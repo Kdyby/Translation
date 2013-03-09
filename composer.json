@@ -1,0 +1,30 @@
+{
+	"name": "kdyby/translation",
+	"type": "library",
+	"description": "Integration of Symfony/Translation into Nette Framework",
+	"keywords": ["nette", "kdyby", "translation"],
+	"homepage": "http://kdyby.org",
+	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
+	"authors": [
+		{
+			"name": "Filip Procházka",
+			"homepage": "http://filip-prochazka.com"
+		}
+	],
+	"support": {
+		"email": "filip@prochazka.su",
+		"issues": "https://github.com/kdyby/translation/issues"
+	},
+	"require": {
+		"nette/nette": "@dev",
+		"symfony/translation": "2.2.*"
+	},
+	"require-dev": {
+		"nette/tester": "@dev"
+	},
+	"autoload": {
+		"psr-0": {
+			"Kdyby\\Translation": "src/Translation/"
+		}
+	}
+}
