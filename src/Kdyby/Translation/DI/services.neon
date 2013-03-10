@@ -1,8 +1,19 @@
 services:
-	default: Kdyby\Translation\Translator
-	selector: Symfony\Component\Translation\MessageSelector
-	extractor: Symfony\Component\Translation\Extractor\ChainExtractor
-	writer: Symfony\Component\Translation\Writer\TranslationWriter
+	default:
+		factory: Kdyby\Translation\Translator
+		inject: no
+
+	selector:
+		class: Symfony\Component\Translation\MessageSelector
+		inject: no
+
+	extractor:
+		class: Symfony\Component\Translation\Extractor\ChainExtractor
+		inject: no
+
+	writer:
+		class: Symfony\Component\Translation\Writer\TranslationWriter
+		inject: no
 
 	loader.php:
 		class: Symfony\Component\Translation\Loader\PhpFileLoader

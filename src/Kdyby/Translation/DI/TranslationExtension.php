@@ -43,7 +43,7 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 		$this->compiler->parseServices($builder, $services, $this->name);
 
 		$translator = $builder->getDefinition($this->prefix('default'));
-		$translator->factory->arguments[3] = new Nette\DI\Statement($config['cache']);
+		$translator->factory->arguments[2] = new Nette\DI\Statement($config['cache']);
 
 		if ($builder->parameters['debugMode']) {
 			$translator->addSetup('enableDebugMode');
@@ -60,14 +60,14 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 		foreach ($builder->findByTag(self::EXTRACTOR_TAG) as $extractorId => $meta) {
 			Nette\Utils\Validators::assert($meta, 'string:2..');
 			$extractor->addSetup('addExtractor', array($meta, '@' . $extractorId));
-			$builder->getDefinition($extractorId)->setAutowired(FALSE);
+			$builder->getDefinition($extractorId)->setAutowired(FALSE)->setInject(FALSE);
 		}
 
 		$writer = $builder->getDefinition($this->prefix('writer'));
 		foreach ($builder->findByTag(self::DUMPER_TAG) as $dumperId => $meta) {
 			Nette\Utils\Validators::assert($meta, 'string:2..');
 			$writer->addSetup('addDumper', array($meta, '@' . $dumperId));
-			$builder->getDefinition($dumperId)->setAutowired(FALSE);
+			$builder->getDefinition($dumperId)->setAutowired(FALSE)->setInject(FALSE);
 		}
 
 		$loaders = array();
@@ -75,8 +75,9 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 		foreach ($builder->findByTag(self::LOADER_TAG) as $loaderId => $meta) {
 			Nette\Utils\Validators::assert($meta, 'string:2..');
 			$loaders[$loaderId][] = $meta;
+			$builder->getDefinition($loaderId)->setAutowired(FALSE)->setInject(FALSE);
 		}
-		$translator->factory->arguments[2] = $loaders;
+		$translator->factory->arguments[3] = $loaders;
 	}
 
 

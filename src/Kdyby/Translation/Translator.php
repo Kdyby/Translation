@@ -62,7 +62,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 * @param array           $loaderIds An array of loader Ids
 	 * @param \Nette\Caching\IStorage $cacheStorage
 	 */
-	public function __construct(Container $container, MessageSelector $selector, $loaderIds = array(), Nette\Caching\IStorage $cacheStorage)
+	public function __construct(Container $container, MessageSelector $selector, Nette\Caching\IStorage $cacheStorage, $loaderIds = array())
 	{
 		$this->container = $container;
 		$this->loaderIds = $loaderIds;
