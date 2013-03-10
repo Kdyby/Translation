@@ -7,6 +7,10 @@ services:
 		class: Symfony\Component\Translation\MessageSelector
 		inject: no
 
+	loader:
+		class: Kdyby\Translation\TranslationLoader
+		inject: no
+
 	extractor:
 		class: Symfony\Component\Translation\Extractor\ChainExtractor
 		inject: no
