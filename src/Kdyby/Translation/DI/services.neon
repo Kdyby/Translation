@@ -1,0 +1,81 @@
+services:
+	default: Kdyby\Translation\Translator
+	selector: Symfony\Component\Translation\MessageSelector
+	extractor: Symfony\Component\Translation\Extractor\ChainExtractor
+	writer: Symfony\Component\Translation\Writer\TranslationWriter
+
+	loader.php:
+		class: Symfony\Component\Translation\Loader\PhpFileLoader
+		tags: {translation.loader: php}
+
+	loader.yml:
+		class: Symfony\Component\Translation\Loader\YamlFileLoader
+		tags: {translation.loader: yml}
+
+	loader.xliff:
+		class: Symfony\Component\Translation\Loader\XliffFileLoader
+		tags: {translation.loader: xlf}
+
+	loader.po:
+		class: Symfony\Component\Translation\Loader\PoFileLoader
+		tags: {translation.loader: po}
+
+	loader.mo:
+		class: Symfony\Component\Translation\Loader\MoFileLoader
+		tags: {translation.loader: mo}
+
+	loader.qt:
+		class: Symfony\Component\Translation\Loader\QtFileLoader
+		tags: {translation.loader: ts}
+
+	loader.csv:
+		class: Symfony\Component\Translation\Loader\CsvFileLoader
+		tags: {translation.loader: csv}
+
+	loader.res:
+		class: Symfony\Component\Translation\Loader\IcuResFileLoader
+		tags: {translation.loader: res}
+
+	loader.dat:
+		class: Symfony\Component\Translation\Loader\IcuDatFileLoader
+		tags: {translation.loader: dat}
+
+	loader.ini:
+		class: Symfony\Component\Translation\Loader\IniFileLoader
+		tags: {translation.loader: ini}
+
+	dumper.php:
+		class: Symfony\Component\Translation\Dumper\PhpFileDumper
+		tags: {translation.dumper: php}
+
+	dumper.xliff:
+		class: Symfony\Component\Translation\Dumper\XliffFileDumper
+		tags: {translation.dumper: xlf}
+
+	dumper.po:
+		class: Symfony\Component\Translation\Dumper\PoFileDumper
+		tags: {translation.dumper: po}
+
+	dumper.mo:
+		class: Symfony\Component\Translation\Dumper\MoFileDumper
+		tags: {translation.dumper: mo}
+
+	dumper.yml:
+		class: Symfony\Component\Translation\Dumper\YamlFileDumper
+		tags: {translation.dumper: yml}
+
+	dumper.qt:
+		class: Symfony\Component\Translation\Dumper\QtFileDumper
+		tags: {translation.dumper: ts}
+
+	dumper.csv:
+		class: Symfony\Component\Translation\Dumper\CsvFileDumper
+		tags: {translation.dumper: csv}
+
+	dumper.ini:
+		class: Symfony\Component\Translation\Dumper\IniFileDumper
+		tags: {translation.dumper: ini}
+
+	dumper.res:
+		class: Symfony\Component\Translation\Dumper\IcuResFileDumper
+		tags: {translation.dumper: res}
