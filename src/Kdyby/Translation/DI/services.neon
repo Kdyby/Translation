@@ -94,3 +94,7 @@ services:
 	dumper.res:
 		class: Symfony\Component\Translation\Dumper\IcuResFileDumper
 		tags: {translation.dumper: res}
+
+	extractor.latte:
+		class: Kdyby\Translation\Extractors\LatteExtractor
+		tags: {translation.extractor: latte}
