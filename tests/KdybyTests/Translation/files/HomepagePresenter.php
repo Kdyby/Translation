@@ -22,7 +22,6 @@ use Nette\Application\UI\Form;
 class HomepagePresenter extends Nette\Application\UI\Presenter
 {
 
-
 	/**
 	 * @return Form
 	 */
