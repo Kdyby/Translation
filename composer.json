@@ -18,6 +18,7 @@
 	"require": {
 		"nette/nette": "@dev",
 		"symfony/translation": "2.2.*",
+		"symfony/locale": "2.2.*",
 		"symfony/config": "2.2.*"
 	},
 	"require-dev": {
