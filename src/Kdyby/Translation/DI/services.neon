@@ -102,3 +102,6 @@ services:
 	console.extract:
 		class: Kdyby\Translation\Console\ExtractCommand
 		tags: {kdyby.console.command: latte}
+
+	helpers:
+		class: Kdyby\Translation\TemplateHelpers
