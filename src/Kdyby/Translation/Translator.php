@@ -170,7 +170,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 		$fallbackContent = '';
 		$current = '';
 		foreach ($this->computeFallbackLocales($locale) as $fallback) {
-			$fallbackContent .= Code\Helpers::formatArgs(<<<EOF
+			$fallbackContent .= Code\Helpers::format(<<<EOF
 \$catalogue? = new MessageCatalogue(?, ?);
 \$catalogue?->addFallbackCatalogue(\$catalogue?);
 
@@ -180,7 +180,7 @@ EOF
 			$current = $fallback;
 		}
 
-		$content = Code\Helpers::formatArgs(<<<EOF
+		$content = Code\Helpers::format(<<<EOF
 <?php
 
 use Symfony\Component\Translation\MessageCatalogue;
