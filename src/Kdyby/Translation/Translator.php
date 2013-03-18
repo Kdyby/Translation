@@ -132,6 +132,10 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	protected function loadCatalogue($locale)
 	{
+		if (empty($locale)) {
+			throw new InvalidArgumentException("Invalid locale.");
+		}
+
 		if (isset($this->catalogues[$locale])) {
 			return;
 		}
