@@ -12,6 +12,10 @@ namespace Kdyby\Translation\DI;
 
 use Kdyby;
 use Nette;
+use Nette\Utils\Arrays;
+use Nette\Utils\Finder;
+use Nette\Utils\Strings;
+use Nette\Utils\Validators;
 
 
 
@@ -30,6 +34,8 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 	 */
 	public $defaults = array(
 		'cache' => '@nette.templateCacheStorage',
+		'fallback' => 'en_GB',
+		'dirs' => array('%appDir%/lang')
 	);
 
 
@@ -43,11 +49,16 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 		$this->compiler->parseServices($builder, $services, $this->name);
 
 		$translator = $builder->getDefinition($this->prefix('default'));
-		$translator->factory->arguments[2] = new Nette\DI\Statement($config['cache']);
+		$translator->factory->arguments[3] = new Nette\DI\Statement($config['cache']);
+		$translator->addSetup('setFallbackLocale', $config['fallback']);
 
 		if ($builder->parameters['debugMode']) {
 			$translator->addSetup('enableDebugMode');
 		}
+
+		Validators::assertField($config, 'dirs', 'list');
+		$builder->getDefinition($this->prefix('console.extract'))
+			->addSetup('$defaultOutputDir', array(reset($config['dirs'])));
 	}
 
 
@@ -55,10 +66,11 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 	public function beforeCompile()
 	{
 		$builder = $this->getContainerBuilder();
+		$config = $this->getConfig($this->defaults);
 
 		$extractor = $builder->getDefinition($this->prefix('extractor'));
 		foreach ($builder->findByTag(self::EXTRACTOR_TAG) as $extractorId => $meta) {
-			Nette\Utils\Validators::assert($meta, 'string:2..');
+			Validators::assert($meta, 'string:2..');
 
 			$extractor->addSetup('addExtractor', array($meta, '@' . $extractorId));
 
@@ -67,7 +79,7 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 
 		$writer = $builder->getDefinition($this->prefix('writer'));
 		foreach ($builder->findByTag(self::DUMPER_TAG) as $dumperId => $meta) {
-			Nette\Utils\Validators::assert($meta, 'string:2..');
+			Validators::assert($meta, 'string:2..');
 
 			$writer->addSetup('addDumper', array($meta, '@' . $dumperId));
 
@@ -77,7 +89,7 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 		$loaders = array();
 		$loader = $builder->getDefinition($this->prefix('loader'));
 		foreach ($builder->findByTag(self::LOADER_TAG) as $loaderId => $meta) {
-			Nette\Utils\Validators::assert($meta, 'string:2..');
+			Validators::assert($meta, 'string:2..');
 
 			$loaders[$loaderId][] = $meta;
 			$loader->addSetup('addLoader', array($meta, '@' . $loaderId));

@@ -27,6 +27,11 @@ class ExtractCommand extends Command
 {
 
 	/**
+	 * @var string
+	 */
+	public $defaultOutputDir = '%appDir%/lang';
+
+	/**
 	 * @var Kdyby\Translation\Translator
 	 */
 	private $translator;
@@ -69,7 +74,7 @@ class ExtractCommand extends Command
 			->setDescription('Extracts strings from application to translation files')
 			->addOption('scan-dir', 'd', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, "The directory to parse the translations. Can contain %placeholders%.", array('%appDir%'))
 			->addOption('output-format', 'f', InputOption::VALUE_REQUIRED, "Format name of the messages.")
-			->addOption('output-dir', 'o', InputOption::VALUE_OPTIONAL, "Directory to write the messages to. Can contain %placeholders%.", '%appDir%/lang')
+			->addOption('output-dir', 'o', InputOption::VALUE_OPTIONAL, "Directory to write the messages to. Can contain %placeholders%.", $this->defaultOutputDir)
 			->addOption('catalogue-language', 'l', InputOption::VALUE_OPTIONAL, "The language of the catalogue", 'en_GB');
 			// todo: append
 	}
