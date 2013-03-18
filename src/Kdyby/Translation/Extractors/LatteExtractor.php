@@ -73,7 +73,10 @@ class LatteExtractor extends Nette\Object implements ExtractorInterface
 				$buffer = '';
 
 			} else {
-				$message = $token->value;
+				$args = new MacroTokenizer($token->value);
+				$writer = new PhpWriter($args, $token->modifiers);
+
+				$message = $writer->write('%node.word');
 				if (in_array(substr(trim($message), 0, 1), array('"', '\''), TRUE)) {
 					$message = substr(trim($message), 1, -1);
 				}

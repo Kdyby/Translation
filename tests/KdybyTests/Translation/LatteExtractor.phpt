@@ -39,6 +39,7 @@ class LatteExtractorTest extends Tester\TestCase
 				"Another important title" => "Another important title",
 				"\nInteresting article about interesting topic\n" => "\nInteresting article about interesting topic\n",
 				"Chapter 2" => "Chapter 2",
+				'none|one|many' => 'none|one|many',
 			)
 		), $catalogue->all());
 	}
@@ -59,6 +60,7 @@ class LatteExtractorTest extends Tester\TestCase
 				"homepage.Another important title" => "Another important title",
 				"homepage.\nInteresting article about interesting topic\n" => "\nInteresting article about interesting topic\n",
 				"homepage.Chapter 2" => "Chapter 2",
+				'homepage.none|one|many' => 'none|one|many',
 			)
 		), $catalogue->all());
 	}
