@@ -98,7 +98,16 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 		}
 
 		$translator = $builder->getDefinition($this->prefix('default'));
-		$translator->factory->arguments[3] = $loaders;
+		$translator->factory->arguments[4] = $loaders;
+
+		foreach (Arrays::flatten($loaders) as $format) {
+			foreach (Finder::findFiles('*.*.' . $format)->from($config['dirs']) as $file) {
+				/** @var \SplFileInfo $file */
+				if ($file = Strings::match($file->getFilename(), '~^(?P<domain>.*?)\.(?P<locale>[^\.]+)\.' . preg_quote($format) . '$~')) {
+					$translator->addSetup('addResource', array($format, $file->getPathname(), $file['locale'], $file['domain']));
+				}
+			}
+		}
 	}
 
 
