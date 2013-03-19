@@ -105,7 +105,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	public function translate($message, $count = NULL, array $parameters = array(), $domain = 'messages', $locale = NULL)
 	{
 		if ($count !== NULL) {
-			return $this->transChoice($message, $count, $parameters, $domain, $locale);
+			return $this->transChoice($message, $count, $parameters + array('%count%' => $count), $domain, $locale);
 		}
 
 		return $this->trans($message, $parameters, $domain, $locale);
