@@ -70,3 +70,4 @@ class LocaleParamResolver extends Nette\Object implements Kdyby\Translation\IUse
 	}
 
 }
+

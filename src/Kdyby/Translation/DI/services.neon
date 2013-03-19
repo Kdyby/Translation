@@ -3,6 +3,19 @@ services:
 		factory: Kdyby\Translation\Translator
 		inject: no
 
+	userLocaleResolver:
+		class: Kdyby\Translation\LocaleResolver\ChainResolver
+		setup:
+			- addResolver(Kdyby\Translation\LocaleResolver\DefaultLocale(%translation.defaultLocale%))
+			- addResolver(Kdyby\Translation\LocaleResolver\AcceptHeaderResolver())
+			- addResolver(@translation.userLocaleResolver.param)
+
+	userLocaleResolver.param:
+		class: Kdyby\Translation\LocaleResolver\LocaleParamResolver()
+		tags: [kdyby.subscriber]
+		autowired: no
+		inject: no
+
 	selector:
 		class: Symfony\Component\Translation\MessageSelector
 		inject: no
