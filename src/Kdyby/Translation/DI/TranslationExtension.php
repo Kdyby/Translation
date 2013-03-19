@@ -125,7 +125,8 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 	 */
 	public function getConfig(array $defaults = NULL, $expand = TRUE)
 	{
-		return parent::getConfig($this->defaults) + array('fallback' => array('en_US', 'en'), 'dirs' => array('%appDir%/lang'));
+		return parent::getConfig($this->defaults) + $this->compiler->getContainerBuilder()
+				->expand(array('fallback' => array('en_US', 'en'), 'dirs' => array('%appDir%/lang')));
 	}
 
 
