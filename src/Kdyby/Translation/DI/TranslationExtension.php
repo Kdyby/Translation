@@ -33,9 +33,10 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 	 * @var array
 	 */
 	public $defaults = array(
+		'default' => 'en',
+		// 'fallback' => array('en_US', 'en'),
+		// 'dirs' => array('%appDir%/lang'),
 		'cache' => '@nette.templateCacheStorage',
-		'fallback' => 'en_GB',
-		'dirs' => array('%appDir%/lang')
 	);
 
 
@@ -43,13 +44,15 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 	public function loadConfiguration()
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->getConfig($this->defaults);
+		$config = $this->getConfig();
 
 		$services = $this->loadFromFile(__DIR__ . '/services.neon');
 		$this->compiler->parseServices($builder, $services, $this->name);
 
 		$translator = $builder->getDefinition($this->prefix('default'));
 		$translator->factory->arguments[3] = new Nette\DI\Statement($config['cache']);
+
+		Validators::assertField($config, 'fallback', 'list');
 		$translator->addSetup('setFallbackLocale', $config['fallback']);
 
 		if ($builder->parameters['debugMode']) {
@@ -60,6 +63,8 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 		Validators::assertField($config, 'dirs', 'list');
 		$builder->getDefinition($this->prefix('console.extract'))
 			->addSetup('$defaultOutputDir', array(reset($config['dirs'])));
+
+		$builder->parameters['translation'] = array('defaultLocale' => $config['default']);
 	}
 
 
@@ -111,6 +116,16 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 				}
 			}
 		}
+	}
+
+
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getConfig(array $defaults = NULL, $expand = TRUE)
+	{
+		return parent::getConfig($this->defaults) + array('fallback' => array('en_US', 'en'), 'dirs' => array('%appDir%/lang'));
 	}
 
 
