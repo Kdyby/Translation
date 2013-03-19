@@ -43,9 +43,9 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	private $loaderIds;
 
 	/**
-	 * @var \Nette\Http\Request
+	 * @var IUserLocaleResolver
 	 */
-	private $httpRequest;
+	private $localeResolver;
 
 	/**
 	 * @var \Nette\Caching\Cache
@@ -63,16 +63,16 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 *   * debug:     Whether to enable debugging or not (false by default)
 	 *
 	 * @param Container $container A ContainerInterface instance
-	 * @param \Nette\Http\Request $httpRequest
+	 * @param IUserLocaleResolver $localeResolver
 	 * @param MessageSelector $selector  The message selector for pluralization
 	 * @param \Nette\Caching\IStorage $cacheStorage
 	 * @param array $loaderIds An array of loader Ids
 	 */
-	public function __construct(Container $container, Nette\Http\Request $httpRequest, MessageSelector $selector,
+	public function __construct(Container $container, IUserLocaleResolver $localeResolver, MessageSelector $selector,
 		Nette\Caching\IStorage $cacheStorage, $loaderIds = array())
 	{
 		$this->container = $container;
-		$this->httpRequest = $httpRequest;
+		$this->localeResolver = $localeResolver;
 		$this->loaderIds = $loaderIds;
 		$this->cache = new Cache($cacheStorage, str_replace('\\', '.', __CLASS__));
 
@@ -119,7 +119,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	public function getLocale()
 	{
 		if ($this->locale === NULL) {
-			$this->locale = $this->httpRequest->detectLanguage(array_merge(array(), array($this->setFallbackLocale())));
+			$this->locale = $this->localeResolver->resolve();
 		}
 
 		return $this->locale;
