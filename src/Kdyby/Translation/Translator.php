@@ -140,7 +140,8 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 			return;
 		}
 
-		if (!$this->cache->getStorage() instanceof Nette\Caching\Storages\PhpFileStorage) {
+		$storage = $this->cache->getStorage();
+		if (!$storage instanceof Nette\Caching\Storages\PhpFileStorage) {
 			if (($messages = $this->cache->load($locale)) !== NULL) {
 				$this->catalogues[$locale] = new MessageCatalogue($locale, $messages);
 				return;
@@ -151,6 +152,8 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 			$this->cache->save($locale, $this->catalogues[$locale]->all());
 			return;
 		}
+
+		$storage->hint = $locale;
 
 		$cached = $compiled = $this->cache->load($locale);
 		if ($compiled === NULL) {
@@ -181,8 +184,6 @@ EOF
 		}
 
 		$content = Code\Helpers::format(<<<EOF
-<?php
-
 use Symfony\Component\Translation\MessageCatalogue;
 
 \$catalogue = new MessageCatalogue(?, ?);
@@ -194,7 +195,7 @@ EOF
 			, $locale, $this->catalogues[$locale]->all(), new Code\PhpLiteral($fallbackContent)
 		);
 
-		return $content;
+		return '<?php' . "\n\n" . $content;
 	}
 
 
