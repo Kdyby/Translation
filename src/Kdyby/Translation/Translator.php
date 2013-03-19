@@ -11,6 +11,7 @@
 namespace Kdyby\Translation;
 
 use Kdyby;
+use Kdyby\Translation\Diagnostics\Panel;
 use Nette;
 use Nette\Caching\Cache;
 use Nette\DI\Container;
@@ -52,6 +53,11 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	private $cache;
 
+	/**
+	 * @var Panel
+	 */
+	private $panel;
+
 
 
 	/**
@@ -77,6 +83,17 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 		$this->cache = new Cache($cacheStorage, str_replace('\\', '.', __CLASS__));
 
 		parent::__construct(NULL, $selector);
+	}
+
+
+
+	/**
+	 * @internal
+	 * @param Panel $panel
+	 */
+	public function injectPanel(Panel $panel)
+	{
+		$this->panel = $panel;
 	}
 
 
@@ -109,6 +126,40 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 		}
 
 		return $this->trans($message, $parameters, $domain, $locale);
+	}
+
+
+
+	public function trans($id, array $parameters = array(), $domain = 'messages', $locale = NULL)
+	{
+		$result = parent::trans($id, $parameters, $domain, $locale);
+		if ($this->panel !== NULL && $id === $result) { // probably untranslated
+			$this->panel->markUntranslated($id);
+		}
+
+		return $result;
+	}
+
+
+
+	public function transChoice($id, $number, array $parameters = array(), $domain = 'messages', $locale = NULL)
+	{
+		try {
+			$result = parent::transChoice($id, $number, $parameters, $domain, $locale);
+
+		} catch (\Exception $e) {
+			$result = $id;
+			if ($this->panel !== NULL) {
+				$this->panel->choiceError($e);
+			}
+		}
+
+
+		if ($this->panel !== NULL && $id === $result) { // probably untranslated
+			$this->panel->markUntranslated($id);
+		}
+
+		return $result;
 	}
 
 
