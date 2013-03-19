@@ -54,6 +54,7 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 
 		if ($builder->parameters['debugMode']) {
 			$translator->addSetup('enableDebugMode');
+			$translator->addSetup('Kdyby\Translation\Diagnostics\Panel::register');
 		}
 
 		Validators::assertField($config, 'dirs', 'list');
