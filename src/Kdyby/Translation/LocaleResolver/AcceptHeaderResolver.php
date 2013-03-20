@@ -44,7 +44,7 @@ class AcceptHeaderResolver extends Nette\Object implements Kdyby\Translation\IUs
 	 */
 	public function resolve()
 	{
-		Locale::acceptFromHttp($this->httpRequest->getHeader('Accept-Language'));
+//		Locale::acceptFromHttp($this->httpRequest->getHeader('Accept-Language'));
 		// $this->locale = $this->httpRequest->detectLanguage(array_merge(array(), array($this->setFallbackLocale())));
 		return $this->httpRequest->detectLanguage(array('cs_CZ'));
 	}

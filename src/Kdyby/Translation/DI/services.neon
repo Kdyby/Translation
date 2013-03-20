@@ -7,7 +7,7 @@ services:
 		class: Kdyby\Translation\LocaleResolver\ChainResolver
 		setup:
 			- addResolver(Kdyby\Translation\LocaleResolver\DefaultLocale(%translation.defaultLocale%))
-			- addResolver(Kdyby\Translation\LocaleResolver\AcceptHeaderResolver())
+#			- addResolver(Kdyby\Translation\LocaleResolver\AcceptHeaderResolver())
 			- addResolver(@translation.userLocaleResolver.param)
 
 	userLocaleResolver.param:
