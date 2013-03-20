@@ -53,7 +53,7 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 		$translator->factory->arguments[3] = new Nette\DI\Statement($config['cache']);
 
 		Validators::assertField($config, 'fallback', 'list');
-		$translator->addSetup('setFallbackLocale', $config['fallback']);
+		$translator->addSetup('setFallbackLocale', array($config['fallback']));
 
 		if ($builder->parameters['debugMode']) {
 			$translator->addSetup('enableDebugMode');
