@@ -114,18 +114,6 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 
 
 	/**
-	 * Returns array of locales from given resources
-	 *
-	 * @return array
-	 */
-	public function getAvailableLocales()
-	{
-		return $this->availableResourceLocales;
-	}
-
-
-
-	/**
 	 * Translates the given string.
 	 *
 	 * @param string  $message    The message id
@@ -197,6 +185,37 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 		if (!in_array($locale, $this->availableResourceLocales, TRUE)) {
 			$this->availableResourceLocales[] = $locale;
 		}
+	}
+
+
+
+	/**
+	 * Returns array of locales from given resources
+	 *
+	 * @return array
+	 */
+	public function getAvailableLocales()
+	{
+		return $this->availableResourceLocales;
+	}
+
+
+
+	/**
+	 * {@inheritdoc}
+	 */
+	protected function computeFallbackLocales($locale)
+	{
+		$fallback = parent::computeFallbackLocales($locale);
+
+		foreach ($this->getAvailableLocales() as $available) {
+			if (substr($available, 0, 2) === substr($locale, 0, 2)) {
+				array_unshift($fallback, $available);
+				break;
+			}
+		}
+
+		return array_unique($fallback);
 	}
 
 
