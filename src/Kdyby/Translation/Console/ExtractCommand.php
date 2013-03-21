@@ -75,7 +75,7 @@ class ExtractCommand extends Command
 			->addOption('scan-dir', 'd', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, "The directory to parse the translations. Can contain %placeholders%.", array('%appDir%'))
 			->addOption('output-format', 'f', InputOption::VALUE_REQUIRED, "Format name of the messages.")
 			->addOption('output-dir', 'o', InputOption::VALUE_OPTIONAL, "Directory to write the messages to. Can contain %placeholders%.", $this->defaultOutputDir)
-			->addOption('catalogue-language', 'l', InputOption::VALUE_OPTIONAL, "The language of the catalogue", 'en_GB');
+			->addOption('catalogue-language', 'l', InputOption::VALUE_OPTIONAL, "The language of the catalogue", 'en_US');
 			// todo: append
 	}
 
