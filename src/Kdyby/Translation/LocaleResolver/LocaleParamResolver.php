@@ -59,7 +59,7 @@ class LocaleParamResolver extends Nette\Object implements Kdyby\Translation\IUse
 	/**
 	 * @return string|NULL
 	 */
-	public function resolve()
+	public function resolve(Kdyby\Translation\Translator $translator)
 	{
 		if ($this->request === NULL) {
 			return NULL;

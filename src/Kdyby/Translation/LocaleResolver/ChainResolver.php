@@ -40,12 +40,13 @@ class ChainResolver extends Nette\Object implements IUserLocaleResolver
 
 
 	/**
+	 * @param \Kdyby\Translation\Translator $translator
 	 * @return string
 	 */
-	public function resolve()
+	public function resolve(Kdyby\Translation\Translator $translator)
 	{
 		foreach ($this->resolvers as $resolver) {
-			if (($locale = $resolver->resolve()) !== NULL) {
+			if (($locale = $resolver->resolve($translator)) !== NULL) {
 				return $locale;
 			}
 		}

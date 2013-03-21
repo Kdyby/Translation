@@ -22,8 +22,9 @@ interface IUserLocaleResolver
 {
 
 	/**
+	 * @param Translator $translator
 	 * @return string
 	 */
-	function resolve();
+	function resolve(Translator $translator);
 
 }

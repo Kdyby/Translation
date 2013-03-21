@@ -58,6 +58,11 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	private $panel;
 
+	/**
+	 * @var array
+	 */
+	private $availableResourceLocales = array();
+
 
 
 	/**
@@ -109,6 +114,18 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 
 
 	/**
+	 * Returns array of locales from given resources
+	 *
+	 * @return array
+	 */
+	public function getAvailableLocales()
+	{
+		return $this->availableResourceLocales;
+	}
+
+
+
+	/**
 	 * Translates the given string.
 	 *
 	 * @param string  $message    The message id
@@ -130,6 +147,9 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 
 
 
+	/**
+	 * {@inheritdoc}
+	 */
 	public function trans($id, array $parameters = array(), $domain = 'messages', $locale = NULL)
 	{
 		$result = parent::trans($id, $parameters, $domain, $locale);
@@ -142,6 +162,9 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 
 
 
+	/**
+	 * {@inheritdoc}
+	 */
 	public function transChoice($id, $number, array $parameters = array(), $domain = 'messages', $locale = NULL)
 	{
 		try {
@@ -167,10 +190,24 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	/**
 	 * {@inheritdoc}
 	 */
+	public function addResource($format, $resource, $locale, $domain = 'messages')
+	{
+		parent::addResource($format, $resource, $locale, $domain);
+
+		if (!in_array($locale, $this->availableResourceLocales, TRUE)) {
+			$this->availableResourceLocales[] = $locale;
+		}
+	}
+
+
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function getLocale()
 	{
 		if ($this->locale === NULL) {
-			$this->locale = $this->localeResolver->resolve();
+			$this->locale = $this->localeResolver->resolve($this);
 		}
 
 		return $this->locale;
