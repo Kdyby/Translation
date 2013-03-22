@@ -65,6 +65,9 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 			->addSetup('$defaultOutputDir', array(reset($config['dirs'])));
 
 		$builder->parameters['translation'] = array('defaultLocale' => $config['default']);
+
+		$builder->getDefinition('nette.latte')
+			->addSetup('Kdyby\Translation\Latte\TranslateMacros::install(?->compiler)', array('@self'));
 	}
 
 
