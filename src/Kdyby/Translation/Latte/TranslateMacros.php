@@ -39,6 +39,9 @@ class TranslateMacros extends MacroSet
 
 	/**
 	 * {_$var |modifiers}
+	 * {_$var, $count |modifiers}
+	 * {_"Sample message", $count |modifiers}
+	 * {_some.string.id, $count |modifiers}
 	 */
 	public function macroTranslate(MacroNode $node, PhpWriter $writer)
 	{
