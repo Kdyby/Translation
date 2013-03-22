@@ -41,7 +41,7 @@ services:
 		tags: {translation.loader: yml}
 
 	loader.neon:
-		class: Kdyby\Translation\Dumper\NeonFileLoader
+		class: Kdyby\Translation\Loader\NeonFileLoader
 		tags: {translation.loader: neon}
 
 	loader.xliff:

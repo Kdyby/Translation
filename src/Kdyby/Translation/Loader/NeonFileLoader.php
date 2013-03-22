@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the file license.txt that was distributed with this source code.
  */
 
-namespace Kdyby\Translation\Dumper;
+namespace Kdyby\Translation\Loader;
 
 use Nette\Utils\Neon;
 use Nette\Utils\NeonException;
@@ -42,7 +42,7 @@ class NeonFileLoader extends ArrayLoader implements LoaderInterface
         }
 
         try {
-            $messages = Neon::decode($resource);
+            $messages = Neon::decode(file_get_contents($resource));
 
         } catch (NeonException $e) {
             throw new InvalidResourceException('Error parsing Neon.', 0, $e);
