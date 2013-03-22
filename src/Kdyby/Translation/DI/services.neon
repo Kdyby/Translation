@@ -40,6 +40,10 @@ services:
 		class: Symfony\Component\Translation\Loader\YamlFileLoader
 		tags: {translation.loader: yml}
 
+	loader.neon:
+		class: Kdyby\Translation\Dumper\NeonFileLoader
+		tags: {translation.loader: neon}
+
 	loader.xliff:
 		class: Symfony\Component\Translation\Loader\XliffFileLoader
 		tags: {translation.loader: xlf}
@@ -91,6 +95,10 @@ services:
 	dumper.yml:
 		class: Symfony\Component\Translation\Dumper\YamlFileDumper
 		tags: {translation.dumper: yml}
+
+	dumper.neon:
+		class: Kdyby\Translation\Dumper\NeonFileDumper
+		tags: {translation.dumper: neon}
 
 	dumper.qt:
 		class: Symfony\Component\Translation\Dumper\QtFileDumper
