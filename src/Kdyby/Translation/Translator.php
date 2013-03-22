@@ -124,8 +124,17 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 *
 	 * @return string
 	 */
-	public function translate($message, $count = NULL, array $parameters = array(), $domain = 'messages', $locale = NULL)
+	public function translate($message, $count = NULL, array $parameters = array(), $domain = NULL, $locale = NULL)
 	{
+		if ($domain === NULL) {
+			if (strpos($message, '.') !== FALSE && strpos($message, ' ') === FALSE) {
+				list($domain, $message) = explode('.', $message, 2);
+
+			} else {
+				$domain = 'messages';
+			}
+		}
+
 		if ($count !== NULL) {
 			return $this->transChoice($message, $count, $parameters + array('%count%' => $count), $domain, $locale);
 		}
