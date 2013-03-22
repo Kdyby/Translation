@@ -44,7 +44,7 @@ class TemplateHelpers extends Nette\Object
 
 
 
-	public function translate($message, $count = NULL, array $parameters = array(), $domain = 'messages', $locale = NULL)
+	public function translate($message, $count = NULL, array $parameters = array(), $domain = NULL, $locale = NULL)
 	{
 		return $this->translator->translate($message, $count, $parameters, $domain, $locale);
 	}
