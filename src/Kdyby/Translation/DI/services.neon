@@ -4,7 +4,8 @@ services:
 		inject: no
 
 	userLocaleResolver:
-		class: Kdyby\Translation\LocaleResolver\ChainResolver
+		class: Kdyby\Translation\IUserLocaleResolver
+		factory: Kdyby\Translation\LocaleResolver\ChainResolver
 		setup:
 			- addResolver(Kdyby\Translation\LocaleResolver\DefaultLocale(%translation.defaultLocale%))
 #			- addResolver(Kdyby\Translation\LocaleResolver\AcceptHeaderResolver())
@@ -12,7 +13,6 @@ services:
 
 	userLocaleResolver.param:
 		class: Kdyby\Translation\LocaleResolver\LocaleParamResolver()
-		tags: [kdyby.subscriber]
 		autowired: no
 		inject: no
 

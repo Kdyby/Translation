@@ -21,27 +21,13 @@ use Symfony\Component\Locale\Locale;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class LocaleParamResolver extends Nette\Object implements Kdyby\Translation\IUserLocaleResolver, Kdyby\Events\Subscriber
+class LocaleParamResolver extends Nette\Object implements Kdyby\Translation\IUserLocaleResolver
 {
 
 	/**
 	 * @var Nette\Application\Request
 	 */
 	private $request;
-
-
-
-	/**
-	 * Returns an array of events this subscriber wants to listen to.
-	 *
-	 * @return array
-	 */
-	public function getSubscribedEvents()
-	{
-		return array(
-			'Nette\\Application\\Application::onRequest'
-		);
-	}
 
 
 

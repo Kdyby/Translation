@@ -68,6 +68,9 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 
 		$builder->getDefinition('nette.latte')
 			->addSetup('Kdyby\Translation\Latte\TranslateMacros::install(?->compiler)', array('@self'));
+
+		$builder->getDefinition('application')
+			->addSetup('$service->onRequest[] = $this->getService(?)->onRequest', array($this->prefix('userLocaleResolver.param')));
 	}
 
 
