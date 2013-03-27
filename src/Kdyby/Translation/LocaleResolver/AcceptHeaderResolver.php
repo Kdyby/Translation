@@ -12,7 +12,6 @@ namespace Kdyby\Translation\LocaleResolver;
 
 use Kdyby;
 use Nette;
-use Symfony\Component\Locale\Locale;
 
 
 
