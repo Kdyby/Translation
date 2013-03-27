@@ -14,7 +14,6 @@ use Kdyby;
 use Nette;
 use Nette\Application\Application;
 use Nette\Application\Request;
-use Symfony\Component\Locale\Locale;
 
 
 
