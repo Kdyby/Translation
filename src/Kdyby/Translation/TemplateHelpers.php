@@ -50,6 +50,7 @@ class TemplateHelpers extends Nette\Object
 			$locale = $domain ?: NULL;
 			$domain = $parameters ?: NULL;
 			$parameters = $count ?: array();
+			$count = NULL;
 		}
 
 		return $this->translator->translate($message, $count, $parameters, $domain, $locale);
