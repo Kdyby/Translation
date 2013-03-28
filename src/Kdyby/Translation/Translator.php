@@ -135,6 +135,12 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 			}
 		}
 
+		$tmp = array();
+		foreach ($parameters as $key => $val) {
+			$tmp['%' . trim($key, '%') . '%'] = $val;
+		}
+		$parameters = $tmp;
+
 		if ($count !== NULL) {
 			return $this->transChoice($message, $count, $parameters + array('%count%' => $count), $domain, $locale);
 		}
