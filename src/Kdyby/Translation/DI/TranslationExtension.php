@@ -110,6 +110,7 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 		}
 
 		$translator = $builder->getDefinition($this->prefix('default'));
+		$translator->setInject(FALSE);
 		$translator->factory->arguments[4] = $loaders;
 
 		if ($dirs = array_filter($config['dirs'], callback('is_dir'))) {
