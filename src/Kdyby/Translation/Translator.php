@@ -15,7 +15,7 @@ use Kdyby\Translation\Diagnostics\Panel;
 use Nette;
 use Nette\Caching\Cache;
 use Nette\DI\Container;
-use Nette\PhpGenerator as Code;
+use Nette\Utils\PhpGenerator as Code;
 use Nette\Utils\LimitedScope;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Translation\MessageCatalogue;
