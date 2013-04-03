@@ -32,9 +32,6 @@
 		},
 		"classmap": [
 			"src/Kdyby/Translation/exceptions.php"
-		],
-		"files": [
-			"src/Nette/compatibility.php"
 		]
 	}
 }
