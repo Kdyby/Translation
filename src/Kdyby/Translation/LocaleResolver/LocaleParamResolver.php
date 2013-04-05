@@ -51,7 +51,7 @@ class LocaleParamResolver extends Nette\Object implements Kdyby\Translation\IUse
 		}
 
 		$params = $this->request->getParameters();
-		return isset($params['locale']) ? $params['locale'] : NULL;
+		return !empty($params['locale']) ? $params['locale'] : NULL;
 	}
 
 }
