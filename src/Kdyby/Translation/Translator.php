@@ -126,6 +126,10 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	public function translate($message, $count = NULL, array $parameters = array(), $domain = NULL, $locale = NULL)
 	{
+		if (empty($message)) {
+			return $message;
+		}
+
 		if ($domain === NULL) {
 			if (strpos($message, '.') !== FALSE && strpos($message, ' ') === FALSE) {
 				list($domain, $message) = explode('.', $message, 2);
@@ -179,7 +183,6 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 				$this->panel->choiceError($e);
 			}
 		}
-
 
 		if ($this->panel !== NULL && $id === $result) { // probably untranslated
 			$this->panel->markUntranslated($id);
