@@ -169,6 +169,8 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 			} catch (\Exception $e) {
 				throw new InvalidResourceException("Resource $file is not valid and cannot be loaded.", 0, $e);
 			}
+
+			break;
 		}
 	}
 
