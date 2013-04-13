@@ -130,6 +130,7 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 					if ($m = Strings::match($file->getFilename(), '~^(?P<domain>.*?)\.(?P<locale>[^\.]+)\.' . preg_quote($format) . '$~')) {
 						$this->validateResource($format, $file->getPathname(), $m['locale'], $m['domain']);
 						$translator->addSetup('addResource', array($format, $file->getPathname(), $m['locale'], $m['domain']));
+						$builder->addDependency($file->getPathname());
 					}
 				}
 			}
