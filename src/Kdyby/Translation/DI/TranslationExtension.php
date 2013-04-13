@@ -11,11 +11,14 @@
 namespace Kdyby\Translation\DI;
 
 use Kdyby;
+use Kdyby\Translation\InvalidResourceException;
 use Nette;
+use Nette\Reflection;
 use Nette\Utils\Arrays;
 use Nette\Utils\Finder;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
+use Symfony\Component\Translation\Loader\LoaderInterface;
 
 
 
@@ -39,10 +42,17 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 		'cache' => '@nette.templateCacheStorage',
 	);
 
+	/**
+	 * @var array
+	 */
+	private $loaders;
+
 
 
 	public function loadConfiguration()
 	{
+		$this->loaders = array();
+
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
 
@@ -98,12 +108,12 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 			$builder->getDefinition($dumperId)->setAutowired(FALSE)->setInject(FALSE);
 		}
 
-		$loaders = array();
+		$this->loaders = array();
 		$loader = $builder->getDefinition($this->prefix('loader'));
 		foreach ($builder->findByTag(self::LOADER_TAG) as $loaderId => $meta) {
 			Validators::assert($meta, 'string:2..');
 
-			$loaders[$loaderId][] = $meta;
+			$this->loaders[$loaderId][] = $meta;
 			$loader->addSetup('addLoader', array($meta, '@' . $loaderId));
 
 			$builder->getDefinition($loaderId)->setAutowired(FALSE)->setInject(FALSE);
@@ -111,16 +121,53 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 
 		$translator = $builder->getDefinition($this->prefix('default'));
 		$translator->setInject(FALSE);
-		$translator->factory->arguments[4] = $loaders;
+		$translator->factory->arguments[4] = $this->loaders;
 
 		if ($dirs = array_filter($config['dirs'], callback('is_dir'))) {
-			foreach (Arrays::flatten($loaders) as $format) {
+			foreach (Arrays::flatten($this->loaders) as $format) {
 				foreach (Finder::findFiles('*.*.' . $format)->from($dirs) as $file) {
 					/** @var \SplFileInfo $file */
 					if ($m = Strings::match($file->getFilename(), '~^(?P<domain>.*?)\.(?P<locale>[^\.]+)\.' . preg_quote($format) . '$~')) {
-						$translator->addSetup('addResource', array($format, $file->getPathname(), $m ['locale'], $m ['domain']));
+						$this->validateResource($format, $file->getPathname(), $m['locale'], $m['domain']);
+						$translator->addSetup('addResource', array($format, $file->getPathname(), $m['locale'], $m['domain']));
 					}
 				}
+			}
+		}
+	}
+
+
+
+	protected function validateResource($format, $file, $locale, $domain)
+	{
+		$builder = $this->getContainerBuilder();
+
+		foreach ($this->loaders as $id => $knownFormats) {
+			if (!in_array($format, $knownFormats, TRUE)) {
+				continue;
+			}
+
+			try {
+				$def = $builder->getDefinition($id);
+				$refl = Reflection\ClassType::from($def->factory ? $def->factory->entity : $def->class);
+				if (($method = $refl->getConstructor()) && $method->getNumberOfRequiredParameters() > 1) {
+					continue;
+				}
+
+				$loader = $refl->newInstance();
+				if (!$loader instanceof LoaderInterface) {
+					continue;
+				}
+
+			} catch (\ReflectionException $e) {
+				continue;
+			}
+
+			try {
+				$loader->load($file, $locale, $domain);
+
+			} catch (\Exception $e) {
+				throw new InvalidResourceException("Resource $file is not valid and cannot be loaded.", 0, $e);
 			}
 		}
 	}
