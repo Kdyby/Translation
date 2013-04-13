@@ -24,7 +24,8 @@
 		"symfony/locale": "Locale component provides fallback code to handle cases when the intl extension is missing."
 	},
 	"require-dev": {
-		"nette/tester": "@dev"
+		"nette/tester": "@dev",
+		"symfony/console": "2.1.*"
 	},
 	"autoload": {
 		"psr-0": {

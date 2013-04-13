@@ -55,6 +55,7 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
+		$builder->parameters['translation'] = array('defaultLocale' => $config['default']);
 
 		$services = $this->loadFromFile(__DIR__ . '/services.neon');
 		$this->compiler->parseServices($builder, $services, $this->name);
@@ -182,7 +183,7 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 	public function getConfig(array $defaults = NULL, $expand = TRUE)
 	{
 		return parent::getConfig($this->defaults) + $this->compiler->getContainerBuilder()
-				->expand(array('fallback' => array('en_US', 'en'), 'dirs' => array('%appDir%/lang')));
+				->expand(array('fallback' => array('en_US'), 'dirs' => array('%appDir%/lang')));
 	}
 
 
