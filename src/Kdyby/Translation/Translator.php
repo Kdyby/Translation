@@ -227,6 +227,10 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 		$fallback = parent::computeFallbackLocales($locale);
 
 		foreach ($this->getAvailableLocales() as $available) {
+			if ($available === $locale) {
+				continue;
+			}
+
 			if (substr($available, 0, 2) === substr($locale, 0, 2)) {
 				array_unshift($fallback, $available);
 				break;
