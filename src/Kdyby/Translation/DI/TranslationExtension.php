@@ -97,7 +97,7 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 
 			$extractor->addSetup('addExtractor', array($meta, '@' . $extractorId));
 
-			$builder->getDefinition($extractorId)->setAutowired(FALSE)->setInject(FALSE);
+			$builder->getDefinition($extractorId)->setAutowired(FALSE);
 		}
 
 		$writer = $builder->getDefinition($this->prefix('writer'));
@@ -106,7 +106,7 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 
 			$writer->addSetup('addDumper', array($meta, '@' . $dumperId));
 
-			$builder->getDefinition($dumperId)->setAutowired(FALSE)->setInject(FALSE);
+			$builder->getDefinition($dumperId)->setAutowired(FALSE);
 		}
 
 		$this->loaders = array();
@@ -117,11 +117,10 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 			$this->loaders[$loaderId][] = $meta;
 			$loader->addSetup('addLoader', array($meta, '@' . $loaderId));
 
-			$builder->getDefinition($loaderId)->setAutowired(FALSE)->setInject(FALSE);
+			$builder->getDefinition($loaderId)->setAutowired(FALSE);
 		}
 
 		$translator = $builder->getDefinition($this->prefix('default'));
-		$translator->setInject(FALSE);
 		$translator->factory->arguments[4] = $this->loaders;
 
 		if ($dirs = array_filter($config['dirs'], callback('is_dir'))) {
