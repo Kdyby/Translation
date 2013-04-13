@@ -32,6 +32,10 @@ class InvalidArgumentException extends \InvalidArgumentException implements Exce
 
 
 
+/**
+ * @author Filip Procházka <filip@prochazka.su>
+ */
+class InvalidResourceException extends \UnexpectedValueException implements Exception
+{
 
-
-
+}
