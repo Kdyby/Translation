@@ -257,6 +257,16 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 
 
 	/**
+	 * @return TemplateHelpers
+	 */
+	public function createTemplateHelpers()
+	{
+		return new TemplateHelpers($this);
+	}
+
+
+
+	/**
 	 * {@inheritdoc}
 	 */
 	protected function loadCatalogue($locale)
