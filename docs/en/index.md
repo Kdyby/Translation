@@ -21,7 +21,7 @@ extensions:
 	translation: Kdyby\Translation\DI\TranslationExtension
 ```
 
-If you're using stable Nette, you have to register them in `app/bootstrap.php`
+If you're using stable Nette, you have to register it in `app/bootstrap.php`
 
 ```php
 Kdyby\Translation\DI\TranslationExtension::register($configurator);
