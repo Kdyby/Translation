@@ -22,10 +22,17 @@ use Symfony\Component\Translation\Loader\LoaderInterface;
 
 
 
+if (!class_exists('Nette\DI\CompilerExtension')) {
+	class_alias('Nette\Config\CompilerExtension', 'Nette\DI\CompilerExtension');
+	class_alias('Nette\Config\Configurator', 'Nette\Configurator');
+	class_alias('Nette\Config\Compiler', 'Nette\DI\Compiler');
+	class_alias('Nette\Config\Helpers', 'Nette\DI\Config\Helpers');
+}
+
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class TranslationExtension extends Nette\Config\CompilerExtension
+class TranslationExtension extends Nette\DI\CompilerExtension
 {
 
 	const LOADER_TAG = 'translation.loader';
@@ -189,11 +196,11 @@ class TranslationExtension extends Nette\Config\CompilerExtension
 
 
 	/**
-	 * @param \Nette\Config\Configurator $configurator
+	 * @param \Nette\Configurator $configurator
 	 */
-	public static function register(Nette\Config\Configurator $configurator)
+	public static function register(Nette\Configurator $configurator)
 	{
-		$configurator->onCompile[] = function ($config, Nette\Config\Compiler $compiler) {
+		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler) {
 			$compiler->addExtension('translation', new TranslationExtension());
 		};
 	}
