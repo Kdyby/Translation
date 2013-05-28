@@ -74,6 +74,9 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 			if ($message instanceof \Exception) {
 				$s .= '<span style="color:red">' . $h($message->getMessage()) . '</span>';
 
+			} elseif ($message instanceof Nette\Utils\Html) {
+				$s .= '<span style="color:red">Nette\Utils\Html(' . $h((string) $message) . ')</span>';
+
 			} else {
 				$s .= $h($message);
 			}

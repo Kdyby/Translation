@@ -128,6 +128,12 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	{
 		if (empty($message)) {
 			return $message;
+
+		} elseif ($message instanceof Nette\Utils\Html) {
+			if ($this->panel) {
+				$this->panel->markUntranslated($message);
+			}
+			return $message; // todo: what now?
 		}
 
 		if ($domain === NULL) {
