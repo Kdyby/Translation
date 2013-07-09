@@ -12,13 +12,17 @@ namespace Kdyby\Translation\Extractors;
 
 use Kdyby;
 use Nette;
-use Nette\Latte\MacroTokenizer;
+use Nette\Latte\MacroTokens;
 use Nette\Latte\PhpWriter;
 use Nette\Utils\Strings;
 use Nette\Utils\Finder;
 use Symfony\Component\Translation\Extractor\ExtractorInterface;
 use Symfony\Component\Translation\MessageCatalogue;
 
+
+if (!class_exists('Nette\Latte\MacroTokens')) {
+	class_alias('Nette\Latte\MacroTokenizer', 'Nette\Latte\MacroTokens');
+}
 
 
 /**
@@ -73,7 +77,7 @@ class LatteExtractor extends Nette\Object implements ExtractorInterface
 				$buffer = '';
 
 			} else {
-				$args = new MacroTokenizer($token->value);
+				$args = new MacroTokens($token->value);
 				$writer = new PhpWriter($args, $token->modifiers);
 
 				$message = $writer->write('%node.word');
