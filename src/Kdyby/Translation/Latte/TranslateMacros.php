@@ -65,7 +65,13 @@ class TranslateMacros extends MacroSet
 
 	private function containsOnlyOneWord(MacroNode $node)
 	{
-		$result = trim($node->tokenizer->fetchUntil(',')) === trim($node->args);
+		if (method_exists($node->tokenizer, 'fetchUntil')) {
+			$result = trim($node->tokenizer->fetchUntil(',')) === trim($node->args);
+
+		} else {
+			$result = trim($node->tokenizer->joinUntil(',')) === trim($node->args);
+		}
+
 		$node->tokenizer->reset();
 		return $result;
 	}
