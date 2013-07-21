@@ -5,7 +5,7 @@ This extension is here to provide robust translation system for Nette Framework.
 It implements `Nette\Localization\ITranslator` using [Symfony/Translation](https://github.com/symfony/Translation).
 
 
-Instalation
+Installation
 -----------
 
 The best way to install Kdyby/Translation is using  [Composer](http://getcomposer.org/):
