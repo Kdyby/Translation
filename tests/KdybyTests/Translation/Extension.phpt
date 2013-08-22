@@ -28,7 +28,7 @@ class ExtensionTest extends Tester\TestCase
 
 	public function testFunctionality()
 	{
-		$config = new Nette\Config\Configurator();
+		$config = new Nette\Configurator();
 		$config->setTempDirectory(TEMP_DIR);
 		$config->addParameters(array('appDir' => __DIR__));
 		Kdyby\Translation\DI\TranslationExtension::register($config);
