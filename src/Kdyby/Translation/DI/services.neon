@@ -2,14 +2,6 @@ services:
 	default:
 		factory: Kdyby\Translation\Translator
 
-	userLocaleResolver:
-		class: Kdyby\Translation\IUserLocaleResolver
-		factory: Kdyby\Translation\LocaleResolver\ChainResolver
-		setup:
-			- addResolver(Kdyby\Translation\LocaleResolver\DefaultLocale(%translation.defaultLocale%))
-			- addResolver(Kdyby\Translation\LocaleResolver\AcceptHeaderResolver())
-			- addResolver(@translation.userLocaleResolver.param)
-
 	userLocaleResolver.param:
 		class: Kdyby\Translation\LocaleResolver\LocaleParamResolver()
 		autowired: no
