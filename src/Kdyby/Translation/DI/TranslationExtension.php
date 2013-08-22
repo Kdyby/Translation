@@ -66,10 +66,20 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
-		$builder->parameters['translation'] = array('defaultLocale' => $config['default']);
 
 		$services = $this->loadFromFile(__DIR__ . '/services.neon');
 		$this->compiler->parseServices($builder, $services, $this->name);
+
+		$builder->addDefinition($this->prefix('userLocaleResolver'))
+			->setClass('Kdyby\Translation\IUserLocaleResolver')
+			->setFactory('Kdyby\Translation\LocaleResolver\ChainResolver')
+			->addSetup('addResolver', array(
+				new Nette\DI\Statement('Kdyby\Translation\LocaleResolver\DefaultLocale', array($config['default'])),
+			))
+			->addSetup('addResolver', array(
+				new Nette\DI\Statement('Kdyby\Translation\LocaleResolver\AcceptHeaderResolver'),
+			))
+			->addSetup('addResolver', array($this->prefix('@userLocaleResolver.param')));
 
 		$translator = $builder->getDefinition($this->prefix('default'));
 		$translator->factory->arguments[3] = new Nette\DI\Statement($config['cache']);
@@ -85,8 +95,6 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		Validators::assertField($config, 'dirs', 'list');
 		$builder->getDefinition($this->prefix('console.extract'))
 			->addSetup('$defaultOutputDir', array(reset($config['dirs'])));
-
-		$builder->parameters['translation'] = array('defaultLocale' => $config['default']);
 
 		$builder->getDefinition('nette.latte')
 			->addSetup('Kdyby\Translation\Latte\TranslateMacros::install(?->compiler)', array('@self'));
