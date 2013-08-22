@@ -92,9 +92,13 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$translator->addSetup('Kdyby\Translation\Diagnostics\Panel::register');
 		}
 
-		Validators::assertField($config, 'dirs', 'list');
-		$builder->getDefinition($this->prefix('console.extract'))
-			->addSetup('$defaultOutputDir', array(reset($config['dirs'])));
+		if ($this->isRegisteredConsoleExtension()) {
+			Validators::assertField($config, 'dirs', 'list');
+			$builder->addDefinition($this->prefix('console.extract'))
+				->setClass('Kdyby\Translation\Console\ExtractCommand')
+				->addSetup('$defaultOutputDir', array(reset($config['dirs'])))
+				->addTag('kdyby.console.command', 'latte');
+		}
 
 		$builder->getDefinition('nette.latte')
 			->addSetup('Kdyby\Translation\Latte\TranslateMacros::install(?->compiler)', array('@self'));
@@ -193,6 +197,19 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 			break;
 		}
+	}
+
+
+
+	private function isRegisteredConsoleExtension()
+	{
+		foreach ($this->compiler->getExtensions() as $extension) {
+			if ($extension instanceof Kdyby\Console\DI\ConsoleExtension) {
+				return TRUE;
+			}
+		}
+
+		return FALSE;
 	}
 
 
