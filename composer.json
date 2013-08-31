@@ -21,7 +21,8 @@
 		"symfony/config": "2.2.*"
 	},
 	"suggest": {
-		"symfony/locale": "Locale component provides fallback code to handle cases when the intl extension is missing."
+		"symfony/locale": "Locale component provides fallback code to handle cases when the intl extension is missing.",
+		"kdyby/console": "If you wanna use extract command and much others, install also console."
 	},
 	"require-dev": {
 		"nette/tester": "@dev",
