@@ -40,7 +40,7 @@ class AcceptHeaderResolver extends Nette\Object implements Kdyby\Translation\IUs
 
 	/**
 	 * @param \Kdyby\Translation\Translator $translator
-	 * @return string
+	 * @return string|NULL
 	 */
 	public function resolve(Kdyby\Translation\Translator $translator)
 	{
@@ -48,7 +48,7 @@ class AcceptHeaderResolver extends Nette\Object implements Kdyby\Translation\IUs
 			return substr($locale, 0, 2);
 		}, $translator->getAvailableLocales());
 
-		return $this->httpRequest->detectLanguage($short);
+		return $this->httpRequest->detectLanguage($short) ?: NULL;
 	}
 
 }
