@@ -41,7 +41,7 @@ class ChainResolver extends Nette\Object implements IUserLocaleResolver
 
 	/**
 	 * @param \Kdyby\Translation\Translator $translator
-	 * @return string
+	 * @return string|NULL
 	 */
 	public function resolve(Kdyby\Translation\Translator $translator)
 	{
