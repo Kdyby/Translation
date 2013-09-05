@@ -39,7 +39,8 @@ class DefaultLocale extends Nette\Object implements Kdyby\Translation\IUserLocal
 
 
 	/**
-	 * @return string
+	 * @param \Kdyby\Translation\Translator $translator
+	 * @return string|NULL
 	 */
 	public function resolve(Kdyby\Translation\Translator $translator)
 	{

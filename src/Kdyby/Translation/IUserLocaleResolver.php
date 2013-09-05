@@ -23,7 +23,7 @@ interface IUserLocaleResolver
 
 	/**
 	 * @param Translator $translator
-	 * @return string
+	 * @return string|NULL
 	 */
 	function resolve(Translator $translator);
 
