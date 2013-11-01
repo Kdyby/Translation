@@ -151,7 +151,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 		}
 		$parameters = $tmp;
 
-		if ($count !== NULL) {
+		if ($count !== NULL && is_scalar($count)) {
 			return $this->transChoice($message, $count, $parameters + array('%count%' => $count), $domain, $locale);
 		}
 
