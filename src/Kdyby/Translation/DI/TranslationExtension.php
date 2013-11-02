@@ -147,10 +147,19 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$translator->setInject(FALSE);
 		$translator->factory->arguments[4] = $this->loaders;
 
+		foreach ($this->compiler->getExtensions() as $extension) {
+			if (!$extension instanceof ITranslationProvider) {
+				continue;
+			}
+
+			$config['dirs'] = array_merge($config['dirs'], array_values($extension->getTranslationResources()));
+		}
+
 		if ($dirs = array_filter($config['dirs'], callback('is_dir'))) {
 			foreach ($dirs as $dir) {
 				$builder->addDependency($dir);
 			}
+
 			foreach (Arrays::flatten($this->loaders) as $format) {
 				foreach (Finder::findFiles('*.*.' . $format)->from($dirs) as $file) {
 					/** @var \SplFileInfo $file */
