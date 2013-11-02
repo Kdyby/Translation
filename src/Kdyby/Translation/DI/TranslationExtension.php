@@ -13,6 +13,7 @@ namespace Kdyby\Translation\DI;
 use Kdyby;
 use Kdyby\Translation\InvalidResourceException;
 use Nette;
+use Nette\DI\Statement;
 use Nette\Reflection;
 use Nette\Utils\Arrays;
 use Nette\Utils\Finder;
@@ -52,6 +53,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		// 'fallback' => array('en_US', 'en'),
 		// 'dirs' => array('%appDir%/lang'),
 		'cache' => '@nette.templateCacheStorage',
+		'debugger' => '%debugMode%',
 	);
 
 	/**
@@ -68,37 +70,55 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
 
-		$services = $this->loadFromFile(__DIR__ . '/services.neon');
-		$this->compiler->parseServices($builder, $services, $this->name);
-
-		$builder->addDefinition($this->prefix('userLocaleResolver'))
-			->setClass('Kdyby\Translation\IUserLocaleResolver')
-			->setFactory('Kdyby\Translation\LocaleResolver\ChainResolver')
-			->addSetup('addResolver', array(
-				new Nette\DI\Statement('Kdyby\Translation\LocaleResolver\DefaultLocale', array($config['default'])),
-			))
-			->addSetup('addResolver', array(
-				new Nette\DI\Statement('Kdyby\Translation\LocaleResolver\AcceptHeaderResolver'),
-			))
-			->addSetup('addResolver', array($this->prefix('@userLocaleResolver.param')));
-
-		$translator = $builder->getDefinition($this->prefix('default'));
-		$translator->factory->arguments[3] = new Nette\DI\Statement($config['cache']);
+		$translator = $builder->addDefinition($this->prefix('default'))
+			->setClass('Kdyby\Translation\Translator');
 
 		Validators::assertField($config, 'fallback', 'list');
 		$translator->addSetup('setFallbackLocale', array($config['fallback']));
 
-		if ($builder->parameters['debugMode']) {
-			$translator->addSetup('enableDebugMode');
+		$this->loadLocaleResolver($config);
+
+		$builder->addDefinition($this->prefix('helpers'))
+			->setClass('Kdyby\Translation\TemplateHelpers')
+			->setFactory($this->prefix('@default') . '::createTemplateHelpers');
+
+		$catalogueCompiler = $builder->addDefinition($this->prefix('catalogueCompiler'))
+			->setClass('Kdyby\Translation\CatalogueCompiler', array(new Statement($config['cache'])));
+
+		$builder->addDefinition($this->prefix('fallbackResolver'))
+			->setClass('Kdyby\Translation\FallbackResolver');
+
+		$builder->addDefinition($this->prefix('catalogueFactory'))
+			->setClass('Kdyby\Translation\CatalogueFactory');
+
+		$builder->addDefinition($this->prefix('selector'))
+			->setClass('Symfony\Component\Translation\MessageSelector');
+
+		$builder->addDefinition($this->prefix('loadersInitializer'))
+			->setClass('Kdyby\Translation\LoadersInitializer');
+
+		$builder->addDefinition($this->prefix('extractor'))
+			->setClass('Symfony\Component\Translation\Extractor\ChainExtractor');
+
+		$this->loadExtractors();
+
+		$builder->addDefinition($this->prefix('writer'))
+			->setClass('Symfony\Component\Translation\Writer\TranslationWriter');
+
+		$this->loadDumpers();
+
+		$builder->addDefinition($this->prefix('loader'))
+			->setClass('Kdyby\Translation\TranslationLoader');
+
+		$this->loadLoaders();
+
+		if ($config['debugger']) {
+			$catalogueCompiler->addSetup('enableDebugMode');
 			$translator->addSetup('Kdyby\Translation\Diagnostics\Panel::register');
 		}
 
 		if ($this->isRegisteredConsoleExtension()) {
-			Validators::assertField($config, 'dirs', 'list');
-			$builder->addDefinition($this->prefix('console.extract'))
-				->setClass('Kdyby\Translation\Console\ExtractCommand')
-				->addSetup('$defaultOutputDir', array(reset($config['dirs'])))
-				->addTag('kdyby.console.command', 'latte');
+			$this->loadConsole($config);
 		}
 
 		$builder->getDefinition('nette.latte')
@@ -110,10 +130,80 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 
 
+	protected function loadLocaleResolver(array $config)
+	{
+		$builder = $this->getContainerBuilder();
+
+		$builder->addDefinition($this->prefix('userLocaleResolver.param'))
+			->setClass('Kdyby\Translation\LocaleResolver\LocaleParamResolver')
+			->setAutowired(FALSE);
+
+		$builder->addDefinition($this->prefix('userLocaleResolver'))
+			->setClass('Kdyby\Translation\IUserLocaleResolver')
+			->setFactory('Kdyby\Translation\LocaleResolver\ChainResolver')
+			->addSetup('addResolver', array(new Statement('Kdyby\Translation\LocaleResolver\DefaultLocale', array($config['default']))))
+			->addSetup('addResolver', array(new Statement('Kdyby\Translation\LocaleResolver\AcceptHeaderResolver')))
+			->addSetup('addResolver', array($this->prefix('@userLocaleResolver.param')));
+	}
+
+
+
+	protected function loadConsole(array $config)
+	{
+		$builder = $this->getContainerBuilder();
+
+		Validators::assertField($config, 'dirs', 'list');
+		$builder->addDefinition($this->prefix('console.extract'))
+			->setClass('Kdyby\Translation\Console\ExtractCommand')
+			->addSetup('$defaultOutputDir', array(reset($config['dirs'])))
+			->addTag('kdyby.console.command', 'latte');
+	}
+
+
+
+	protected function loadDumpers()
+	{
+		$builder = $this->getContainerBuilder();
+
+		foreach ($this->loadFromFile(__DIR__ . '/config/dumpers.neon') as $format => $class) {
+			$builder->addDefinition($this->prefix('dumper.' . $format))
+				->setClass($class)
+				->addTag(self::DUMPER_TAG, $format);
+		}
+	}
+
+
+
+	protected function loadLoaders()
+	{
+		$builder = $this->getContainerBuilder();
+
+		foreach ($this->loadFromFile(__DIR__ . '/config/loaders.neon') as $format => $class) {
+			$builder->addDefinition($this->prefix('loader.' . $format))
+				->setClass($class)
+				->addTag(self::LOADER_TAG, $format);
+		}
+	}
+
+
+
+	protected function loadExtractors()
+	{
+		$builder = $this->getContainerBuilder();
+
+		foreach ($this->loadFromFile(__DIR__ . '/config/extractors.neon') as $format => $class) {
+			$builder->addDefinition($this->prefix('extractor.' . $format))
+				->setClass($class)
+				->addTag(self::EXTRACTOR_TAG, $format);
+		}
+	}
+
+
+
 	public function beforeCompile()
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->getConfig($this->defaults);
+		$config = $this->getConfig();
 
 		$extractor = $builder->getDefinition($this->prefix('extractor'));
 		foreach ($builder->findByTag(self::EXTRACTOR_TAG) as $extractorId => $meta) {
@@ -144,8 +234,8 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$builder->getDefinition($loaderId)->setAutowired(FALSE);
 		}
 
-		$translator = $builder->getDefinition($this->prefix('default'));
-		$translator->factory->arguments[4] = $this->loaders;
+		$builder->getDefinition($this->prefix('loadersInitializer'))
+			->setArguments(array($this->loaders));
 
 		foreach ($this->compiler->getExtensions() as $extension) {
 			if (!$extension instanceof ITranslationProvider) {
@@ -159,6 +249,8 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			foreach ($dirs as $dir) {
 				$builder->addDependency($dir);
 			}
+
+			$translator = $builder->getDefinition($this->prefix('default'));
 
 			foreach (Arrays::flatten($this->loaders) as $format) {
 				foreach (Finder::findFiles('*.*.' . $format)->from($dirs) as $file) {

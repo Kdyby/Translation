@@ -39,3 +39,13 @@ class InvalidResourceException extends \UnexpectedValueException implements Exce
 {
 
 }
+
+
+
+/**
+ * @author Filip Procházka <filip@prochazka.su>
+ */
+class LoaderNotFoundException extends \RuntimeException implements Exception
+{
+
+}

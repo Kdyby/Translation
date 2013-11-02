@@ -1,0 +1,11 @@
+php: Symfony\Component\Translation\Loader\PhpFileLoader
+yml: Symfony\Component\Translation\Loader\YamlFileLoader
+xlf: Symfony\Component\Translation\Loader\XliffFileLoader
+po: Symfony\Component\Translation\Loader\PoFileLoader
+mo: Symfony\Component\Translation\Loader\MoFileLoader
+ts: Symfony\Component\Translation\Loader\QtFileLoader
+csv: Symfony\Component\Translation\Loader\CsvFileLoader
+res: Symfony\Component\Translation\Loader\IcuResFileLoader
+dat: Symfony\Component\Translation\Loader\IcuDatFileLoader
+ini: Symfony\Component\Translation\Loader\IniFileLoader
+neon: Kdyby\Translation\Loader\NeonFileLoader

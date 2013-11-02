@@ -1,0 +1,10 @@
+php: Symfony\Component\Translation\Dumper\PhpFileDumper
+xliff: Symfony\Component\Translation\Dumper\XliffFileDumper
+po: Symfony\Component\Translation\Dumper\PoFileDumper
+mo: Symfony\Component\Translation\Dumper\MoFileDumper
+yml: Symfony\Component\Translation\Dumper\YamlFileDumper
+neon: Kdyby\Translation\Dumper\NeonFileDumper
+qt: Symfony\Component\Translation\Dumper\QtFileDumper
+csv: Symfony\Component\Translation\Dumper\CsvFileDumper
+ini: Symfony\Component\Translation\Dumper\IniFileDumper
+res: Symfony\Component\Translation\Dumper\IcuResFileDumper
