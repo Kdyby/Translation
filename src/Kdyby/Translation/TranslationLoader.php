@@ -63,9 +63,27 @@ class TranslationLoader extends Nette\Object
 			foreach (Finder::findFiles('*.' . $extension)->from($directory) as $file) {
 				/** @var \SplFileInfo $file */
 				$domain = substr($file->getFileName(), 0, -1 * strlen($extension) - 1);
-				$catalogue->addCatalogue($loader->load($file->getPathname(), $catalogue->getLocale(), $domain));
+				$this->loadResource($format, $file->getPathname(), $domain, $catalogue);
 			}
 		}
+	}
+
+
+
+	/**
+	 * @param string $format
+	 * @param string $resource
+	 * @param string $domain
+	 * @param MessageCatalogue $catalogue
+	 * @throws LoaderNotFoundException
+	 */
+	public function loadResource($format, $resource, $domain, MessageCatalogue $catalogue)
+	{
+		if (!isset($this->loaders[$format])) {
+			throw new LoaderNotFoundException(sprintf('The "%s" translation loader is not registered.', $resource[0]));
+		}
+
+		$catalogue->addCatalogue($this->loaders[$format]->load($resource, $catalogue->getLocale(), $domain));
 	}
 
 }

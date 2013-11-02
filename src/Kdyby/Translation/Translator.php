@@ -13,12 +13,6 @@ namespace Kdyby\Translation;
 use Kdyby;
 use Kdyby\Translation\Diagnostics\Panel;
 use Nette;
-use Nette\Caching\Cache;
-use Nette\DI\Container;
-use Nette\PhpGenerator as Code;
-use Nette\Utils\LimitedScope;
-use Symfony\Component\Translation\Loader\LoaderInterface;
-use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\Translator as BaseTranslator;
 
@@ -34,24 +28,24 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 {
 
 	/**
-	 * @var \Nette\DI\Container
-	 */
-	private $container;
-
-	/**
-	 * @var array
-	 */
-	private $loaderIds;
-
-	/**
 	 * @var IUserLocaleResolver
 	 */
 	private $localeResolver;
 
 	/**
-	 * @var \Nette\Caching\Cache
+	 * @var CatalogueCompiler
 	 */
-	private $cache;
+	private $catalogueCompiler;
+
+	/**
+	 * @var FallbackResolver
+	 */
+	private $fallbackResolver;
+
+	/**
+	 * @var CatalogueFactory
+	 */
+	private $catalogueFactory;
 
 	/**
 	 * @var Panel
@@ -66,26 +60,19 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 
 
 	/**
-	 * Constructor.
-	 *
-	 * Available options:
-	 *
-	 *   * cache_dir: The cache directory (or null to disable caching)
-	 *   * debug:     Whether to enable debugging or not (false by default)
-	 *
-	 * @param Container $container A ContainerInterface instance
 	 * @param IUserLocaleResolver $localeResolver
-	 * @param MessageSelector $selector  The message selector for pluralization
-	 * @param \Nette\Caching\IStorage $cacheStorage
-	 * @param array $loaderIds An array of loader Ids
+	 * @param MessageSelector $selector The message selector for pluralization
+	 * @param CatalogueCompiler $catalogueCompiler
+	 * @param CatalogueFactory $catalogueFactory
+	 * @param FallbackResolver $fallbackResolver
 	 */
-	public function __construct(Container $container, IUserLocaleResolver $localeResolver, MessageSelector $selector,
-		Nette\Caching\IStorage $cacheStorage, $loaderIds = array())
+	public function __construct(IUserLocaleResolver $localeResolver, MessageSelector $selector, CatalogueCompiler $catalogueCompiler,
+		CatalogueFactory $catalogueFactory, FallbackResolver $fallbackResolver)
 	{
-		$this->container = $container;
 		$this->localeResolver = $localeResolver;
-		$this->loaderIds = $loaderIds;
-		$this->cache = new Cache($cacheStorage, str_replace('\\', '.', __CLASS__));
+		$this->catalogueCompiler = $catalogueCompiler;
+		$this->catalogueFactory = $catalogueFactory;
+		$this->fallbackResolver = $fallbackResolver;
 
 		parent::__construct(NULL, $selector);
 	}
@@ -99,16 +86,6 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	public function injectPanel(Panel $panel)
 	{
 		$this->panel = $panel;
-	}
-
-
-
-	/**
-	 * Replaces cache storage with simple memory storage (per-request).
-	 */
-	public function enableDebugMode()
-	{
-		$this->cache = new Cache(new Nette\Caching\Storages\MemoryStorage());
 	}
 
 
@@ -204,11 +181,17 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	public function addResource($format, $resource, $locale, $domain = 'messages')
 	{
+		$this->catalogueFactory->addResource($format, $resource, $locale, $domain);
 		parent::addResource($format, $resource, $locale, $domain);
+		$this->availableResourceLocales[$locale] = TRUE;
+	}
 
-		if (!in_array($locale, $this->availableResourceLocales, TRUE)) {
-			$this->availableResourceLocales[] = $locale;
-		}
+
+
+	public function setFallbackLocale($locales)
+	{
+		parent::setFallbackLocale($locales);
+		$this->fallbackResolver->setFallbackLocales($locales);
 	}
 
 
@@ -220,30 +203,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	public function getAvailableLocales()
 	{
-		return $this->availableResourceLocales;
-	}
-
-
-
-	/**
-	 * {@inheritdoc}
-	 */
-	protected function computeFallbackLocales($locale)
-	{
-		$fallback = parent::computeFallbackLocales($locale);
-
-		foreach ($this->getAvailableLocales() as $available) {
-			if ($available === $locale) {
-				continue;
-			}
-
-			if (substr($available, 0, 2) === substr($locale, 0, 2)) {
-				array_unshift($fallback, $available);
-				break;
-			}
-		}
-
-		return array_unique($fallback);
+		return array_keys($this->availableResourceLocales);
 	}
 
 
@@ -285,75 +245,17 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 			return;
 		}
 
-		$storage = $this->cache->getStorage();
-		if (!$storage instanceof Nette\Caching\Storages\PhpFileStorage) {
-			if (($messages = $this->cache->load($locale)) !== NULL) {
-				$this->catalogues[$locale] = new MessageCatalogue($locale, $messages);
-				return;
-			}
-
-			$this->initialize();
-			parent::loadCatalogue($locale);
-			$this->cache->save($locale, $this->catalogues[$locale]->all());
-			return;
-		}
-
-		$storage->hint = $locale;
-
-		$cached = $compiled = $this->cache->load($locale);
-		if ($compiled === NULL) {
-			$this->initialize();
-			parent::loadCatalogue($locale);
-			$this->cache->save($locale, $compiled = $this->compilePhpCache($locale));
-			$cached = $this->cache->load($locale);
-		}
-
-		$this->catalogues[$locale] = LimitedScope::load($cached['file']);
+		$this->catalogues = $this->catalogueCompiler->compile($this, $this->catalogues, $locale);
 	}
 
 
 
-	protected function compilePhpCache($locale)
+	/**
+	 * {@inheritdoc}
+	 */
+	protected function computeFallbackLocales($locale)
 	{
-		$fallbackContent = '';
-		$current = '';
-		foreach ($this->computeFallbackLocales($locale) as $fallback) {
-			$fallbackContent .= Code\Helpers::format(<<<EOF
-\$catalogue? = new MessageCatalogue(?, ?);
-\$catalogue?->addFallbackCatalogue(\$catalogue?);
-
-EOF
-				, new Code\PhpLiteral($fallback), $fallback, $this->catalogues[$fallback]->all(), new Code\PhpLiteral($current), new Code\PhpLiteral($fallback)
-			);
-			$current = $fallback;
-		}
-
-		$content = Code\Helpers::format(<<<EOF
-use Symfony\Component\Translation\MessageCatalogue;
-
-\$catalogue = new MessageCatalogue(?, ?);
-
-?
-return \$catalogue;
-
-EOF
-			, $locale, $this->catalogues[$locale]->all(), new Code\PhpLiteral($fallbackContent)
-		);
-
-		return '<?php' . "\n\n" . $content;
-	}
-
-
-
-	protected function initialize()
-	{
-		foreach ($this->loaderIds as $serviceId => $aliases) {
-			foreach ($aliases as $alias) {
-				$loader = $this->container->getService($serviceId);
-				/** @var LoaderInterface $loader */
-				$this->addLoader($alias, $loader);
-			}
-		}
+		return $this->fallbackResolver->compute($this, $locale);
 	}
 
 }
