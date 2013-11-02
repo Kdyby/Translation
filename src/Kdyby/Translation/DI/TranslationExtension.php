@@ -47,6 +47,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	 * @var array
 	 */
 	public $defaults = array(
+		'whitelist' => array('cs', 'en'),
 		'default' => 'en',
 		// 'fallback' => array('en_US', 'en'),
 		// 'dirs' => array('%appDir%/lang'),
@@ -155,7 +156,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$config['dirs'] = array_merge($config['dirs'], array_values($extension->getTranslationResources()));
 		}
 
-		if ($dirs = array_filter($config['dirs'], callback('is_dir'))) {
+		if ($dirs = array_values(array_filter($config['dirs'], callback('is_dir')))) {
 			foreach ($dirs as $dir) {
 				$builder->addDependency($dir);
 			}
@@ -164,6 +165,10 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 				foreach (Finder::findFiles('*.*.' . $format)->from($dirs) as $file) {
 					/** @var \SplFileInfo $file */
 					if ($m = Strings::match($file->getFilename(), '~^(?P<domain>.*?)\.(?P<locale>[^\.]+)\.' . preg_quote($format) . '$~')) {
+						if (!in_array(substr($m['locale'], 0, 2), $config['whitelist'])) {
+							continue; // ignore
+						}
+
 						$this->validateResource($format, $file->getPathname(), $m['locale'], $m['domain']);
 						$translator->addSetup('addResource', array($format, $file->getPathname(), $m['locale'], $m['domain']));
 						$builder->addDependency($file->getPathname());
