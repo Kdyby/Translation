@@ -71,7 +71,8 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$config = $this->getConfig();
 
 		$translator = $builder->addDefinition($this->prefix('default'))
-			->setClass('Kdyby\Translation\Translator');
+			->setClass('Kdyby\Translation\Translator')
+			->addSetup('?->setTranslator(?)', array($this->prefix('@userLocaleResolver.param'), '@self'));
 
 		Validators::assertField($config, 'fallback', 'list');
 		$translator->addSetup('setFallbackLocale', array($config['fallback']));
