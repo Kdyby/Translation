@@ -28,6 +28,18 @@ class LocaleParamResolver extends Nette\Object implements Kdyby\Translation\IUse
 	 */
 	private $request;
 
+	/**
+	 * @var Kdyby\Translation\Translator
+	 */
+	private $translator;
+
+
+
+	public function setTranslator(Kdyby\Translation\Translator $translator)
+	{
+		$this->translator = $translator;
+	}
+
 
 
 	/**
@@ -37,6 +49,11 @@ class LocaleParamResolver extends Nette\Object implements Kdyby\Translation\IUse
 	public function onRequest(Application $sender, Request $request)
 	{
 		$this->request = $request;
+
+		if ($this->translator) {
+			$this->translator->setLocale(NULL);
+			$this->translator->getLocale(); // invoke resolver
+		}
 	}
 
 

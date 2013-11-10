@@ -72,6 +72,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 		$translator = $builder->addDefinition($this->prefix('default'))
 			->setClass('Kdyby\Translation\Translator')
+			->addSetup('?->setTranslator(?)', array($this->prefix('@userLocaleResolver.param'), '@self'))
 			->setInject(FALSE);
 
 		Validators::assertField($config, 'fallback', 'list');
