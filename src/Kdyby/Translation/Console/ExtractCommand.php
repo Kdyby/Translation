@@ -10,13 +10,15 @@
 
 namespace Kdyby\Translation\Console;
 
-use Kdyby;
-use Nette;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Translation\MessageCatalogue;
+use Kdyby\Translation\Translator;
+use Symfony\Component\Translation\Writer\TranslationWriter;
+use Symfony\Component\Translation\Extractor\ChainExtractor;
+use Nette\DI\Container;
 
 
 
@@ -32,22 +34,22 @@ class ExtractCommand extends Command
 	public $defaultOutputDir = '%appDir%/lang';
 
 	/**
-	 * @var Kdyby\Translation\Translator
+	 * @var ranslator
 	 */
 	private $translator;
 
 	/**
-	 * @var \Symfony\Component\Translation\Writer\TranslationWriter
+	 * @var TranslationWriter
 	 */
 	private $writer;
 
 	/**
-	 * @var \Symfony\Component\Translation\Extractor\ChainExtractor
+	 * @var ChainExtractor
 	 */
 	private $extractor;
 
 	/**
-	 * @var Nette\DI\Container
+	 * @var Container
 	 */
 	private $serviceLocator;
 
@@ -68,6 +70,23 @@ class ExtractCommand extends Command
 
 
 
+	/**
+	 * @param \Kdyby\Translation\Translator $translator
+	 * @param \Symfony\Component\Translation\Writer\TranslationWriter $writer
+	 * @param \Symfony\Component\Translation\Extractor\ChainExtractor $extractor
+	 * @param \Nette\DI\Container $serviceLocator
+	 */
+	public function __construct(Translator $translator, TranslationWriter $writer, ChainExtractor $extractor, Container $serviceLocator)
+	{
+		parent::__construct();
+		$this->translator = $translator;
+		$this->writer = $writer;
+		$this->extractor = $extractor;
+		$this->serviceLocator = $serviceLocator;
+	}
+
+
+
 	protected function configure()
 	{
 		$this->setName('kdyby:translation-extract')
@@ -77,16 +96,6 @@ class ExtractCommand extends Command
 			->addOption('output-dir', 'o', InputOption::VALUE_OPTIONAL, "Directory to write the messages to. Can contain %placeholders%.", $this->defaultOutputDir)
 			->addOption('catalogue-language', 'l', InputOption::VALUE_OPTIONAL, "The language of the catalogue", 'en_US');
 			// todo: append
-	}
-
-
-
-	protected function initialize(InputInterface $input, OutputInterface $output)
-	{
-		$this->translator = $this->getHelper('container')->getByType('Kdyby\Translation\Translator');
-		$this->writer = $this->getHelper('container')->getByType('Symfony\Component\Translation\Writer\TranslationWriter');
-		$this->extractor = $this->getHelper('container')->getByType('Symfony\Component\Translation\Extractor\ChainExtractor');
-		$this->serviceLocator = $this->getHelper('container')->getContainer();
 	}
 
 
@@ -141,5 +150,7 @@ class ExtractCommand extends Command
 
 		return 0;
 	}
+
+
 
 }
