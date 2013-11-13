@@ -10,18 +10,27 @@ Installation
 
 The best way to install Kdyby/Translation is using  [Composer](http://getcomposer.org/):
 
+With dev Nette, this is how you install the extension
+
 ```sh
 $ composer require kdyby/translation:@dev
 ```
 
-With dev Nette, you can enable the extension using your neon config.
+and you can enable the extension using your neon config
 
 ```yml
 extensions:
 	translation: Kdyby\Translation\DI\TranslationExtension
 ```
 
-If you're using stable Nette, you have to register it in `app/bootstrap.php`
+If you're using stable Nette, the series `0.10` is for you, so install it using this command
+
+```sh
+$ composer require kdyby/translation:~0.10
+```
+
+and you have to register it in `app/bootstrap.php`
+
 
 ```php
 Kdyby\Translation\DI\TranslationExtension::register($configurator);
