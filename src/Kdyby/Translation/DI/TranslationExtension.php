@@ -76,7 +76,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			->setInject(FALSE);
 
 		Validators::assertField($config, 'fallback', 'list');
-		$translator->addSetup('setFallbackLocale', array($config['fallback']));
+		$translator->addSetup('setFallbackLocales', array($config['fallback']));
 
 		$this->loadLocaleResolver($config);
 
