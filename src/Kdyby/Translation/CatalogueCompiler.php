@@ -125,16 +125,18 @@ class CatalogueCompiler extends Nette\Object
 	protected function compilePhpCache(Translator $translator, array &$availableCatalogues, $locale)
 	{
 		$fallbackContent = '';
-		$current = '';
+		$current = new Code\PhpLiteral('');
 		foreach ($this->fallbackResolver->compute($translator, $locale) as $fallback) {
+			$fallbackSuffix = new Code\PhpLiteral(ucfirst(str_replace('-', '_', $fallback)));
+
 			$fallbackContent .= Code\Helpers::format(<<<EOF
 \$catalogue? = new MessageCatalogue(?, ?);
 \$catalogue?->addFallbackCatalogue(\$catalogue?);
 
 EOF
-				, new Code\PhpLiteral($fallback), $fallback, $availableCatalogues[$fallback]->all(), new Code\PhpLiteral($current), new Code\PhpLiteral($fallback)
+				, $fallbackSuffix, $fallback, $availableCatalogues[$fallback]->all(), $current, $fallbackSuffix
 			);
-			$current = $fallback;
+			$current = $fallbackSuffix;
 		}
 
 		$content = Code\Helpers::format(<<<EOF
