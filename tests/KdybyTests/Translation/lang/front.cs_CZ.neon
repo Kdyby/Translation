@@ -1,2 +1,4 @@
 homepage:
 	hello: Ahoj světe
+	namedHello: Ahoj %name%
+	namedHelloCounting: Ahoj %name%|Hola %name%
