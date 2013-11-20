@@ -53,20 +53,18 @@ class FallbackResolver extends Nette\Object
 			array_unshift($locales, substr($locale, 0, -strlen(strrchr($locale, '_'))));
 		}
 
-		$fallback = array_unique($locales);
-
 		foreach ($translator->getAvailableLocales() as $available) {
 			if ($available === $locale) {
 				continue;
 			}
 
 			if (substr($available, 0, 2) === substr($locale, 0, 2)) {
-				array_unshift($fallback, $available);
+				array_unshift($locales, $available);
 				break;
 			}
 		}
 
-		return array_unique($fallback);
+		return array_unique($locales);
 	}
 
 }
