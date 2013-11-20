@@ -47,6 +47,7 @@ class TemplateHelpersTest extends Tester\TestCase
 		$config->setTempDirectory(TEMP_DIR);
 		$config->addParameters(array('appDir' => __DIR__));
 		Kdyby\Translation\DI\TranslationExtension::register($config);
+		$config->addConfig(__DIR__ . '/../nette-reset.neon');
 		$container = $config->createContainer();
 		/** @var \Nette\DI\Container|\SystemContainer $container */
 
