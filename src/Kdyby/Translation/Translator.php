@@ -188,9 +188,12 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 
 
 
-	public function setFallbackLocale($locales)
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setFallbackLocales(array $locales)
 	{
-		parent::setFallbackLocale($locales);
+		parent::setFallbackLocales($locales);
 		$this->fallbackResolver->setFallbackLocales($locales);
 	}
 
