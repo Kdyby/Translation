@@ -140,7 +140,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	/**
 	 * {@inheritdoc}
 	 */
-	public function trans($id, array $parameters = array(), $domain = 'messages', $locale = NULL)
+	public function trans($id, array $parameters = array(), $domain = NULL, $locale = NULL)
 	{
 		$result = parent::trans($id, $parameters, $domain, $locale);
 		if ($this->panel !== NULL && $id === $result) { // probably untranslated
@@ -155,7 +155,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	/**
 	 * {@inheritdoc}
 	 */
-	public function transChoice($id, $number, array $parameters = array(), $domain = 'messages', $locale = NULL)
+	public function transChoice($id, $number, array $parameters = array(), $domain = NULL, $locale = NULL)
 	{
 		try {
 			$result = parent::transChoice($id, $number, $parameters, $domain, $locale);
@@ -179,7 +179,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	/**
 	 * {@inheritdoc}
 	 */
-	public function addResource($format, $resource, $locale, $domain = 'messages')
+	public function addResource($format, $resource, $locale, $domain = NULL)
 	{
 		$this->catalogueFactory->addResource($format, $resource, $locale, $domain);
 		parent::addResource($format, $resource, $locale, $domain);
