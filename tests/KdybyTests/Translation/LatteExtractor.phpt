@@ -31,7 +31,7 @@ class LatteExtractorTest extends Tester\TestCase
 		$extractor = new LatteExtractor();
 
 		$catalogue = new MessageCatalogue('cs_CZ');
-		$extractor->extract(__DIR__ . '/files', $catalogue);
+		$extractor->extract(__DIR__ . '/extractor-files', $catalogue);
 
 		Assert::same(array(
 			'messages' => array(
@@ -53,7 +53,7 @@ class LatteExtractorTest extends Tester\TestCase
 		$extractor->setPrefix('homepage');
 
 		$catalogue = new MessageCatalogue('cs_CZ');
-		$extractor->extract(__DIR__ . '/files', $catalogue);
+		$extractor->extract(__DIR__ . '/extractor-files', $catalogue);
 
 		Assert::same(array(
 			'messages' => array(
