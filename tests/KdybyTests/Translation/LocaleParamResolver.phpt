@@ -22,7 +22,7 @@ require_once __DIR__ . '/../bootstrap.php';
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class LocaleParamResolverTest extends Tester\TestCase
+class LocaleParamResolverTest extends TestCase
 {
 
 	public function testInvalidateLocaleOnRequest()
@@ -41,21 +41,6 @@ class LocaleParamResolverTest extends Tester\TestCase
 
 		$app->onRequest($app, new Nette\Application\Request('Test', 'GET', array('action' => 'default', 'locale' => 'en')));
 		Assert::same('en', $translator->getLocale());
-	}
-
-
-
-	protected function createContainer()
-	{
-		$config = new Nette\Configurator();
-		$config->setTempDirectory(TEMP_DIR);
-		$config->addParameters(array('appDir' => __DIR__));
-		Kdyby\Translation\DI\TranslationExtension::register($config);
-		$config->addConfig(__DIR__ . '/../nette-reset.neon');
-		$container = $config->createContainer();
-		/** @var \Nette\DI\Container|\SystemContainer $container */
-
-		return $container;
 	}
 
 }

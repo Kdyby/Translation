@@ -22,7 +22,7 @@ require_once __DIR__ . '/../bootstrap.php';
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class FallbackResolverTest extends Tester\TestCase
+class FallbackResolverTest extends TestCase
 {
 
 	public function testCompute()
@@ -41,21 +41,6 @@ class FallbackResolverTest extends Tester\TestCase
 		Assert::same(array('sk', 'cs_CZ', 'cs'), $fallbackResolver->compute($translator, 'sk_SK'));
 		Assert::same(array('en_US', 'cs_CZ', 'cs'), $fallbackResolver->compute($translator, 'en'));
 		Assert::same(array('en', 'cs_CZ', 'cs'), $fallbackResolver->compute($translator, 'en_US'));
-	}
-
-
-
-	private function createContainer()
-	{
-		$config = new Nette\Configurator();
-		$config->setTempDirectory(TEMP_DIR);
-		$config->addParameters(array('appDir' => __DIR__));
-		Kdyby\Translation\DI\TranslationExtension::register($config);
-		$config->addConfig(__DIR__ . '/../nette-reset.neon');
-		$container = $config->createContainer();
-		/** @var \Nette\DI\Container|\SystemContainer $container */
-
-		return $container;
 	}
 
 }
