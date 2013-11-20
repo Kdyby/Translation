@@ -53,7 +53,7 @@ class TemplateHelpers extends Nette\Object
 			$count = NULL;
 		}
 
-		return $this->translator->translate($message, $count, $parameters, $domain, $locale);
+		return $this->translator->translate($message, $count, (array) $parameters, $domain, $locale);
 	}
 
 }

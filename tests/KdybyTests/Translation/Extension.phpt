@@ -28,6 +28,20 @@ class ExtensionTest extends Tester\TestCase
 
 	public function testFunctionality()
 	{
+		$translator = $this->createTranslator();
+
+		Assert::true($translator instanceof Nette\Localization\ITranslator);
+		Assert::true($translator instanceof Kdyby\Translation\Translator);
+		Assert::true($translator instanceof Symfony\Component\Translation\Translator);
+
+		Assert::same("Ahoj světe", $translator->translate('homepage.hello', NULL, array(), 'front', 'cs'));
+		Assert::same("Hello world", $translator->translate('homepage.hello', NULL, array(), 'front', 'en'));
+	}
+
+
+
+	private function createTranslator()
+	{
 		$config = new Nette\Configurator();
 		$config->setTempDirectory(TEMP_DIR);
 		$config->addParameters(array('appDir' => __DIR__));
@@ -37,12 +51,8 @@ class ExtensionTest extends Tester\TestCase
 
 		$translator = $container->getByType('Nette\Localization\ITranslator');
 		/** @var Kdyby\Translation\Translator $translator */
-		Assert::true($translator instanceof Nette\Localization\ITranslator);
-		Assert::true($translator instanceof Kdyby\Translation\Translator);
-		Assert::true($translator instanceof Symfony\Component\Translation\Translator);
 
-		Assert::same("Ahoj světe", $translator->translate('homepage.hello', NULL, array(), 'front', 'cs'));
-		Assert::same("Hello world", $translator->translate('homepage.hello', NULL, array(), 'front', 'en'));
+		return $translator;
 	}
 
 }

@@ -1,2 +1,4 @@
 homepage:
 	hello: Hello world
+	namedHello: Hello %name%
+	namedHelloCounting: Hello %name%|Helloes %name%
