@@ -23,7 +23,7 @@ require_once __DIR__ . '/../bootstrap.php';
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class LatteExtractorTest extends Tester\TestCase
+class LatteExtractorTest extends TestCase
 {
 
 	public function testExtractDirectory()

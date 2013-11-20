@@ -22,7 +22,7 @@ require_once __DIR__ . '/../bootstrap.php';
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class TemplateHelpersTest extends Tester\TestCase
+class TemplateHelpersTest extends TestCase
 {
 
 	public function testTranslate()
@@ -45,24 +45,6 @@ class TemplateHelpersTest extends Tester\TestCase
 		Assert::same("missingKey.namedHelloCounting", $helper->translate('front.missingKey.namedHelloCounting', 3, NULL, NULL, 'en'));
 		Assert::same("missingKey.namedHelloCounting", $helper->translate('front.missingKey.namedHelloCounting', 3, array('name' => 'Peter'), NULL, 'en'));
 		Assert::same("missingKey.namedHelloCounting", $helper->translate('front.missingKey.namedHelloCounting', array('name' => 'Peter'), NULL, 'en'));
-	}
-
-
-
-	private function createTranslator()
-	{
-		$config = new Nette\Config\Configurator();
-		$config->setTempDirectory(TEMP_DIR);
-		$config->addParameters(array('appDir' => __DIR__));
-		Kdyby\Translation\DI\TranslationExtension::register($config);
-		$config->addConfig(__DIR__ . '/../nette-reset.neon');
-		$container = $config->createContainer();
-		/** @var \Nette\DI\Container|\SystemContainer $container */
-
-		$translator = $container->getByType('Nette\Localization\ITranslator');
-		/** @var Kdyby\Translation\Translator $translator */
-
-		return $translator;
 	}
 
 }

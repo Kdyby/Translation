@@ -23,7 +23,7 @@ require_once __DIR__ . '/../bootstrap.php';
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class ExtensionTest extends Tester\TestCase
+class ExtensionTest extends TestCase
 {
 
 	public function testFunctionality()
@@ -36,24 +36,6 @@ class ExtensionTest extends Tester\TestCase
 
 		Assert::same("Ahoj světe", $translator->translate('homepage.hello', NULL, array(), 'front', 'cs'));
 		Assert::same("Hello world", $translator->translate('homepage.hello', NULL, array(), 'front', 'en'));
-	}
-
-
-
-	private function createTranslator()
-	{
-		$config = new Nette\Config\Configurator();
-		$config->setTempDirectory(TEMP_DIR);
-		$config->addParameters(array('appDir' => __DIR__));
-		Kdyby\Translation\DI\TranslationExtension::register($config);
-		$config->addConfig(__DIR__ . '/../nette-reset.neon');
-		$container = $config->createContainer();
-		/** @var \Nette\DI\Container|\SystemContainer $container */
-
-		$translator = $container->getByType('Nette\Localization\ITranslator');
-		/** @var Kdyby\Translation\Translator $translator */
-
-		return $translator;
 	}
 
 }
