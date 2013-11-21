@@ -199,7 +199,7 @@ And that's all, you're ready to translate templates.
 
 ```smarty
 <p>{_messages.homepage.hello}</p>
-<p>{_messages.homepage.helloName, [name => $name]}</p>
+<p>{_messages.homepage.helloName, NULL, [name => $name]}</p>
 <p>{_messages.homepage.applesCount, 10}</p>
 ```
 
