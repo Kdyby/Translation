@@ -22,7 +22,7 @@ require_once __DIR__ . '/../bootstrap.php';
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class LocaleParamResolverTest extends TestCase
+class LocaleSessionResolver extends TestCase
 {
 
 	public function testInvalidateLocaleOnRequest()
@@ -35,16 +35,27 @@ class LocaleParamResolverTest extends TestCase
 		/** @var Nette\Application\Application $app */
 		$app = $container->getByType('Nette\Application\Application');
 
+		/** @var Kdyby\Translation\LocaleResolver\SessionResolver $sessionResolver */
+		$sessionResolver = $container->getByType('Kdyby\Translation\LocaleResolver\SessionResolver');
+
 		// this should fallback to default locale
 		Assert::same('en', $translator->getLocale());
 
-		$app->onRequest($app, new Nette\Application\Request('Test', 'GET', array('action' => 'default', 'locale' => 'cs')));
+		// force cs locale
+		$sessionResolver->setLocale('cs');
+
+		// locale from request parameter should be ignored
+		$app->onRequest($app, new Nette\Application\Request('Test', 'GET', array('action' => 'default', 'locale' => 'en')));
 		Assert::same('cs', $translator->getLocale());
 
-		$app->onRequest($app, new Nette\Application\Request('Test', 'GET', array('action' => 'default', 'locale' => 'en')));
+		// force en locale
+		$sessionResolver->setLocale('en');
+
+		// locale from request parameter should be ignored
+		$app->onRequest($app, new Nette\Application\Request('Test', 'GET', array('action' => 'default', 'locale' => 'cs')));
 		Assert::same('en', $translator->getLocale());
 	}
 
 }
 
-\run(new LocaleParamResolverTest());
+\run(new LocaleSessionResolver());

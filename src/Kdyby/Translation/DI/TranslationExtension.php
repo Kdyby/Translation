@@ -71,7 +71,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$config = $this->getConfig();
 
 		$translator = $builder->addDefinition($this->prefix('default'))
-			->setClass('Kdyby\Translation\Translator')
+			->setClass('Kdyby\Translation\Translator', array($this->prefix('@userLocaleResolver')))
 			->addSetup('?->setTranslator(?)', array($this->prefix('@userLocaleResolver.param'), '@self'))
 			->setInject(FALSE);
 
@@ -150,12 +150,17 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			->setAutowired(FALSE)
 			->setInject(FALSE);
 
+		$builder->addDefinition($this->prefix('userLocaleResolver.session'))
+			->setClass('Kdyby\Translation\LocaleResolver\SessionResolver')
+			->setInject(FALSE);
+
 		$builder->addDefinition($this->prefix('userLocaleResolver'))
 			->setClass('Kdyby\Translation\IUserLocaleResolver')
 			->setFactory('Kdyby\Translation\LocaleResolver\ChainResolver')
 			->addSetup('addResolver', array(new Statement('Kdyby\Translation\LocaleResolver\DefaultLocale', array($config['default']))))
 			->addSetup('addResolver', array(new Statement('Kdyby\Translation\LocaleResolver\AcceptHeaderResolver')))
 			->addSetup('addResolver', array($this->prefix('@userLocaleResolver.param')))
+			->addSetup('addResolver', array($this->prefix('@userLocaleResolver.session')))
 			->setInject(FALSE);
 	}
 
