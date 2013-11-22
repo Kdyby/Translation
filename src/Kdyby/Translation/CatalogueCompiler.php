@@ -85,28 +85,29 @@ class CatalogueCompiler extends Nette\Object
 		if (isset($availableCatalogues[$locale])) {
 			return $availableCatalogues;
 		}
+		$cacheKey = array($locale, $translator->getFallbackLocales());
 
 		$storage = $this->cache->getStorage();
 		if (!$storage instanceof Nette\Caching\Storages\PhpFileStorage) {
-			if (($messages = $this->cache->load($locale)) !== NULL) {
+			if (($messages = $this->cache->load($cacheKey)) !== NULL) {
 				$availableCatalogues[$locale] = new MessageCatalogue($locale, $messages);
 				return $availableCatalogues;
 			}
 
 			$this->loadersInitializer->initialize($translator);
 			$this->catalogueFactory->createCatalogue($translator, $availableCatalogues, $locale);
-			$this->cache->save($locale, $availableCatalogues[$locale]->all());
+			$this->cache->save($cacheKey, $availableCatalogues[$locale]->all());
 			return $availableCatalogues;
 		}
 
 		$storage->hint = $locale;
 
-		$cached = $compiled = $this->cache->load($locale);
+		$cached = $compiled = $this->cache->load($cacheKey);
 		if ($compiled === NULL) {
 			$this->loadersInitializer->initialize($translator);
 			$this->catalogueFactory->createCatalogue($translator, $availableCatalogues, $locale);
-			$this->cache->save($locale, $compiled = $this->compilePhpCache($translator, $availableCatalogues, $locale));
-			$cached = $this->cache->load($locale);
+			$this->cache->save($cacheKey, $compiled = $this->compilePhpCache($translator, $availableCatalogues, $locale));
+			$cached = $this->cache->load($cacheKey);
 		}
 
 		$availableCatalogues[$locale] = LimitedScope::load($cached['file']);
