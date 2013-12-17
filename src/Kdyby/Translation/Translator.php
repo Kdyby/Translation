@@ -56,10 +56,32 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 * @var array
 	 */
 	private $availableResourceLocales = array();
+        
+        /**
+         *
+         * @var string
+         */
+        private $prefix;
+        
+        /**
+         * Prefix setter
+         * @param string $prefix
+         */
+        public function setPrefix($prefix)
+        {
+            $this->prefix = $prefix;
+        }
+        
+        /**
+         * Reset prefix
+         */
+        public function resetPrefix()
+        {
+            $this->prefix = NULL;
+        }
 
-
-
-	/**
+        
+        /**
 	 * @param IUserLocaleResolver $localeResolver
 	 * @param MessageSelector $selector The message selector for pluralization
 	 * @param CatalogueCompiler $catalogueCompiler
@@ -103,6 +125,10 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	public function translate($message, $count = NULL, array $parameters = array(), $domain = NULL, $locale = NULL)
 	{
+                if (!empty($this->prefix)) {
+                    $message = $this->prefix.$message;
+                }
+                
 		if (empty($message)) {
 			return $message;
 
