@@ -32,7 +32,7 @@ class TranslateMacros extends MacroSet
 
 		$me->addMacro('_', array($me, 'macroTranslate'), array($me, 'macroTranslate'));
                 $me->addMacro(
-                    'translatePreview',
+                    'translatePrefix',
                     '$presenter->translator->setPrefix(%node.args)',
                     '$presenter->translator->resetPrefix()'
                 );
