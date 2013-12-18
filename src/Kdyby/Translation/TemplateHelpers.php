@@ -44,6 +44,16 @@ class TemplateHelpers extends Nette\Object
 
 
 
+	/**
+	 * @return \Kdyby\Translation\Translator
+	 */
+	public function getTranslator()
+	{
+		return $this->translator;
+	}
+
+
+
 	public function translate($message, $count = NULL, $parameters = array(), $domain = NULL, $locale = NULL)
 	{
 		if (is_array($count)) {

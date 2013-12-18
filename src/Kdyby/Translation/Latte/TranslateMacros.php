@@ -31,6 +31,7 @@ class TranslateMacros extends MacroSet
 		/** @var TranslateMacros $me */
 
 		$me->addMacro('_', array($me, 'macroTranslate'), array($me, 'macroTranslate'));
+		$me->addMacro('translator', array($me, 'macroDomain'), array($me, 'macroDomainEnd'));
 
 		return $me;
 	}
@@ -59,6 +60,32 @@ class TranslateMacros extends MacroSet
 		} else {
 			return 'ob_start()';
 		}
+	}
+
+
+
+	/**
+	 * @param MacroNode $node
+	 * @param PhpWriter $writer
+	 */
+	public function macroDomain(MacroNode $node, PhpWriter $writer)
+	{
+		if ($node->isEmpty) {
+			throw new Latte\CompileException("Expected message prefix, none given");
+		}
+
+		return $writer->write('$_translator = \Kdyby\Translation\PrefixedTranslator::register($template, %node.word);');
+	}
+
+
+
+	/**
+	 * @param MacroNode $node
+	 * @param PhpWriter $writer
+	 */
+	public function macroDomainEnd(MacroNode $node, PhpWriter $writer)
+	{
+		return $writer->write('$_translator->unregister($template);');
 	}
 
 
