@@ -15,7 +15,7 @@ if (!$autoload = @include __DIR__ . '/../../vendor/autoload.php') {
 $autoload->add('KdybyTests', __DIR__ . '/..');
 
 // configure environment
-Tester\Helpers::setup();
+Tester\Environment::setup();
 class_alias('Tester\Assert', 'Assert');
 date_default_timezone_set('Europe/Prague');
 
