@@ -16,9 +16,9 @@
 		"issues": "https://github.com/kdyby/translation/issues"
 	},
 	"require": {
-		"nette/nette": "@dev",
-		"symfony/translation": "~2.3",
-		"symfony/config": "~2.3"
+		"nette/nette": "~2.1@dev",
+		"symfony/translation": "~2.4",
+		"symfony/config": "~2.4"
 	},
 	"suggest": {
 		"symfony/locale": "Locale component provides fallback code to handle cases when the intl extension is missing.",
@@ -26,7 +26,7 @@
 	},
 	"require-dev": {
 		"nette/tester": "@dev",
-		"symfony/console": "~2.3"
+		"symfony/console": "~2.4"
 	},
 	"autoload": {
 		"psr-0": {
