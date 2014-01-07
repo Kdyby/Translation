@@ -113,7 +113,8 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 	{
 		$helpers = $template->getHelpers();
 		if (isset($helpers['translate'])) {
-			$obj = isset($helpers['translate'][0]) ? $helpers['translate'][0] : NULL;
+			$helper = $helpers['translate'] instanceof Nette\Callback ? $helpers['translate']->getNative() : $helpers['translate'];
+			$obj = isset($helper[0]) ? $helper[0] : NULL;
 			if ($obj instanceof ITranslator) {
 				return $obj;
 
@@ -123,6 +124,7 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 		}
 
 		foreach ($template->getHelperLoaders() as $loader) {
+			$loader = $loader instanceof Nette\Callback ? $loader->getNative() : $loader;
 			$obj = is_array($loader) && isset($loader[0]) ? $loader[0] : NULL;
 			if ($obj instanceof TemplateHelpers) {
 				$template->setTranslator($translator = $obj->getTranslator());
