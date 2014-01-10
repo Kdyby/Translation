@@ -238,6 +238,17 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 
 
 	/**
+	 * @param string $messagePrefix
+	 * @return Nette\Localization\ITranslator
+	 */
+	public function domain($messagePrefix)
+	{
+		return new PrefixedTranslator($messagePrefix, $this);
+	}
+
+
+
+	/**
 	 * @return TemplateHelpers
 	 */
 	public function createTemplateHelpers()
