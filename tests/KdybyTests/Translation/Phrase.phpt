@@ -52,7 +52,7 @@ class PhraseTest extends TestCase
 		$check = $form->addCheckbox('useCredits');
 
 		$check->addRule(Form::FILLED, new Phrase('front.orderForm.useCredits', $credits = 10));
-		$form->validate([$check]);
+		$form->validate(array($check));
 
 		Assert::same(array(
 			'Use 10 credits'
