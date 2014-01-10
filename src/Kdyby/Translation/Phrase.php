@@ -20,7 +20,7 @@ use Nette;
  *
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Phase extends Nette\Object
+class Phrase extends Nette\Object
 {
 
 	/**
