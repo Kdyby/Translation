@@ -37,7 +37,9 @@ class PhraseTest extends TestCase
 		$form->setTranslator($translator);
 
 		$check = $form->addCheckbox('useCredits', new Phrase('front.orderForm.useCredits', $credits = 10));
-		Assert::same('Use 10 credits', $check->getLabelPart()->getText());
+
+		$label = method_exists($check, 'getLabelPart') ? $check->getLabelPart() : $check->getLabel();
+		Assert::same('Use 10 credits', $label->getText());
 	}
 
 
@@ -58,7 +60,8 @@ class PhraseTest extends TestCase
 			'Use 10 credits'
 		), $check->getErrors());
 
-		Assert::same('[{"op":":filled","msg":"Use 10 credits"}]', $check->getControlPart()->attrs['data-nette-rules']);
+		$control = method_exists($check, 'getControlPart') ? $check->getControlPart() : $check->getControl();
+		Assert::same('[{"op":":filled","msg":"Use 10 credits"}]', $control->attrs['data-nette-rules']);
 	}
 
 }
