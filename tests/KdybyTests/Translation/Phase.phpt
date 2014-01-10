@@ -51,7 +51,6 @@ class PhaseTest extends TestCase
 
 		$check = $form->addCheckbox('useCredits');
 
-		$check->addRule(function () { return FALSE; }, new Phase('front.orderForm.useCredits', $credits = 10));
 		$check->addRule(Form::FILLED, new Phase('front.orderForm.useCredits', $credits = 10));
 		$form->validate([$check]);
 
