@@ -103,6 +103,10 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	public function translate($message, $count = NULL, array $parameters = array(), $domain = NULL, $locale = NULL)
 	{
+		if ($message instanceof Phase) {
+			return $message->translate($this);
+		}
+
 		if (empty($message)) {
 			return $message;
 
@@ -142,6 +146,10 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	public function trans($id, array $parameters = array(), $domain = NULL, $locale = NULL)
 	{
+		if ($id instanceof Phase) {
+			return $id->translate($this);
+		}
+
 		$result = parent::trans($id, $parameters, $domain, $locale);
 		if ($this->panel !== NULL && $id === $result) { // probably untranslated
 			$this->panel->markUntranslated($id);
@@ -157,6 +165,10 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	public function transChoice($id, $number, array $parameters = array(), $domain = NULL, $locale = NULL)
 	{
+		if ($id instanceof Phase) {
+			return $id->translate($this);
+		}
+
 		try {
 			$result = parent::transChoice($id, $number, $parameters, $domain, $locale);
 
