@@ -37,7 +37,7 @@ class PhaseTest extends TestCase
 		$form->setTranslator($translator);
 
 		$check = $form->addCheckbox('useCredits', new Phase('front.orderForm.useCredits', $credits = 10));
-		Assert::same('', $check->getLabelPart()->getText());
+		Assert::same('Use 10 credits', $check->getLabelPart()->getText());
 	}
 
 
