@@ -61,7 +61,9 @@ class PhraseTest extends TestCase
 		), $check->getErrors());
 
 		$control = method_exists($check, 'getControlPart') ? $check->getControlPart() : $check->getControl();
-		Assert::same('[{"op":":filled","msg":"Use 10 credits"}]', $control->attrs['data-nette-rules']);
+		$rules = isset($control->attrs['data-nette-rules']) ? $control->attrs['data-nette-rules'] : $control->attrs['data']['nette-rules'];
+
+		Assert::match('%A%Use 10 credits%A%', $rules);
 	}
 
 }
