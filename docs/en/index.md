@@ -1,12 +1,10 @@
-Quickstart
-==========
+# Quickstart
 
 This extension is here to provide robust translation system for Nette Framework.
 It implements `Nette\Localization\ITranslator` using [Symfony/Translation](https://github.com/symfony/Translation).
 
 
-Installation
------------
+## Installation
 
 The best way to install Kdyby/Translation is using  [Composer](http://getcomposer.org/):
 
@@ -39,8 +37,7 @@ return $configurator->createContainer();
 ```
 
 
-Setup
------
+## Setup
 
 We have to somehow tell the translator, what is the language, that the user want's to see the website in.
 You should define persistent parameter `$locale` in your presenter. That way you can keep in url the language, or read it from the url.
@@ -83,8 +80,7 @@ translation:
 ```
 
 
-Usage
-----
+## Usage
 
 The default directory for translation files is `%appDir%/lang` and they have to be named in specific way.
 The mask is `<category>.<language>.<type>`, this means for example `app/lang/messages.en_US.neon`.
@@ -117,8 +113,7 @@ Why `messages.homepage.hello`? The `messages` is in the catalogue filename, and 
 `homepage.hello` is from the `.neon` file, the structure is flattened and joined by dots.
 
 
-Placeholders
-------------
+## Placeholders
 
 Sometimes, a message containing a variable needs to be translated
 
@@ -150,8 +145,7 @@ $this->translator->translate('messages.homepage.helloName', NULL, array('name' =
 The translator will look for the given message, and replace the parameters after it finds the translation.
 
 
-Pluralization
--------------
+## Pluralization
 
 When a translation has different forms due to pluralization, you can provide all the forms as a string separated by a pipe (|)
 
@@ -169,8 +163,7 @@ echo $this->translator->translate('messages.homepage.applesCount', 10); // There
 For the exact format and all it's possibilities please check [the current Symfony documentation](http://symfony.com/doc/current/book/translation.html#pluralization).
 
 
-Templates
----------
+## Templates
 
 You don't have to call this verbose method in templates, there is a macro prepared for you!
 If you're not hacking the `Latte\Engine` creation in any way, it will work right away, because the extension will register it.
@@ -203,3 +196,62 @@ And that's all, you're ready to translate templates.
 <p>{_messages.homepage.applesCount, 10}</p>
 ```
 
+
+## Additional configuration
+
+There are several additional configurations
+
+### Bar panel
+
+Enables and disables Nette debugger bar panel
+
+```yml
+translation:
+	debugger: off
+```
+
+### Locale resolvers
+
+There are several resolvers that take care of figuring out what locale should be used in translator as default.
+
+Special case of resolvers is DefaultLocaleResolver that is configured by `translation: default:`
+
+#### Session
+
+This resolver stores the locale in session and it has highest priority.
+
+It is by default turned off and can be enabled by following configuration
+
+```yml
+translation:
+	resolvers:
+		session: on
+```
+
+It can be autowired by `Kdyby\Translation\LocaleResolver\SessionResolver`, and you can change the stored locale using `setLocale` method.
+
+
+#### Parameter
+
+This resolver looks for parameter `locale` in application `Request` produced by routers.
+
+It is by default turned on and can be disabled by following configuration
+
+```yml
+translation:
+	resolvers:
+		request: off
+```
+
+
+#### Accept Language Header
+
+This resolver asks the `Translator` for acceptable locales (based on loaded resources), and then tries to find one of them in Accept-Language http header provided by client's browser.
+
+It is by default turned on and can be disabled by following configuration
+
+```yml
+translation:
+	resolvers:
+		header: off
+```

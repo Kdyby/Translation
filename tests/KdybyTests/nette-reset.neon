@@ -17,3 +17,5 @@ services:
 
 translation:
 	whitelist: [cs, sk, en]
+	resolvers:
+		session: on

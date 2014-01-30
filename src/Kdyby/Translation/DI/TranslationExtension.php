@@ -44,6 +44,10 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	const DUMPER_TAG = 'translation.dumper';
 	const EXTRACTOR_TAG = 'translation.extractor';
 
+	const RESOLVER_REQUEST = 'request';
+	const RESOLVER_HEADER = 'header';
+	const RESOLVER_SESSION = 'session';
+
 	/**
 	 * @var array
 	 */
@@ -54,6 +58,11 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		// 'dirs' => array('%appDir%/lang', '%appDir%/locale'),
 		'cache' => '@nette.templateCacheStorage',
 		'debugger' => '%debugMode%',
+		'resolvers' => [
+			self::RESOLVER_SESSION => FALSE,
+			self::RESOLVER_REQUEST => TRUE,
+			self::RESOLVER_HEADER => TRUE,
+		],
 	);
 
 	/**
@@ -154,14 +163,23 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			->setClass('Kdyby\Translation\LocaleResolver\SessionResolver')
 			->setInject(FALSE);
 
-		$builder->addDefinition($this->prefix('userLocaleResolver'))
+		$chain = $builder->addDefinition($this->prefix('userLocaleResolver'))
 			->setClass('Kdyby\Translation\IUserLocaleResolver')
 			->setFactory('Kdyby\Translation\LocaleResolver\ChainResolver')
 			->addSetup('addResolver', array(new Statement('Kdyby\Translation\LocaleResolver\DefaultLocale', array($config['default']))))
-			->addSetup('addResolver', array(new Statement('Kdyby\Translation\LocaleResolver\AcceptHeaderResolver')))
-			->addSetup('addResolver', array($this->prefix('@userLocaleResolver.param')))
-			->addSetup('addResolver', array($this->prefix('@userLocaleResolver.session')))
 			->setInject(FALSE);
+
+		if ($config['resolvers'][self::RESOLVER_HEADER]) {
+			$chain->addSetup('addResolver', array(new Statement('Kdyby\Translation\LocaleResolver\AcceptHeaderResolver')));
+		}
+
+		if ($config['resolvers'][self::RESOLVER_REQUEST]) {
+			$chain->addSetup('addResolver', array($this->prefix('@userLocaleResolver.param')));
+		}
+
+		if ($config['resolvers'][self::RESOLVER_SESSION]) {
+			$chain->addSetup('addResolver', array($this->prefix('@userLocaleResolver.session')));
+		}
 	}
 
 
