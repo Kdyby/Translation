@@ -35,13 +35,25 @@ class SessionResolver extends Nette\Object implements Kdyby\Translation\IUserLoc
 	/**
 	 * @var \Nette\Http\SessionSection|\stdClass
 	 */
+	private $localeSession;
+
+	/**
+	 * @var \Nette\Http\Response
+	 */
+	private $httpResponse;
+
+	/**
+	 * @var \Nette\Http\Session
+	 */
 	private $session;
 
 
 
-	public function __construct(Nette\Http\Session $session)
+	public function __construct(Nette\Http\Session $session, Nette\Http\Response $httpResponse)
 	{
-		$this->session = $session->getSection(get_class($this));
+		$this->localeSession = $session->getSection(get_class($this));
+		$this->httpResponse = $httpResponse;
+		$this->session = $session;
 	}
 
 
@@ -51,7 +63,7 @@ class SessionResolver extends Nette\Object implements Kdyby\Translation\IUserLoc
 	 */
 	public function setLocale($locale = NULL)
 	{
-		$this->session->locale = $locale;
+		$this->localeSession->locale = $locale;
 	}
 
 
@@ -62,7 +74,16 @@ class SessionResolver extends Nette\Object implements Kdyby\Translation\IUserLoc
 	 */
 	public function resolve(Translator $translator)
 	{
-		if (empty($this->session->locale)) {
+		if (!$this->session->isStarted() && $this->httpResponse->isSent()) {
+			trigger_error(
+				"The advice of session locale resolver is required but the session has not been started and headers had been already sent. " .
+				"Either start your sessions earlier or disabled the SessionResolver.",
+				E_USER_WARNING
+			);
+			return NULL;
+		}
+
+		if (empty($this->localeSession->locale)) {
 			return NULL;
 		}
 
@@ -70,11 +91,11 @@ class SessionResolver extends Nette\Object implements Kdyby\Translation\IUserLoc
 			return substr($locale, 0, 2);
 		}, $translator->getAvailableLocales());
 
-		if (!in_array(substr($this->session->locale, 0, 2), $short, TRUE)) {
+		if (!in_array(substr($this->localeSession->locale, 0, 2), $short, TRUE)) {
 			return NULL;
 		}
 
-		return $this->session->locale;
+		return $this->localeSession->locale;
 	}
 
 }
