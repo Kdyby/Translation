@@ -58,11 +58,11 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		// 'dirs' => array('%appDir%/lang', '%appDir%/locale'),
 		'cache' => '@nette.templateCacheStorage',
 		'debugger' => '%debugMode%',
-		'resolvers' => [
+		'resolvers' => array(
 			self::RESOLVER_SESSION => FALSE,
 			self::RESOLVER_REQUEST => TRUE,
 			self::RESOLVER_HEADER => TRUE,
-		],
+		),
 	);
 
 	/**
