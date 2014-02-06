@@ -48,6 +48,8 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	const RESOLVER_HEADER = 'header';
 	const RESOLVER_SESSION = 'session';
 
+	const DEFAULT_MESSAGE_PREPROCESSOR = 'Kdyby\Translation\TexyMessagePreprocessor';
+
 	/**
 	 * @var array
 	 */
@@ -62,6 +64,10 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			self::RESOLVER_SESSION => FALSE,
 			self::RESOLVER_REQUEST => TRUE,
 			self::RESOLVER_HEADER => TRUE,
+		),
+		'messagePreprocessor' => array(
+			'enable' => FALSE,
+			'class' => self::DEFAULT_MESSAGE_PREPROCESSOR,
 		),
 	);
 
@@ -126,9 +132,11 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 		$this->loadDumpers();
 
-		$builder->addDefinition($this->prefix('loader'))
+		$translationLoader = $builder->addDefinition($this->prefix('loader'))
 			->setClass('Kdyby\Translation\TranslationLoader')
 			->setInject(FALSE);
+
+		$this->loadMessageCompiler($config['messagePreprocessor'], $translationLoader);
 
 		$this->loadLoaders();
 
@@ -232,6 +240,30 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$builder->addDefinition($this->prefix('extractor.' . $format))
 				->setClass($class)
 				->addTag(self::EXTRACTOR_TAG, $format);
+		}
+	}
+
+
+
+	/**
+	 * @param array $config
+	 * @param \Nette\DI\ServiceDefinition $translationLoader
+	 */
+	private function loadMessageCompiler($config, $translationLoader)
+	{
+		$builder = $this->getContainerBuilder();
+
+		if ((bool)($config['enable'])) {
+			if ($config['class'] === self::DEFAULT_MESSAGE_PREPROCESSOR && !$builder->getByType('Texy')) {
+				$builder->addDefinition($this->prefix('texy'))
+					->setClass('Texy');
+				\Texy::$advertisingNotice = FALSE;
+			};
+
+			$builder->addDefinition($this->prefix('messagePreprocessor'))
+				->setClass($config['class']);
+			$translationLoader->addSetup('setMessagePreprocessor');
+
 		}
 	}
 
