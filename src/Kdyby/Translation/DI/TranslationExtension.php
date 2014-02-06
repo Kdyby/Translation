@@ -64,6 +64,11 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			self::RESOLVER_REQUEST => TRUE,
 			self::RESOLVER_HEADER => TRUE,
 		),
+		'preprocessor' => FALSE,
+	);
+
+	private static $preprocessorClasses = array(
+		'texy' => 'Kdyby\Translation\Preprocessors\TexyMessagePreprocessor'
 	);
 
 	/**
@@ -83,6 +88,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$translator = $builder->addDefinition($this->prefix('default'))
 			->setClass('Kdyby\Translation\Translator', array($this->prefix('@userLocaleResolver')))
 			->addSetup('?->setTranslator(?)', array($this->prefix('@userLocaleResolver.param'), '@self'))
+			->addSetup('injectTemplateHelpersFactory')
 			->setInject(FALSE);
 
 		Validators::assertField($config, 'fallback', 'list');
@@ -90,9 +96,13 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 		$this->loadLocaleResolver($config);
 
+		$builder->addDefinition($this->prefix('helpersFactory'))
+			->setImplement('Kdyby\Translation\ITemplateHelpersFactory')
+			->setInject(FALSE);
+
 		$builder->addDefinition($this->prefix('helpers'))
 			->setClass('Kdyby\Translation\TemplateHelpers')
-			->setFactory($this->prefix('@default') . '::createTemplateHelpers')
+			->setFactory($this->prefix('@helpersFactory') . '::create')
 			->setInject(FALSE);
 
 		$catalogueCompiler = $builder->addDefinition($this->prefix('catalogueCompiler'))
@@ -130,6 +140,10 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$builder->addDefinition($this->prefix('loader'))
 			->setClass('Kdyby\Translation\TranslationLoader')
 			->setInject(FALSE);
+
+		if ($config['preprocessor']) {
+			$this->loadMessagePreprocessor($config['preprocessor']);
+		}
 
 		$this->loadLoaders();
 
@@ -234,6 +248,31 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 				->setClass($class)
 				->addTag(self::EXTRACTOR_TAG, $format);
 		}
+	}
+
+
+
+	/**
+	 * @param string $class
+	 */
+	private function loadMessagePreprocessor($class)
+	{
+		$builder = $this->getContainerBuilder();
+
+		$preprocessor = $builder->addDefinition($this->prefix('messagePreprocessor'))
+			->setClass('Kdyby\Translation\IMessagePreprocessor');
+		list($preprocessor->factory) = $this->filterArgs($class);
+
+		$factory = $preprocessor->factory;
+		if (is_string($factory->entity) && isset(self::$preprocessorClasses[$factory->entity])) {
+			$factory->entity = self::$preprocessorClasses[$factory->entity];
+		}
+
+		$builder->getDefinition($this->prefix('loader'))
+			->addSetup('setMessagePreprocessor', array($this->prefix('@messagePreprocessor')));
+
+		$builder->getDefinition($this->prefix('helpers'))
+			->addSetup('setWrapInHtmlObject', array(TRUE));
 	}
 
 
@@ -384,6 +423,17 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	{
 		return parent::getConfig($this->defaults) + $this->compiler->getContainerBuilder()
 				->expand(array('fallback' => array('en_US'), 'dirs' => array('%appDir%/lang', '%appDir%/locale')));
+	}
+
+
+
+	/**
+	 * @param string|\stdClass $statement
+	 * @return Nette\DI\Statement[]
+	 */
+	private static function filterArgs($statement)
+	{
+		return Nette\DI\Compiler::filterArguments(array(is_string($statement) ? new Nette\DI\Statement($statement) : $statement));
 	}
 
 

@@ -12,6 +12,7 @@ namespace Kdyby\Translation;
 
 use Kdyby;
 use Nette;
+use Nette\Utils\Html;
 
 
 
@@ -26,11 +27,29 @@ class TemplateHelpers extends Nette\Object
 	 */
 	private $translator;
 
+	/**
+	 * @var bool
+	 */
+	private $wrapInHtmlObject = FALSE;
+
 
 
 	public function __construct(Translator $translator)
 	{
 		$this->translator = $translator;
+	}
+
+
+
+	/**
+	 * @param boolean $wrapInHtmlObject
+	 * @return TemplateHelpers
+	 */
+	public function setWrapInHtmlObject($wrapInHtmlObject = TRUE)
+	{
+		$this->wrapInHtmlObject = $wrapInHtmlObject;
+
+		return $this;
 	}
 
 
@@ -63,7 +82,13 @@ class TemplateHelpers extends Nette\Object
 			$count = NULL;
 		}
 
-		return $this->translator->translate($message, $count, (array) $parameters, $domain, $locale);
+		$translatedMessage = $this->translator->translate($message, $count, (array) $parameters, $domain, $locale);
+
+		if ($this->wrapInHtmlObject !== TRUE) {
+			return $translatedMessage;
+		}
+
+		return Html::el()->setHtml($translatedMessage);
 	}
 
 }

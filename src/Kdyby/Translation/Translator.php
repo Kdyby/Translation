@@ -53,6 +53,11 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	private $panel;
 
 	/**
+	 * @var ITemplateHelpersFactory
+	 */
+	private $templateHelpersFactory;
+
+	/**
 	 * @var array
 	 */
 	private $availableResourceLocales = array();
@@ -86,6 +91,16 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	public function injectPanel(Panel $panel)
 	{
 		$this->panel = $panel;
+	}
+
+
+
+	/**
+	 * @internal
+	 */
+	public function injectTemplateHelpersFactory(ITemplateHelpersFactory $factory)
+	{
+		$this->templateHelpersFactory = $factory;
 	}
 
 
@@ -253,6 +268,10 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	public function createTemplateHelpers()
 	{
+		if ($this->templateHelpersFactory !== FALSE) {
+			return $this->templateHelpersFactory->create();
+		}
+
 		return new TemplateHelpers($this);
 	}
 

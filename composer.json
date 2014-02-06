@@ -23,9 +23,11 @@
 	"suggest": {
 		"symfony/locale": "Locale component provides fallback code to handle cases when the intl extension is missing.",
 		"kdyby/console": "If you wanna use extract command and much others, install also console.",
-		"symfony/yaml": "If you wanna store translations in YAML format - supports multiline strings."
+		"symfony/yaml": "If you wanna store translations in YAML format - supports multiline strings.",
+		"texy/texy": "If you wanna use html tags in translated string"
 	},
 	"require-dev": {
+		"texy/texy": "~2.0@dev",
 		"nette/tester": "@dev",
 		"symfony/console": "~2.4"
 	},
