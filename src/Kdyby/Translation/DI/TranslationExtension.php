@@ -242,6 +242,9 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
 
+		$bar = method_exists('Nette\Diagnostics\Debugger', 'getBlueScreen') ? Nette\Diagnostics\Debugger::getBlueScreen() : Nette\Diagnostics\Debugger::$blueScreen;
+		$bar->addPanel('Kdyby\Translation\Diagnostics\Panel::renderException');
+
 		$extractor = $builder->getDefinition($this->prefix('extractor'));
 		foreach ($builder->findByTag(self::EXTRACTOR_TAG) as $extractorId => $meta) {
 			Validators::assert($meta, 'string:2..');
