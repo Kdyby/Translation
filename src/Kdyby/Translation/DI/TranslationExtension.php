@@ -14,6 +14,7 @@ use Kdyby;
 use Kdyby\Translation\InvalidResourceException;
 use Nette;
 use Nette\DI\Statement;
+use Nette\PhpGenerator as Code;
 use Nette\Reflection;
 use Nette\Utils\Arrays;
 use Nette\Utils\Finder;
@@ -242,6 +243,9 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
 
+		$bar = method_exists('Nette\Diagnostics\Debugger', 'getBlueScreen') ? Nette\Diagnostics\Debugger::getBlueScreen() : Nette\Diagnostics\Debugger::$blueScreen;
+		$bar->addPanel('Kdyby\Translation\Diagnostics\Panel::renderException');
+
 		$extractor = $builder->getDefinition($this->prefix('extractor'));
 		foreach ($builder->findByTag(self::EXTRACTOR_TAG) as $extractorId => $meta) {
 			Validators::assert($meta, 'string:2..');
@@ -343,6 +347,19 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 			break;
 		}
+	}
+
+
+
+	public function afterCompile(Code\ClassType $class)
+	{
+		$initialize = $class->methods['initialize'];
+		$container = $this->getContainerBuilder();
+
+		$initialize->addBody($container->formatPhp(
+			'Nette\Diagnostics\Debugger::' . (method_exists('Nette\Diagnostics\Debugger', 'getBlueScreen') ? 'getBlueScreen()' : '$blueScreen') . '->addPanel(?);',
+			Nette\DI\Compiler::filterArguments(array('Kdyby\Translation\Diagnostics\Panel::renderException'))
+		));
 	}
 
 
