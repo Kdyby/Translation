@@ -11,8 +11,10 @@
 namespace Kdyby\Translation\Diagnostics;
 
 use Kdyby;
+use Kdyby\Translation\InvalidResourceException;
 use Kdyby\Translation\Translator;
 use Nette;
+use Symfony\Component\Yaml;
 
 
 
@@ -116,6 +118,33 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 		$translator->injectPanel($panel);
 		Nette\Diagnostics\Debugger::$bar->addPanel($panel, 'kdyby.translation');
 		return $panel;
+	}
+
+
+
+	public static function renderException(\Exception $e = NULL)
+	{
+		if (!$e instanceof InvalidResourceException) {
+			return NULL;
+		}
+
+		$previous = $e->getPrevious();
+		if (!$previous) {
+			return NULL;
+		}
+
+		$previous = $previous->getPrevious();
+		if (!$previous instanceof Yaml\Exception\ParseException) {
+			return NULL;
+		}
+
+		if ($call = Nette\Diagnostics\Helpers::findTrace($e->getPrevious()->getTrace(), 'Symfony\Component\Translation\Loader\YamlFileLoader::load')) {
+			return array(
+				'tab' => 'YAML dictionary',
+				'panel' => '<p>' . $previous->getMessage() . '</p><p><b>File:</b> ' . Nette\Diagnostics\Helpers::editorLink($call['args'][0], $previous->getParsedLine()) . '</p>'
+				. ($previous->getParsedLine() ? Nette\Diagnostics\BlueScreen::highlightFile($call['args'][0], $previous->getParsedLine()) : '')
+			);
+		}
 	}
 
 }
