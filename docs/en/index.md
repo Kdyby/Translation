@@ -8,10 +8,10 @@ It implements `Nette\Localization\ITranslator` using [Symfony/Translation](https
 
 The best way to install Kdyby/Translation is using  [Composer](http://getcomposer.org/):
 
-With dev Nette, this is how you install the extension
+With Nette stable 2.1, this is how you install the extension
 
 ```sh
-$ composer require kdyby/translation:@dev
+$ composer require kdyby/translation:~1.1
 ```
 
 and you can enable the extension using your neon config
@@ -21,7 +21,11 @@ extensions:
 	translation: Kdyby\Translation\DI\TranslationExtension
 ```
 
-If you're using stable Nette, the series `0.10` is for you, so install it using this command
+You might also wanna add the `@dev` stability flag if you like to live on the edge.
+
+
+
+And if you're using old stable Nette `2.0.*`, there is release for you but it's not developed anymore, only bugfix patches are being released.
 
 ```sh
 $ composer require kdyby/translation:~0.10

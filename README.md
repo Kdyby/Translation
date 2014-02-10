@@ -17,20 +17,13 @@ Installation
 
 The best way to install Kdyby/Translation is using  [Composer](http://getcomposer.org/):
 
-With dev Nette, this is how you install the extension
+With Nette stable 2.1, this is how you install the extension
 
 ```sh
-$ composer require kdyby/translation:@dev
-```
-
-If you're using stable Nette, the series `0.10` is for you, so install it using this command
-
-```sh
-$ composer require kdyby/translation:~0.10
+$ composer require kdyby/translation:~1.1
 ```
 
 For the configuration, follow the [detailed documentation](https://github.com/Kdyby/Translation/blob/master/docs/en/index.md).
-
 
 
 -----
