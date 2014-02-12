@@ -116,7 +116,13 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 		$panel = new static($translator);
 		/** @var Panel $panel */
 		$translator->injectPanel($panel);
-		Nette\Diagnostics\Debugger::$bar->addPanel($panel, 'kdyby.translation');
+
+		$bar = method_exists('Nette\Diagnostics\Debugger', 'getBar')
+			? Nette\Diagnostics\Debugger::getBar()
+			: Nette\Diagnostics\Debugger::$bar;
+
+		$bar->addPanel($panel, 'kdyby.translation');
+
 		return $panel;
 	}
 
