@@ -50,10 +50,17 @@ class LocaleParamResolver extends Nette\Object implements Kdyby\Translation\IUse
 	{
 		$this->request = $request;
 
-		if ($this->translator) {
-			$this->translator->setLocale(NULL);
-			$this->translator->getLocale(); // invoke resolver
+		if (!$this->translator) {
+			return;
 		}
+
+		$params = $this->request->getParameters();
+		if ($this->request->getMethod() === Request::FORWARD && empty($params['locale'])) {
+			return;
+		}
+
+		$this->translator->setLocale(NULL);
+		$this->translator->getLocale(); // invoke resolver
 	}
 
 
