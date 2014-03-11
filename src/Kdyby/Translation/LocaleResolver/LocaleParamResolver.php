@@ -48,14 +48,14 @@ class LocaleParamResolver extends Nette\Object implements Kdyby\Translation\IUse
 	 */
 	public function onRequest(Application $sender, Request $request)
 	{
-		$this->request = $request;
-
-		if (!$this->translator) {
+		$params = $request->getParameters();
+		if ($request->getMethod() === Request::FORWARD && empty($params['locale'])) {
 			return;
 		}
 
-		$params = $this->request->getParameters();
-		if ($this->request->getMethod() === Request::FORWARD && empty($params['locale'])) {
+		$this->request = $request;
+
+		if (!$this->translator) {
 			return;
 		}
 
