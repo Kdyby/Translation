@@ -122,6 +122,7 @@ class Phrase extends Nette\Object
 	public function __sleep()
 	{
 		$this->translator = NULL;
+		return array('message', 'count', 'parameters', 'domain', 'locale');
 	}
 
 }
