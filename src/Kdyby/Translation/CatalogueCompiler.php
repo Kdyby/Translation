@@ -14,7 +14,6 @@ use Kdyby;
 use Nette;
 use Nette\Caching\Cache;
 use Nette\PhpGenerator as Code;
-use Nette\Utils\LimitedScope;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\MessageCatalogueInterface;
 
@@ -110,7 +109,7 @@ class CatalogueCompiler extends Nette\Object
 			$cached = $this->cache->load($cacheKey);
 		}
 
-		$availableCatalogues[$locale] = LimitedScope::load($cached['file']);
+		$availableCatalogues[$locale] = self::load($cached['file']);
 
 		return $availableCatalogues;
 	}
@@ -153,6 +152,13 @@ EOF
 		);
 
 		return '<?php' . "\n\n" . $content;
+	}
+
+
+
+	protected static function load(/*$file*/)
+	{
+		return include func_get_arg(0);
 	}
 
 }
