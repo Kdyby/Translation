@@ -34,14 +34,26 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 	 */
 	private $untranslated = array();
 
+	/**
+	 * @var array
+	 */
+	private $resources = array();
+
+	/**
+	 * @var string
+	 */
+	private $rootDir;
+
 
 
 	/**
+	 * @param string $rootDir
 	 * @param Translator $translator
 	 */
-	public function __construct(Translator $translator)
+	public function __construct($rootDir, Translator $translator)
 	{
 		$this->translator = $translator;
+		$this->rootDir = $rootDir;
 	}
 
 
@@ -86,9 +98,36 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 			$s .= '</td></tr>';
 		}
 
+		$untranslated = '<table style="width:100%"><tr><th>Untranslated message</th></tr>' . $s . '</table>';
+
+		$s = '';
+		ksort($this->resources);
+		foreach ($this->resources as $locale => $resources) {
+			foreach ($resources as $resourcePath => $domain) {
+				$s .= '<tr>';
+				$s .= '<td>' . $h($locale) . '</td>';
+				$s .= '<td>' . $h($domain) . '</td>';
+
+				$relativePath = str_replace(rtrim($this->rootDir, '/') . '/', '', $resourcePath);
+				if (Nette\Utils\Strings::startsWith($relativePath, 'vendor/')) {
+					$parts = explode('/', $relativePath, 4);
+					$left = array_pop($parts);
+					$relativePath = implode('/', $parts) . '/.../' . basename($left);
+				}
+
+				$s .= '<td>' . Nette\Diagnostics\Helpers::editorLink($resourcePath, 1)->setText($relativePath) . '</td>';
+
+				$s .= '</tr>';
+			}
+		}
+
+		$resources = '<table style="width:100%"><tr><th>Locale</th><th>Domain</th><th>Resource</th></tr>' . $s . '</table>';
+
 		return empty($this->untranslated) ? '' :
-			'<h1>Missing translations: ' .  count($unique) . '</h1>' .
-			'<div class="nette-inner kdyby-TranslationPanel"><table><tr><th>Message</th></tr>' . $s . '</table></div>';
+			'<h1>Missing translations: ' .  count($unique) . ', Resources: ' . count(Nette\Utils\Arrays::flatten($this->resources)) . '</h1>' .
+			'<div class="nette-inner kdyby-TranslationPanel" style="min-width:500px">' .
+			$untranslated . '<br><br>' .
+			'<h1>Loaded resources</h1>' . $resources . '</div>';
 	}
 
 
@@ -107,13 +146,21 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 
 
 
+	public function addResource($format, $resource, $locale, $domain)
+	{
+		$this->resources[$locale][$resource] = $domain;
+	}
+
+
+
 	/**
 	 * @param Translator $translator
+	 * @param string $rootDir
 	 * @return Panel
 	 */
-	public static function register(Translator $translator)
+	public static function register(Translator $translator, $rootDir)
 	{
-		$panel = new static($translator);
+		$panel = new static($rootDir, $translator);
 		/** @var Panel $panel */
 		$translator->injectPanel($panel);
 

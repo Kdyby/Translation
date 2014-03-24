@@ -135,7 +135,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 		if ($config['debugger']) {
 			$catalogueCompiler->addSetup('enableDebugMode');
-			$translator->addSetup('Kdyby\Translation\Diagnostics\Panel::register');
+			$translator->addSetup('Kdyby\Translation\Diagnostics\Panel::register', array('@self', dirname($builder->expand('%appDir%'))));
 		}
 
 		if ($this->isRegisteredConsoleExtension()) {
