@@ -121,13 +121,25 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 			}
 		}
 
-		$resources = '<table style="width:100%"><tr><th>Locale</th><th>Domain</th><th>Resource</th></tr>' . $s . '</table>';
+		$resources = '<table style="width:100%"><tr><th>Locale</th><th>Domain</th><th>Resource filename</th></tr>' . $s . '</table>';
 
-		return empty($this->untranslated) ? '' :
+		$panel = array();
+
+		if (!empty($this->untranslated)) {
+			$panel[] = $untranslated;
+		}
+
+		if (!empty($this->resources)) {
+			if (!empty($this->untranslated)) {
+				$panel[] = '<br><br><h1>Loaded resources</h1>';
+			}
+
+			$panel[] = $resources;
+		}
+
+		return empty($panel) ? '' :
 			'<h1>Missing translations: ' .  count($unique) . ', Resources: ' . count(Nette\Utils\Arrays::flatten($this->resources)) . '</h1>' .
-			'<div class="nette-inner kdyby-TranslationPanel" style="min-width:500px">' .
-			$untranslated . '<br><br>' .
-			'<h1>Loaded resources</h1>' . $resources . '</div>';
+			'<div class="nette-inner kdyby-TranslationPanel" style="min-width:500px">' . implode($panel) . '</div>';
 	}
 
 
