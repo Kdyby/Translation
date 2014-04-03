@@ -20,8 +20,11 @@ use Symfony\Component\Translation\Extractor\ExtractorInterface;
 use Symfony\Component\Translation\MessageCatalogue;
 
 
-if (!class_exists('Nette\Latte\MacroTokens')) {
+if (class_exists('Nette\Latte\MacroTokenizer')) {
 	class_alias('Nette\Latte\MacroTokenizer', 'Nette\Latte\MacroTokens');
+
+} elseif (class_exists('Latte\MacroTokens')) {
+	class_alias('Latte\MacroTokens', 'Nette\Latte\MacroTokens');
 }
 
 
