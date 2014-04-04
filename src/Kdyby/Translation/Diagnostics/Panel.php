@@ -21,7 +21,7 @@ use Tracy\Helpers;
 use Tracy\IBarPanel;
 
 
-if (!class_exists('Tracy\IBarPanel')) {
+if (!class_exists('Tracy\BlueScreen')) {
 	class_alias('Nette\Diagnostics\BlueScreen', 'Tracy\BlueScreen');
 	class_alias('Nette\Diagnostics\Debugger', 'Tracy\Debugger');
 	class_alias('Nette\Diagnostics\Helpers', 'Tracy\Helpers');
