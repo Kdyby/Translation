@@ -15,13 +15,24 @@ use Kdyby\Translation\InvalidResourceException;
 use Kdyby\Translation\Translator;
 use Nette;
 use Symfony\Component\Yaml;
+use Tracy\BlueScreen;
+use Tracy\Debugger;
+use Tracy\Helpers;
+use Tracy\IBarPanel;
 
+
+if (!class_exists('Tracy\IBarPanel')) {
+	class_alias('Nette\Diagnostics\BlueScreen', 'Tracy\BlueScreen');
+	class_alias('Nette\Diagnostics\Debugger', 'Tracy\Debugger');
+	class_alias('Nette\Diagnostics\Helpers', 'Tracy\Helpers');
+	class_alias('Nette\Diagnostics\IBarPanel', 'Tracy\IBarPanel');
+}
 
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
+class Panel extends Nette\Object implements IBarPanel
 {
 
 	/**
@@ -107,16 +118,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 				$s .= '<tr>';
 				$s .= '<td>' . $h($locale) . '</td>';
 				$s .= '<td>' . $h($domain) . '</td>';
-
-				$relativePath = str_replace(rtrim($this->rootDir, '/') . '/', '', $resourcePath);
-				if (Nette\Utils\Strings::startsWith($relativePath, 'vendor/')) {
-					$parts = explode('/', $relativePath, 4);
-					$left = array_pop($parts);
-					$relativePath = implode('/', $parts) . '/.../' . basename($left);
-				}
-
-				$s .= '<td>' . Nette\Diagnostics\Helpers::editorLink($resourcePath, 1)->setText($relativePath) . '</td>';
-
+				$s .= '<td>' . Helpers::editorLink($resourcePath, 1) . '</td>';
 				$s .= '</tr>';
 			}
 		}
@@ -176,9 +178,9 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 		/** @var Panel $panel */
 		$translator->injectPanel($panel);
 
-		$bar = method_exists('Nette\Diagnostics\Debugger', 'getBar')
-			? Nette\Diagnostics\Debugger::getBar()
-			: Nette\Diagnostics\Debugger::$bar;
+		$bar = method_exists('Tracy\Debugger', 'getBar')
+			? Debugger::getBar()
+			: Debugger::$bar;
 
 		$bar->addPanel($panel, 'kdyby.translation');
 
@@ -199,11 +201,11 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 		}
 
 		$method = 'Symfony\Component\Translation\Loader\YamlFileLoader::load';
-		if ($call = Nette\Diagnostics\Helpers::findTrace($e->getPrevious()->getTrace(), $method)) {
+		if ($call = Helpers::findTrace($e->getPrevious()->getTrace(), $method)) {
 			return array(
 				'tab' => 'YAML dictionary',
-				'panel' => '<p><b>File:</b> ' . Nette\Diagnostics\Helpers::editorLink($call['args'][0], $previous->getParsedLine()) . '</p>'
-					. ($previous->getParsedLine() ? Nette\Diagnostics\BlueScreen::highlightFile($call['args'][0], $previous->getParsedLine()) : '')
+				'panel' => '<p><b>File:</b> ' . Helpers::editorLink($call['args'][0], $previous->getParsedLine()) . '</p>'
+					. ($previous->getParsedLine() ? BlueScreen::highlightFile($call['args'][0], $previous->getParsedLine()) : '')
 					. '<p>' . $previous->getMessage() . ' </p>'
 			);
 		}
