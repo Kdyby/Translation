@@ -84,6 +84,8 @@ translation:
 	fallback: [cs_CZ, cs]
 ```
 
+Whitelist has default value `[cs, en]`, it's used in compile-time and prevents loading of resources that will not be used.
+
 
 ## Usage
 
