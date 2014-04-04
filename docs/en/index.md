@@ -80,6 +80,7 @@ To change the default language, place this in your `app/config/config.neon`
 ```yml
 translation:
 	default: cs
+	whitelist: [cs, en, de] #....
 	fallback: [cs_CZ, cs]
 ```
 
