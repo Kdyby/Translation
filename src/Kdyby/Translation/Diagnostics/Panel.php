@@ -40,6 +40,16 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 	private $resources = array();
 
 	/**
+	 * @var array
+	 */
+	private $ignoredResources = array();
+
+	/**
+	 * @var array
+	 */
+	private $resourceWhitelist = array();
+
+	/**
 	 * @var string
 	 */
 	private $rootDir;
@@ -79,6 +89,41 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 	 */
 	public function getPanel()
 	{
+		$h = 'htmlSpecialChars';
+
+		$panel = array();
+		if (!empty($this->untranslated)) {
+			$panel[] = $this->renderUntranslated();
+		}
+
+		if (!empty($this->resources)) {
+			if (!empty($panel)) {
+				$panel[] = '<br><br>';
+			}
+			$panel[] = '<h1>Loaded resources</h1>';
+			$panel[] = $this->renderResources($this->resources);
+		}
+
+		if (!empty($this->ignoredResources)) {
+			if (!empty($panel)) {
+				$panel[] = '<br><br>';
+			}
+
+			$panel[] = '<h1>Ignored resources</h1>';
+			$panel[] = '<p>Whitelist config: ' . implode(', ', array_map($h, $this->resourceWhitelist)) . '</p>';
+			$panel[] = $this->renderResources($this->ignoredResources);
+		}
+
+		return empty($panel) ? '' :
+			'<h1>Missing translations: ' .  count(array_unique($this->untranslated)) .
+			', Resources: ' . count(Nette\Utils\Arrays::flatten($this->resources)) . '</h1>' .
+			'<div class="nette-inner kdyby-TranslationPanel" style="min-width:500px">' . implode($panel) . '</div>';
+	}
+
+
+
+	private function renderUntranslated()
+	{
 		$s = '';
 		$h = 'htmlSpecialChars';
 
@@ -98,11 +143,17 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 			$s .= '</td></tr>';
 		}
 
-		$untranslated = '<table style="width:100%"><tr><th>Untranslated message</th></tr>' . $s . '</table>';
+		return '<table style="width:100%"><tr><th>Untranslated message</th></tr>' . $s . '</table>';
+	}
 
+
+	private function renderResources($resourcesMap)
+	{
 		$s = '';
-		ksort($this->resources);
-		foreach ($this->resources as $locale => $resources) {
+		$h = 'htmlSpecialChars';
+
+		ksort($resourcesMap);
+		foreach ($resourcesMap as $locale => $resources) {
 			foreach ($resources as $resourcePath => $domain) {
 				$s .= '<tr>';
 				$s .= '<td>' . $h($locale) . '</td>';
@@ -121,25 +172,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 			}
 		}
 
-		$resources = '<table style="width:100%"><tr><th>Locale</th><th>Domain</th><th>Resource filename</th></tr>' . $s . '</table>';
-
-		$panel = array();
-
-		if (!empty($this->untranslated)) {
-			$panel[] = $untranslated;
-		}
-
-		if (!empty($this->resources)) {
-			if (!empty($this->untranslated)) {
-				$panel[] = '<br><br><h1>Loaded resources</h1>';
-			}
-
-			$panel[] = $resources;
-		}
-
-		return empty($panel) ? '' :
-			'<h1>Missing translations: ' .  count($unique) . ', Resources: ' . count(Nette\Utils\Arrays::flatten($this->resources)) . '</h1>' .
-			'<div class="nette-inner kdyby-TranslationPanel" style="min-width:500px">' . implode($panel) . '</div>';
+		return '<table style="width:100%"><tr><th>Locale</th><th>Domain</th><th>Resource filename</th></tr>' . $s . '</table>';
 	}
 
 
@@ -161,6 +194,20 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 	public function addResource($format, $resource, $locale, $domain)
 	{
 		$this->resources[$locale][$resource] = $domain;
+	}
+
+
+
+	public function setResourceWhitelist($whitelist)
+	{
+		$this->resourceWhitelist = $whitelist;
+	}
+
+
+
+	public function addIgnoredResource($format, $resource, $locale, $domain)
+	{
+		$this->ignoredResources[$locale][$resource] = $domain;
 	}
 
 

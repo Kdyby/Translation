@@ -135,7 +135,8 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 		if ($config['debugger']) {
 			$catalogueCompiler->addSetup('enableDebugMode');
-			$translator->addSetup('Kdyby\Translation\Diagnostics\Panel::register', array('@self', dirname($builder->expand('%appDir%'))));
+			$translator->addSetup('$panel = Kdyby\Translation\Diagnostics\Panel::register(?, ?)', array('@self', dirname($builder->expand('%appDir%'))));
+			$translator->addSetup('$panel->setResourceWhitelist(?)', array($config['whitelist']));
 		}
 
 		if ($this->isRegisteredConsoleExtension()) {
@@ -299,12 +300,19 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 					/** @var \SplFileInfo $file */
 					if ($m = Strings::match($file->getFilename(), '~^(?P<domain>.*?)\.(?P<locale>[^\.]+)\.' . preg_quote($format) . '$~')) {
 						if (!in_array(substr($m['locale'], 0, 2), $config['whitelist'])) {
+							if ($config['debugger']) {
+								$translator->addSetup('$panel->addIgnoredResource(?, ?, ?, ?)', array($format, $file->getPathname(), $m['locale'], $m['domain']));
+							}
 							continue; // ignore
 						}
 
 						$this->validateResource($format, $file->getPathname(), $m['locale'], $m['domain']);
 						$translator->addSetup('addResource', array($format, $file->getPathname(), $m['locale'], $m['domain']));
 						$builder->addDependency($file->getPathname());
+
+						if ($config['debugger']) {
+							$translator->addSetup('$panel->addResource(?, ?, ?, ?)', array($format, $file->getPathname(), $m['locale'], $m['domain']));
+						}
 					}
 				}
 			}

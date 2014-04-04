@@ -196,10 +196,6 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 		$this->catalogueFactory->addResource($format, $resource, $locale, $domain);
 		parent::addResource($format, $resource, $locale, $domain);
 		$this->availableResourceLocales[$locale] = TRUE;
-
-		if ($this->panel) {
-			$this->panel->addResource($format, $resource, $locale, $domain);
-		}
 	}
 
 
