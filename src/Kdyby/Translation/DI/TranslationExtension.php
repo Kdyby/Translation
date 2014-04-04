@@ -53,7 +53,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	 * @var array
 	 */
 	public $defaults = array(
-		'whitelist' => array('cs', 'en'),
+		// 'whitelist' => array('cs', 'en'),
 		'default' => 'en',
 		// 'fallback' => array('en_US', 'en'), // using custom merge strategy becase Nette's config merger appends lists of values
 		'dirs' => array('%appDir%/lang', '%appDir%/locale'),
@@ -382,7 +382,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	 */
 	public function getConfig(array $defaults = NULL, $expand = TRUE)
 	{
-		return parent::getConfig($this->defaults) + array('fallback' => array('en_US'));
+		return parent::getConfig($this->defaults) + array('fallback' => array('en_US'), 'whitelist' => array('cs', 'en'));
 	}
 
 
