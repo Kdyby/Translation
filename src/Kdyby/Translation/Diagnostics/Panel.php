@@ -14,6 +14,9 @@ use Kdyby;
 use Kdyby\Translation\InvalidResourceException;
 use Kdyby\Translation\Translator;
 use Nette;
+use Nette\Application\Application;
+use Nette\Application\Request;
+use Nette\Reflection\ClassType;
 use Symfony\Component\Yaml;
 
 
@@ -50,6 +53,16 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 	private $resourceWhitelist = array();
 
 	/**
+	 * @var array|Kdyby\Translation\IUserLocaleResolver[]
+	 */
+	private $localeResolvers = array();
+
+	/**
+	 * @var array
+	 */
+	private $onRequestLocaleSnapshot = array();
+
+	/**
 	 * @var string
 	 */
 	private $rootDir;
@@ -58,11 +71,9 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 
 	/**
 	 * @param string $rootDir
-	 * @param Translator $translator
 	 */
-	public function __construct($rootDir, Translator $translator)
+	public function __construct($rootDir)
 	{
-		$this->translator = $translator;
 		$this->rootDir = $rootDir;
 	}
 
@@ -96,11 +107,37 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 			$panel[] = $this->renderUntranslated();
 		}
 
+		if (!empty($this->onRequestLocaleSnapshot)) {
+			if (!empty($panel)) {
+				$panel[] = '<br><br>';
+			}
+
+			$panel[] = '<h2>Locale resolution</h2>';
+			$panel[] = '<p>Order of locale resolvers and final locale for each request</p>';
+
+			foreach ($this->onRequestLocaleSnapshot as $i => $snapshot) {
+				$s = $i > 0 ? '<br>' : '';
+
+				/** @var Request[] $snapshot */
+				$params = $snapshot['request']->getParameters();
+				$s .= '<tr><th width="10px">&nbsp;</th>' .
+					'<th>' . $h($snapshot['request']->getPresenterName() . (isset($params['action']) ? ':' . $params['action'] : '')) . '</th>' .
+					'<th>' . $h($snapshot['locale']) . '</th></tr>';
+
+				$l = 1;
+				foreach ($snapshot['resolvers'] as $name => $resolvedLocale) {
+					$s .= '<tr><td>' . ($l++) . '.</td><td>' . $h($name) . '</td><td>' . $h($resolvedLocale) . '</td></tr>';
+				}
+
+				$panel[] = '<table style="width:100%">' . $s . '</table>';
+			}
+		}
+
 		if (!empty($this->resources)) {
 			if (!empty($panel)) {
 				$panel[] = '<br><br>';
 			}
-			$panel[] = '<h1>Loaded resources</h1>';
+			$panel[] = '<h2>Loaded resources</h2>';
 			$panel[] = $this->renderResources($this->resources);
 		}
 
@@ -109,7 +146,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 				$panel[] = '<br><br>';
 			}
 
-			$panel[] = '<h1>Ignored resources</h1>';
+			$panel[] = '<h2>Ignored resources</h2>';
 			$panel[] = '<p>Whitelist config: ' . implode(', ', array_map($h, $this->resourceWhitelist)) . '</p>';
 			$panel[] = $this->renderResources($this->ignoredResources);
 		}
@@ -117,7 +154,8 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 		return empty($panel) ? '' :
 			'<h1>Missing translations: ' .  count(array_unique($this->untranslated)) .
 			', Resources: ' . count(Nette\Utils\Arrays::flatten($this->resources)) . '</h1>' .
-			'<div class="nette-inner kdyby-TranslationPanel" style="min-width:500px">' . implode($panel) . '</div>';
+			'<div class="nette-inner kdyby-TranslationPanel" style="min-width:500px">' . implode($panel) . '</div>' .
+			'<style>#nette-debug .kdyby-TranslationPanel h2 {font-size: 23px;}</style>';
 	}
 
 
@@ -145,6 +183,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 
 		return '<table style="width:100%"><tr><th>Untranslated message</th></tr>' . $s . '</table>';
 	}
+
 
 
 	private function renderResources($resourcesMap)
@@ -212,24 +251,40 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 
 
 
-	/**
-	 * @param Translator $translator
-	 * @param string $rootDir
-	 * @return Panel
-	 */
-	public static function register(Translator $translator, $rootDir)
+	public function setLocaleResolvers(array $resolvers)
 	{
-		$panel = new static($rootDir, $translator);
-		/** @var Panel $panel */
-		$translator->injectPanel($panel);
+		$this->localeResolvers = array();
+		foreach ($resolvers as $resolver) {
+			$this->localeResolvers[ClassType::from($resolver)->getShortName()] = $resolver;
+		}
+	}
+
+
+
+	public function onRequest(Application $app, Request $request)
+	{
+		$snapshot = array('request' => $request, 'locale' => $this->translator->getLocale());
+		foreach ($this->localeResolvers as $name => $resolver) {
+			$snapshot['resolvers'][$name] = $resolver->resolve($this->translator);
+		}
+
+		$this->onRequestLocaleSnapshot[] = $snapshot;
+	}
+
+
+
+	public function register(Translator $translator)
+	{
+		$this->translator = $translator;
+		$translator->injectPanel($this);
 
 		$bar = method_exists('Nette\Diagnostics\Debugger', 'getBar')
 			? Nette\Diagnostics\Debugger::getBar()
 			: Nette\Diagnostics\Debugger::$bar;
 
-		$bar->addPanel($panel, 'kdyby.translation');
+		$bar->addPanel($this, 'kdyby.translation');
 
-		return $panel;
+		return $this;
 	}
 
 
