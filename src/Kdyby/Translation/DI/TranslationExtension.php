@@ -202,6 +202,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 				->addSetup('setLocaleResolvers', array(array_reverse($resolvers)));
 
 			$builder->getDefinition('application')
+				->addSetup('$self = $this; $service->onStartup[] = function () use ($self) { $self->getService(?); }', array($this->prefix('default')))
 				->addSetup('$service->onRequest[] = ?', array(array($this->prefix('@panel'), 'onRequest')));
 		}
 	}
