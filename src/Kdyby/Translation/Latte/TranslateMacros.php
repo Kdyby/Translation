@@ -11,12 +11,21 @@
 namespace Kdyby\Translation\Latte;
 
 use Kdyby;
+use Latte\CompileException;
+use Latte\Compiler;
+use Latte\MacroNode;
+use Latte\PhpWriter;
+use Latte\Macros\MacroSet;
 use Nette;
-use Nette\Latte;
-use Nette\Latte\MacroNode;
-use Nette\Latte\PhpWriter;
-use Nette\Latte\Macros\MacroSet;
 
+
+if (!class_exists('Latte\CompileException')) {
+	class_alias('Nette\Latte\CompileException', 'Latte\CompileException');
+	class_alias('Nette\Latte\Compiler', 'Latte\Compiler');
+	class_alias('Nette\Latte\MacroNode', 'Latte\MacroNode');
+	class_alias('Nette\Latte\PhpWriter', 'Latte\PhpWriter');
+	class_alias('Nette\Latte\Macros\MacroSet', 'Latte\Macros\MacroSet');
+}
 
 
 /**
@@ -25,7 +34,7 @@ use Nette\Latte\Macros\MacroSet;
 class TranslateMacros extends MacroSet
 {
 
-	public static function install(Latte\Compiler $compiler)
+	public static function install(Compiler $compiler)
 	{
 		$me = new static($compiler);
 		/** @var TranslateMacros $me */
@@ -71,7 +80,7 @@ class TranslateMacros extends MacroSet
 	public function macroDomain(MacroNode $node, PhpWriter $writer)
 	{
 		if ($node->isEmpty) {
-			throw new Latte\CompileException("Expected message prefix, none given");
+			throw new CompileException("Expected message prefix, none given");
 		}
 
 		$node->isEmpty = $node->isEmpty || (substr($node->args, -1) === '/');
