@@ -57,7 +57,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		'default' => 'en',
 		// 'fallback' => array('en_US', 'en'), // using custom merge strategy becase Nette's config merger appends lists of values
 		'dirs' => array('%appDir%/lang', '%appDir%/locale'),
-		'cache' => '@nette.templateCacheStorage',
+		'cache' => 'Kdyby\Translation\Caching\PhpFileStorage',
 		'debugger' => '%debugMode%',
 		'resolvers' => array(
 			self::RESOLVER_SESSION => FALSE,
@@ -70,6 +70,13 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	 * @var array
 	 */
 	private $loaders;
+
+
+
+	public function __construct()
+	{
+		$this->defaults['cache'] = new Statement($this->defaults['cache'], array('%tempDir%/cache'));
+	}
 
 
 
@@ -89,7 +96,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$translator->addSetup('setFallbackLocales', array($config['fallback']));
 
 		$catalogueCompiler = $builder->addDefinition($this->prefix('catalogueCompiler'))
-			->setClass('Kdyby\Translation\CatalogueCompiler', array(new Statement($config['cache'])))
+			->setClass('Kdyby\Translation\CatalogueCompiler', self::filterArgs($config['cache']))
 			->setInject(FALSE);
 
 		if ($config['debugger']) {
@@ -416,6 +423,17 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	public function getConfig(array $defaults = NULL, $expand = TRUE)
 	{
 		return parent::getConfig($this->defaults) + array('fallback' => array('en_US'), 'whitelist' => array('cs', 'en'));
+	}
+
+
+
+	/**
+	 * @param string|\stdClass $statement
+	 * @return Nette\DI\Statement[]
+	 */
+	public static function filterArgs($statement)
+	{
+		return Nette\DI\Compiler::filterArguments(array(is_string($statement) ? new Nette\DI\Statement($statement) : $statement));
 	}
 
 

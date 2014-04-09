@@ -11,19 +11,23 @@
 namespace Kdyby\Translation\Extractors;
 
 use Kdyby;
+use Latte\MacroTokens;
+use Latte\PhpWriter;
 use Nette;
-use Nette\Latte\MacroTokens;
-use Nette\Latte\PhpWriter;
-use Nette\Utils\Strings;
 use Nette\Utils\Finder;
 use Symfony\Component\Translation\Extractor\ExtractorInterface;
 use Symfony\Component\Translation\MessageCatalogue;
 
 
-if (!class_exists('Nette\Latte\MacroTokens')) {
-	class_alias('Nette\Latte\MacroTokenizer', 'Nette\Latte\MacroTokens');
+if (!class_exists('Latte\MacroTokens')) {
+	if (!class_exists('Nette\Latte\MacroTokens')) {
+		class_alias('Nette\Latte\MacroTokenizer', 'Nette\Latte\MacroTokens');
+	}
+	class_alias('Nette\Latte\MacroTokens', 'Latte\MacroTokens');
 }
-
+if (!class_exists('Latte\PhpWriter')) {
+	class_alias('Nette\Latte\PhpWriter', 'Latte\PhpWriter');
+}
 
 /**
  * @author Filip Procházka <filip@prochazka.su>

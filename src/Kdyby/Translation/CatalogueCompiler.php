@@ -87,7 +87,7 @@ class CatalogueCompiler extends Nette\Object
 		$cacheKey = array($locale, $translator->getFallbackLocales());
 
 		$storage = $this->cache->getStorage();
-		if (!$storage instanceof Nette\Caching\Storages\PhpFileStorage) {
+		if (!$storage instanceof Kdyby\Translation\Caching\PhpFileStorage) {
 			if (($messages = $this->cache->load($cacheKey)) !== NULL) {
 				$availableCatalogues[$locale] = new MessageCatalogue($locale, $messages);
 				return $availableCatalogues;
