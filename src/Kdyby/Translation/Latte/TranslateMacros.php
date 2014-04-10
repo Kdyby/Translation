@@ -12,12 +12,26 @@ namespace Kdyby\Translation\Latte;
 
 use Kdyby;
 use Nette;
-use Nette\Latte;
-use Nette\Latte\MacroNode;
-use Nette\Latte\PhpWriter;
-use Nette\Latte\Macros\MacroSet;
+use Latte;
+use Latte\Compiler;
+use Latte\MacroNode;
+use Latte\PhpWriter;
+use Latte\Macros\MacroSet;
 
 
+
+if (!class_exists('Latte\PhpWriter')) {
+	class_alias('Nette\Latte\PhpWriter', 'Latte\PhpWriter');
+}
+if (!class_exists('Latte\MacroNode')) {
+	class_alias('Nette\Latte\MacroNode', 'Latte\MacroNode');
+}
+if (!class_exists('Latte\Compiler')) {
+	class_alias('Nette\Latte\Compiler', 'Latte\Compiler');
+}
+if (!class_exists('Latte\Macros\MacroSet')) {
+	class_alias('Nette\Latte\Macros\MacroSet', 'Latte\Macros\MacroSet');
+}
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
@@ -25,7 +39,7 @@ use Nette\Latte\Macros\MacroSet;
 class TranslateMacros extends MacroSet
 {
 
-	public static function install(Latte\Compiler $compiler)
+	public static function install(Compiler $compiler)
 	{
 		$me = new static($compiler);
 		/** @var TranslateMacros $me */

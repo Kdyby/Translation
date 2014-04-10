@@ -154,7 +154,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		}
 
 		$builder->getDefinition('nette.latte')
-			->addSetup('Kdyby\Translation\Latte\TranslateMacros::install(?->compiler)', array('@self'));
+			->addSetup('Kdyby\Translation\Latte\TranslateMacros::install(?->getCompiler())', array('@self'));
 	}
 
 
