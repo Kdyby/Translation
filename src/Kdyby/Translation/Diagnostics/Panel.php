@@ -169,8 +169,11 @@ class Panel extends Nette\Object implements IBarPanel
 		return empty($panel) ? '' :
 			'<h1>Missing translations: ' .  count(array_unique($this->untranslated)) .
 			', Resources: ' . count(Nette\Utils\Arrays::flatten($this->resources)) . '</h1>' .
-			'<div class="nette-inner kdyby-TranslationPanel" style="min-width:500px">' . implode($panel) . '</div>' .
-			'<style>#nette-debug .kdyby-TranslationPanel h2 {font-size: 23px;}</style>';
+			'<div class="nette-inner tracy-inner kdyby-TranslationPanel" style="min-width:500px">' . implode($panel) . '</div>' .
+			'<style>
+				#nette-debug .kdyby-TranslationPanel h2,
+				#tracy-debug .kdyby-TranslationPanel h2 {font-size: 23px;}
+			</style>';
 	}
 
 
