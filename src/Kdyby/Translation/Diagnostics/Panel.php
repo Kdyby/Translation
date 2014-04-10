@@ -18,13 +18,28 @@ use Nette\Application\Application;
 use Nette\Application\Request;
 use Nette\Reflection\ClassType;
 use Symfony\Component\Yaml;
+use Tracy\BlueScreen;
+use Tracy\Debugger;
+use Tracy\Helpers;
+use Tracy\IBarPanel;
 
 
+
+if (!class_exists('Tracy\Debugger')) {
+	class_alias('Nette\Diagnostics\Debugger', 'Tracy\Debugger');
+}
+
+if (!class_exists('Tracy\Bar')) {
+	class_alias('Nette\Diagnostics\Bar', 'Tracy\Bar');
+	class_alias('Nette\Diagnostics\BlueScreen', 'Tracy\BlueScreen');
+	class_alias('Nette\Diagnostics\Helpers', 'Tracy\Helpers');
+	class_alias('Nette\Diagnostics\IBarPanel', 'Tracy\IBarPanel');
+}
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
+class Panel extends Nette\Object implements IBarPanel
 {
 
 	/**
@@ -202,11 +217,13 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 				if (Nette\Utils\Strings::startsWith($relativePath, 'vendor/')) {
 					$parts = explode('/', $relativePath, 4);
 					$left = array_pop($parts);
-					$relativePath = implode('/', $parts) . '/.../' . basename($left);
+					$relativePath = $h(implode('/', $parts) . '/.../') . '<b>' . $h(basename($left)) . '</b>';
+
+				} else {
+					$relativePath = $h(dirname($relativePath)) . '/<b>' . $h(basename($relativePath)) . '</b>';
 				}
 
-				$s .= '<td>' . Nette\Diagnostics\Helpers::editorLink($resourcePath, 1)->setText($relativePath) . '</td>';
-
+				$s .= '<td>' . self::editorLink($resourcePath, 1)->setHtml($relativePath) . '</td>';
 				$s .= '</tr>';
 			}
 		}
@@ -278,9 +295,9 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 		$this->translator = $translator;
 		$translator->injectPanel($this);
 
-		$bar = method_exists('Nette\Diagnostics\Debugger', 'getBar')
-			? Nette\Diagnostics\Debugger::getBar()
-			: Nette\Diagnostics\Debugger::$bar;
+		$bar = method_exists('Tracy\Debugger', 'getBar')
+			? Debugger::getBar()
+			: Debugger::$bar;
 
 		$bar->addPanel($this, 'kdyby.translation');
 
@@ -301,13 +318,43 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 		}
 
 		$method = 'Symfony\Component\Translation\Loader\YamlFileLoader::load';
-		if ($call = Nette\Diagnostics\Helpers::findTrace($e->getPrevious()->getTrace(), $method)) {
+		if ($call = Helpers::findTrace($e->getPrevious()->getTrace(), $method)) {
 			return array(
 				'tab' => 'YAML dictionary',
-				'panel' => '<p><b>File:</b> ' . Nette\Diagnostics\Helpers::editorLink($call['args'][0], $previous->getParsedLine()) . '</p>'
-					. ($previous->getParsedLine() ? Nette\Diagnostics\BlueScreen::highlightFile($call['args'][0], $previous->getParsedLine()) : '')
+				'panel' => '<p><b>File:</b> ' . self::editorLink($call['args'][0], $previous->getParsedLine()) . '</p>'
+					. ($previous->getParsedLine() ? BlueScreen::highlightFile($call['args'][0], $previous->getParsedLine()) : '')
 					. '<p>' . $previous->getMessage() . ' </p>'
 			);
+		}
+	}
+
+
+
+	/**
+	 * Returns link to editor.
+	 * @return Nette\Utils\Html
+	 */
+	private static function editorLink($file, $line, $text = NULL)
+	{
+		if (Debugger::$editor && is_file($file)) {
+			if ($text === NULL) {
+				$dir = dirname(strtr($file, '/', DIRECTORY_SEPARATOR));
+
+				$base = isset($_SERVER['SCRIPT_FILENAME']) ? dirname(dirname(strtr($_SERVER['SCRIPT_FILENAME'], '/', DIRECTORY_SEPARATOR))) : dirname($dir);
+				if (substr($dir, 0, strlen($base)) === $base || substr($dir, 0, strlen($base = realpath($base))) === $base) {
+					$dir = '...' . substr($dir, strlen($base));
+				}
+
+				$text = htmlSpecialChars(rtrim($dir, DIRECTORY_SEPARATOR), ENT_IGNORE) . DIRECTORY_SEPARATOR . '<b>' . htmlSpecialChars(basename($file), ENT_IGNORE) . '</b>' . ($line ? ":$line" : '');
+			}
+
+			return Nette\Utils\Html::el('a')
+				->href(strtr(Debugger::$editor, array('%file' => rawurlencode($file), '%line' => $line)))
+				->title("$file:$line")
+				->setHtml($text);
+
+		} else {
+			return Nette\Utils\Html::el('span')->setText($file . ($line ? ":$line" : ''));
 		}
 	}
 
