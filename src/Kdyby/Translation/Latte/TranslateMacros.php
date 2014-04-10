@@ -20,19 +20,6 @@ use Latte\Macros\MacroSet;
 
 
 
-if (!class_exists('Latte\PhpWriter')) {
-	class_alias('Nette\Latte\PhpWriter', 'Latte\PhpWriter');
-}
-if (!class_exists('Latte\MacroNode')) {
-	class_alias('Nette\Latte\MacroNode', 'Latte\MacroNode');
-}
-if (!class_exists('Latte\Compiler')) {
-	class_alias('Nette\Latte\Compiler', 'Latte\Compiler');
-}
-if (!class_exists('Latte\Macros\MacroSet')) {
-	class_alias('Nette\Latte\Macros\MacroSet', 'Latte\Macros\MacroSet');
-}
-
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
