@@ -223,7 +223,7 @@ class Panel extends Nette\Object implements IBarPanel
 					$relativePath = $h(dirname($relativePath)) . '/<b>' . $h(basename($relativePath)) . '</b>';
 				}
 
-				$s .= '<td>' . self::editorLink($resourcePath, 1)->setHtml($relativePath) . '</td>';
+				$s .= '<td>' . self::editorLink($resourcePath, 1, $relativePath) . '</td>';
 				$s .= '</tr>';
 			}
 		}
@@ -333,7 +333,7 @@ class Panel extends Nette\Object implements IBarPanel
 	/**
 	 * Returns link to editor.
 	 * @author David Grudl
-	 * @return Nette\Utils\Html
+	 * @return Nette\Utils\Html|string
 	 */
 	private static function editorLink($file, $line, $text = NULL)
 	{
