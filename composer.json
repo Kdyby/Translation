@@ -18,10 +18,21 @@
 	},
 	"require": {
 		"nette/nette": "~2.2@dev",
-		"symfony/translation": "~2.4",
-		"symfony/config": "~2.4"
+		"latte/latte": "~2.2@dev",
+		"nette/caching": "~2.2@dev",
+		"nette/di": "~2.2@dev",
+		"nette/finder": "~2.2@dev",
+		"nette/http": "~2.2@dev",
+		"nette/neon": "~2.2@dev",
+		"nette/php-generator": "~2.2@dev",
+		"nette/reflection": "~2.2@dev",
+		"nette/utils": "~2.2@dev",
+
+		"symfony/translation": "~2.4@stable",
+		"symfony/config": "~2.4@stable"
 	},
 	"suggest": {
+		"tracy/tracy": "Diagnostics tool for ",
 		"symfony/locale": "Locale component provides fallback code to handle cases when the intl extension is missing.",
 		"kdyby/console": "If you wanna use extract command and much others, install also console.",
 		"symfony/yaml": "If you wanna store translations in YAML format - supports multiline strings."
@@ -30,6 +41,7 @@
 		"nette/tester": "@dev",
 		"symfony/console": "~2.4"
 	},
+	"minimum-stability": "beta",
 	"autoload": {
 		"psr-0": {
 			"Kdyby\\Translation": "src/"
