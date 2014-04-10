@@ -332,6 +332,7 @@ class Panel extends Nette\Object implements IBarPanel
 
 	/**
 	 * Returns link to editor.
+	 * @author David Grudl
 	 * @return Nette\Utils\Html
 	 */
 	private static function editorLink($file, $line, $text = NULL)
