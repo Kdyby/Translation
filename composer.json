@@ -17,7 +17,7 @@
 		"issues": "https://github.com/kdyby/translation/issues"
 	},
 	"require": {
-		"nette/nette": "~2.1@dev",
+		"nette/nette": "~2.2@dev",
 		"symfony/translation": "~2.4",
 		"symfony/config": "~2.4"
 	},
