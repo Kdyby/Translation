@@ -239,7 +239,7 @@ class Translator extends BaseTranslator implements ITranslator
 
 	/**
 	 * @param string $messagePrefix
-	 * @return Nette\Localization\ITranslator
+	 * @return ITranslator
 	 */
 	public function domain($messagePrefix)
 	{
