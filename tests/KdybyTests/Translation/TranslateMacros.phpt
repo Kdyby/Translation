@@ -12,6 +12,7 @@ namespace KdybyTests\Translation;
 
 use Kdyby;
 use Nette;
+use Latte;
 use Tester;
 use Tester\Assert;
 
@@ -27,7 +28,7 @@ class TranslateMacrosTest extends TestCase
 
 	public function testRender_translate()
 	{
-		$template = $this->buildTemplate()->setFile(__DIR__ . '/files/Homepage.default.latte');
+		$template = $this->buildTemplate();
 
 		Assert::same('Ahoj %name%
 Ahoj Peter
@@ -47,14 +48,14 @@ Hello Peter|Helloes Peter
 
 missingKey.namedHelloCounting
 missingKey.namedHelloCounting
-missingKey.namedHelloCounting' . "\n", $template->__toString());
+missingKey.namedHelloCounting' . "\n", $template->renderToString(__DIR__ . '/files/Homepage.default.latte'));
 	}
 
 
 
 	public function testRender_translate_prefixed()
 	{
-		$template = $this->buildTemplate()->setFile(__DIR__ . '/files/Order.default.latte');
+		$template = $this->buildTemplate();
 
 		Assert::same('
 Ahoj %name%
@@ -81,13 +82,13 @@ Hello Peter|Helloes Peter
 
 missingKey.namedHelloCounting
 missingKey.namedHelloCounting
-missingKey.namedHelloCounting' . "\n", $template->__toString());
+missingKey.namedHelloCounting' . "\n", $template->renderToString(__DIR__ . '/files/Order.default.latte'));
 	}
 
 
 
 	/**
-	 * @return Nette\Templating\FileTemplate
+	 * @return Latte\Engine
 	 */
 	private function buildTemplate()
 	{
@@ -98,12 +99,13 @@ missingKey.namedHelloCounting' . "\n", $template->__toString());
 		$translator->setFallbackLocales(array('cs_CZ', 'cs'));
 		$translator->setLocale('cs');
 
-		$template = new Nette\Templating\FileTemplate();
-		$template->registerHelperLoader(array($translator->createTemplateHelpers(), 'loader'));
-		$template->registerFilter($engine = new Nette\Latte\Engine());
-		Kdyby\Translation\Latte\TranslateMacros::install($engine->getCompiler());
+		$latte = new Latte\Engine;
+		$latte->onCompile[] = function (Latte\Engine $engine) {
+			Kdyby\Translation\Latte\TranslateMacros::install($engine->getCompiler());
+		};
+		$latte->addFilter(NULL, array($translator->createTemplateHelpers(), 'loader'));
 
-		return $template;
+		return $latte;
 	}
 
 }
