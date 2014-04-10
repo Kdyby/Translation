@@ -11,6 +11,7 @@
 namespace Kdyby\Translation;
 
 use Kdyby;
+use Latte\Engine;
 use Nette;
 
 
@@ -35,21 +36,9 @@ class TemplateHelpers extends Nette\Object
 
 
 
-	public function loader($method)
+	public function register(Engine $engine)
 	{
-		if (method_exists($this, $method)) {
-			return callback($this, $method);
-		}
-	}
-
-
-
-	/**
-	 * @return \Kdyby\Translation\Translator
-	 */
-	public function getTranslator()
-	{
-		return $this->translator;
+		$engine->addFilter('translate', array($this, 'translate'));
 	}
 
 
@@ -64,6 +53,26 @@ class TemplateHelpers extends Nette\Object
 		}
 
 		return $this->translator->translate($message, $count, (array) $parameters, $domain, $locale);
+	}
+
+
+
+	/**
+	 * @deprecated
+	 */
+	public function loader($method)
+	{
+
+	}
+
+
+
+	/**
+	 * @deprecated
+	 */
+	public function getTranslator()
+	{
+		return $this->translator;
 	}
 
 }

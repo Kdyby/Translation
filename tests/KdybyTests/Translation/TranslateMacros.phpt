@@ -99,13 +99,7 @@ missingKey.namedHelloCounting' . "\n", $template->renderToString(__DIR__ . '/fil
 		$translator->setFallbackLocales(array('cs_CZ', 'cs'));
 		$translator->setLocale('cs');
 
-		$latte = new Latte\Engine;
-		$latte->onCompile[] = function (Latte\Engine $engine) {
-			Kdyby\Translation\Latte\TranslateMacros::install($engine->getCompiler());
-		};
-		$latte->addFilter(NULL, array($translator->createTemplateHelpers(), 'loader'));
-
-		return $latte;
+		return $container->getByType('Nette\Bridges\Framework\ILatteFactory')->create();
 	}
 
 }
