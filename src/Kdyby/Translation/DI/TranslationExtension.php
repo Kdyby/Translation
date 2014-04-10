@@ -21,6 +21,7 @@ use Nette\Utils\Finder;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
 use Symfony\Component\Translation\Loader\LoaderInterface;
+use Tracy;
 
 
 
@@ -99,7 +100,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			->setClass('Kdyby\Translation\CatalogueCompiler', self::filterArgs($config['cache']))
 			->setInject(FALSE);
 
-		if ($config['debugger']) {
+		if ($config['debugger'] && interface_exists('Tracy\IBarPanel')) {
 			$builder->addDefinition($this->prefix('panel'))
 				->setClass('Kdyby\Translation\Diagnostics\Panel', array(dirname($builder->expand('%appDir%'))))
 				->addSetup('setResourceWhitelist', array($config['whitelist']));
@@ -204,7 +205,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$chain->addSetup('addResolver', array($this->prefix('@userLocaleResolver.session')));
 		}
 
-		if ($config['debugger']) {
+		if ($config['debugger'] && interface_exists('Tracy\IBarPanel')) {
 			$builder->getDefinition($this->prefix('panel'))
 				->addSetup('setLocaleResolvers', array(array_reverse($resolvers)));
 
@@ -274,8 +275,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
 
-		$bar = method_exists('Nette\Diagnostics\Debugger', 'getBlueScreen') ? Nette\Diagnostics\Debugger::getBlueScreen() : Nette\Diagnostics\Debugger::$blueScreen;
-		$bar->addPanel('Kdyby\Translation\Diagnostics\Panel::renderException');
+		Tracy\Debugger::getBlueScreen()->addPanel('Kdyby\Translation\Diagnostics\Panel::renderException');
 
 		$extractor = $builder->getDefinition($this->prefix('extractor'));
 		foreach ($builder->findByTag(self::EXTRACTOR_TAG) as $extractorId => $meta) {
@@ -396,10 +396,12 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$initialize = $class->methods['initialize'];
 		$container = $this->getContainerBuilder();
 
-		$initialize->addBody($container->formatPhp(
-			'Nette\Diagnostics\Debugger::' . (method_exists('Nette\Diagnostics\Debugger', 'getBlueScreen') ? 'getBlueScreen()' : '$blueScreen') . '->addPanel(?);',
-			Nette\DI\Compiler::filterArguments(array('Kdyby\Translation\Diagnostics\Panel::renderException'))
-		));
+		if (interface_exists('Tracy\IBarPanel')) {
+			$initialize->addBody($container->formatPhp(
+				'Tracy\Debugger::getBlueScreen()->addPanel(?);',
+				Nette\DI\Compiler::filterArguments(array('Kdyby\Translation\Diagnostics\Panel::renderException'))
+			));
+		}
 	}
 
 
