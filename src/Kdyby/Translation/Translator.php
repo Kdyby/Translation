@@ -24,7 +24,7 @@ use Symfony\Component\Translation\Translator as BaseTranslator;
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Translator extends BaseTranslator implements Nette\Localization\ITranslator
+class Translator extends BaseTranslator implements ITranslator
 {
 
 	/**

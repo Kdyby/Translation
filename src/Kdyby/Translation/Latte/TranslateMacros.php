@@ -100,7 +100,9 @@ class TranslateMacros extends MacroSet
 	 */
 	public function macroDomainEnd(MacroNode $node, PhpWriter $writer)
 	{
-		return $writer->write('$_translator->unregister($template);');
+		if ($node->content !== NULL) {
+			return $writer->write('$_translator->unregister($template);');
+		}
 	}
 
 

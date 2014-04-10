@@ -23,13 +23,13 @@ class TemplateHelpers extends Nette\Object
 {
 
 	/**
-	 * @var Translator
+	 * @var ITranslator
 	 */
 	private $translator;
 
 
 
-	public function __construct(Translator $translator)
+	public function __construct(ITranslator $translator)
 	{
 		$this->translator = $translator;
 	}
@@ -39,6 +39,17 @@ class TemplateHelpers extends Nette\Object
 	public function register(Engine $engine)
 	{
 		$engine->addFilter('translate', array($this, 'translate'));
+		$engine->addFilter('getTranslator', array($this, 'getTranslator'));
+	}
+
+
+
+	/**
+	 * @return ITranslator
+	 */
+	public function getTranslator()
+	{
+		return $this->translator;
 	}
 
 
@@ -62,17 +73,9 @@ class TemplateHelpers extends Nette\Object
 	 */
 	public function loader($method)
 	{
-
-	}
-
-
-
-	/**
-	 * @deprecated
-	 */
-	public function getTranslator()
-	{
-		return $this->translator;
+		if (method_exists($this, $method) && strtolower($method) !== 'register') {
+			return array($this, $method);
+		}
 	}
 
 }
