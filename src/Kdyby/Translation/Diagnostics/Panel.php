@@ -337,25 +337,14 @@ class Panel extends Nette\Object implements IBarPanel
 	 */
 	private static function editorLink($file, $line, $text = NULL)
 	{
-		if (Debugger::$editor && is_file($file)) {
-			if ($text === NULL) {
-				$dir = dirname(strtr($file, '/', DIRECTORY_SEPARATOR));
-
-				$base = isset($_SERVER['SCRIPT_FILENAME']) ? dirname(dirname(strtr($_SERVER['SCRIPT_FILENAME'], '/', DIRECTORY_SEPARATOR))) : dirname($dir);
-				if (substr($dir, 0, strlen($base)) === $base || substr($dir, 0, strlen($base = realpath($base))) === $base) {
-					$dir = '...' . substr($dir, strlen($base));
-				}
-
-				$text = htmlSpecialChars(rtrim($dir, DIRECTORY_SEPARATOR), ENT_IGNORE) . DIRECTORY_SEPARATOR . '<b>' . htmlSpecialChars(basename($file), ENT_IGNORE) . '</b>' . ($line ? ":$line" : '');
-			}
-
+		if (Debugger::$editor && is_file($file) && $text !== NULL) {
 			return Nette\Utils\Html::el('a')
 				->href(strtr(Debugger::$editor, array('%file' => rawurlencode($file), '%line' => $line)))
 				->title("$file:$line")
 				->setHtml($text);
 
 		} else {
-			return Nette\Utils\Html::el('span')->setText($file . ($line ? ":$line" : ''));
+			return Helpers::editorLink($file, $line);
 		}
 	}
 
