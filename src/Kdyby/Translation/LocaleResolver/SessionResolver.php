@@ -38,7 +38,7 @@ class SessionResolver extends Nette\Object implements Kdyby\Translation\IUserLoc
 	private $localeSession;
 
 	/**
-	 * @var \Nette\Http\Response
+	 * @var \Nette\Http\IResponse
 	 */
 	private $httpResponse;
 
@@ -49,7 +49,7 @@ class SessionResolver extends Nette\Object implements Kdyby\Translation\IUserLoc
 
 
 
-	public function __construct(Nette\Http\Session $session, Nette\Http\Response $httpResponse)
+	public function __construct(Nette\Http\Session $session, Nette\Http\IResponse $httpResponse)
 	{
 		$this->localeSession = $session->getSection(get_class($this));
 		$this->httpResponse = $httpResponse;
