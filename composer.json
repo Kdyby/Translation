@@ -29,7 +29,6 @@
 		"symfony/yaml": "If you wanna store translations in YAML format - supports multiline strings."
 	},
 	"require-dev": {
-		"nette/nette": "~2.2@dev",
 		"nette/tester": "@dev",
 		"symfony/console": "~2.4"
 	},
