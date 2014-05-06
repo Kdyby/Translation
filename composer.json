@@ -30,7 +30,7 @@
 		"symfony/translation": "~2.4@stable",
 		"symfony/config": "~2.4@stable"
 	},
-	"minimum-stability": "rc",
+	"minimum-stability": "RC",
 	"suggest": {
 		"tracy/tracy": "Diagnostics tool from Nette",
 		"symfony/locale": "Locale component provides fallback code to handle cases when the intl extension is missing.",
