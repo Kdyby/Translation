@@ -25,6 +25,17 @@ use Tracy;
 
 
 
+if (!class_exists('Tracy\Debugger')) {
+	class_alias('Nette\Diagnostics\Debugger', 'Tracy\Debugger');
+}
+
+if (!class_exists('Tracy\Bar')) {
+	class_alias('Nette\Diagnostics\Bar', 'Tracy\Bar');
+	class_alias('Nette\Diagnostics\BlueScreen', 'Tracy\BlueScreen');
+	class_alias('Nette\Diagnostics\Helpers', 'Tracy\Helpers');
+	class_alias('Nette\Diagnostics\IBarPanel', 'Tracy\IBarPanel');
+}
+
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
@@ -266,7 +277,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
 
-		Tracy\Debugger::getBlueScreen()->addPanel('Kdyby\Translation\Diagnostics\Panel::renderException');
+		Kdyby\Translation\Diagnostics\Panel::registerBluescreen();
 
 		$extractor = $builder->getDefinition($this->prefix('extractor'));
 		foreach ($builder->findByTag(self::EXTRACTOR_TAG) as $extractorId => $meta) {
@@ -385,13 +396,9 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	public function afterCompile(Code\ClassType $class)
 	{
 		$initialize = $class->methods['initialize'];
-		$container = $this->getContainerBuilder();
 
 		if (interface_exists('Tracy\IBarPanel')) {
-			$initialize->addBody($container->formatPhp(
-				'Tracy\Debugger::getBlueScreen()->addPanel(?);',
-				Nette\DI\Compiler::filterArguments(array('Kdyby\Translation\Diagnostics\Panel::renderException'))
-			));
+			$initialize->addBody('Kdyby\Translation\Diagnostics\Panel::registerBluescreen();');
 		}
 	}
 

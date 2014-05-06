@@ -25,6 +25,19 @@ use Tracy\IBarPanel;
 
 
 
+if (!class_exists('Tracy\Debugger')) {
+	class_alias('Nette\Diagnostics\Debugger', 'Tracy\Debugger');
+}
+
+if (!class_exists('Tracy\Bar')) {
+	class_alias('Nette\Diagnostics\Bar', 'Tracy\Bar');
+	class_alias('Nette\Diagnostics\BlueScreen', 'Tracy\BlueScreen');
+	class_alias('Nette\Diagnostics\Helpers', 'Tracy\Helpers');
+	class_alias('Nette\Diagnostics\IBarPanel', 'Tracy\IBarPanel');
+}
+
+
+
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
@@ -294,6 +307,17 @@ class Panel extends Nette\Object implements IBarPanel
 		$bar->addPanel($this, 'kdyby.translation');
 
 		return $this;
+	}
+
+
+
+	public static function registerBluescreen()
+	{
+		$blueScreen = method_exists('Tracy\Debugger', 'getBlueScreen')
+			? Debugger::getBlueScreen()
+			: Debugger::$blueScreen;
+
+		$blueScreen->addPanel(array(get_called_class(), 'renderException'));
 	}
 
 
