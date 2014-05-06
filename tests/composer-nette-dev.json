@@ -17,23 +17,40 @@
 		"issues": "https://github.com/kdyby/translation/issues"
 	},
 	"require": {
-		"nette/nette": "~2.1@dev",
+		"nette/nette": "@dev",
+		"nette/application": "@dev",
+		"nette/bootstrap": "@dev",
+		"nette/caching": "@dev",
+		"nette/component-model": "@dev",
+		"nette/database": "@dev",
+		"nette/di": "@dev",
+		"nette/finder": "@dev",
+		"nette/forms": "@dev",
+		"nette/http": "@dev",
+		"nette/mail": "@dev",
+		"nette/neon": "@dev",
+		"nette/php-generator": "@dev",
+		"nette/reflection": "@dev",
+		"nette/robot-loader": "@dev",
+		"nette/safe-stream": "@dev",
+		"nette/security": "@dev",
+		"nette/tokenizer": "@dev",
+		"nette/utils": "@dev",
+		"latte/latte": "@dev",
+		"tracy/tracy": "@dev",
 
 		"symfony/translation": "~2.4",
 		"symfony/config": "~2.4"
 	},
 	"suggest": {
-		"tracy/tracy": "Diagnostics tool from Nette",
 		"symfony/locale": "Locale component provides fallback code to handle cases when the intl extension is missing.",
 		"kdyby/console": "If you wanna use extract command and much others, install also console.",
 		"symfony/yaml": "If you wanna store translations in YAML format - supports multiline strings."
 	},
 	"require-dev": {
-		"nette/nette": "~2.2@dev",
 		"nette/tester": "@dev",
 		"symfony/console": "~2.4"
 	},
-	"minimum-stability": "beta",
 	"autoload": {
 		"psr-0": {
 			"Kdyby\\Translation": "src/"
@@ -44,7 +61,7 @@
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-master": "2.0-dev"
+			"dev-master": "1.2-dev"
 		}
 	}
 }
