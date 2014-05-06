@@ -11,6 +11,7 @@
 namespace Kdyby\Translation\Extractors;
 
 use Kdyby;
+use Latte\Parser;
 use Latte\MacroTokens;
 use Latte\PhpWriter;
 use Nette;
@@ -54,7 +55,7 @@ class LatteExtractor extends Nette\Object implements ExtractorInterface
 	public function extractFile($file, MessageCatalogue $catalogue)
 	{
 		$buffer = NULL;
-		$parser = new Nette\Latte\Parser();
+		$parser = new Parser();
 		foreach ($tokens = $parser->parse(file_get_contents($file)) as $token) {
 			if ($token->type !== $token::MACRO_TAG || !in_array($token->name, array('_', '/_'), TRUE)) {
 				if ($buffer !== NULL) {

@@ -25,17 +25,6 @@ use Tracy;
 
 
 
-if (!class_exists('Tracy\Debugger')) {
-	class_alias('Nette\Diagnostics\Debugger', 'Tracy\Debugger');
-}
-
-if (!class_exists('Tracy\Bar')) {
-	class_alias('Nette\Diagnostics\Bar', 'Tracy\Bar');
-	class_alias('Nette\Diagnostics\BlueScreen', 'Tracy\BlueScreen');
-	class_alias('Nette\Diagnostics\Helpers', 'Tracy\Helpers');
-	class_alias('Nette\Diagnostics\IBarPanel', 'Tracy\IBarPanel');
-}
-
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
@@ -154,7 +143,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$this->loadConsole($config);
 		}
 
-		$builder->getDefinition('nette.latte')
+		$builder->getDefinition('nette.latteFactory')
 			->addSetup('Kdyby\Translation\Latte\TranslateMacros::install(?->getCompiler())', array('@self'))
 			->addSetup('addFilter', array('translate', array($this->prefix('@helpers'), 'translate')))
 			->addSetup('addFilter', array('getTranslator', array($this->prefix('@helpers'), 'getTranslator')));

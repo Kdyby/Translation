@@ -58,7 +58,8 @@ class PhraseTest extends TestCase
 			'Use 10 credits'
 		), $check->getErrors());
 
-		Assert::same('[{"op":":filled","msg":"Use 10 credits"}]', $check->getControlPart()->attrs['data-nette-rules']);
+		Assert::same(array(array('op' => ':filled', 'msg' => 'Use 10 credits')), $check->getControlPart()->attrs['data-nette-rules']);
+		Assert::match('<input%A% data-nette-rules=\'[{"op":":filled","msg":"Use 10 credits"}]\'>', (string) $check->getControlPart());
 	}
 
 }

@@ -20,6 +20,11 @@ require_once __DIR__ . '/../bootstrap.php';
 
 
 
+class ControlMock extends Nette\Application\UI\Control
+{
+
+}
+
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
@@ -48,7 +53,7 @@ Hello Peter|Helloes Peter
 
 missingKey.namedHelloCounting
 missingKey.namedHelloCounting
-missingKey.namedHelloCounting' . "\n", $template->renderToString(__DIR__ . '/files/Homepage.default.latte'));
+missingKey.namedHelloCounting' . "\n", (string) $template->setFile(__DIR__ . '/files/Homepage.default.latte'));
 	}
 
 
@@ -82,13 +87,13 @@ Hello Peter|Helloes Peter
 
 missingKey.namedHelloCounting
 missingKey.namedHelloCounting
-missingKey.namedHelloCounting' . "\n", $template->renderToString(__DIR__ . '/files/Order.default.latte'));
+missingKey.namedHelloCounting' . "\n", (string) $template->setFile(__DIR__ . '/files/Order.default.latte'));
 	}
 
 
 
 	/**
-	 * @return Latte\Engine
+	 * @return \Nette\Bridges\ApplicationLatte\Template
 	 */
 	private function buildTemplate()
 	{
@@ -99,7 +104,7 @@ missingKey.namedHelloCounting' . "\n", $template->renderToString(__DIR__ . '/fil
 		$translator->setFallbackLocales(array('cs_CZ', 'cs'));
 		$translator->setLocale('cs');
 
-		return $container->getByType('Nette\Bridges\Framework\ILatteFactory')->create();
+		return $container->getByType('Nette\Bridges\ApplicationLatte\TemplateFactory')->createTemplate(new ControlMock());
 	}
 
 }

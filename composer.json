@@ -17,11 +17,20 @@
 		"issues": "https://github.com/kdyby/translation/issues"
 	},
 	"require": {
-		"nette/nette": "~2.1@dev",
+		"latte/latte": "~2.2@rc",
+		"nette/caching": "~2.2@rc",
+		"nette/di": "~2.2@rc",
+		"nette/finder": "~2.2@rc",
+		"nette/http": "~2.2@rc",
+		"nette/neon": "~2.2@rc",
+		"nette/php-generator": "~2.2@rc",
+		"nette/reflection": "~2.2@rc",
+		"nette/utils": "~2.2@rc",
 
-		"symfony/translation": "~2.4",
-		"symfony/config": "~2.4"
+		"symfony/translation": "~2.4@stable",
+		"symfony/config": "~2.4@stable"
 	},
+	"minimum-stability": "rc",
 	"suggest": {
 		"tracy/tracy": "Diagnostics tool from Nette",
 		"symfony/locale": "Locale component provides fallback code to handle cases when the intl extension is missing.",
@@ -29,6 +38,7 @@
 		"symfony/yaml": "If you wanna store translations in YAML format - supports multiline strings."
 	},
 	"require-dev": {
+		"nette/nette": "~2.2@rc",
 		"nette/tester": "@dev",
 		"symfony/console": "~2.4"
 	},
