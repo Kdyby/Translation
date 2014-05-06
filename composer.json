@@ -33,7 +33,6 @@
 		"nette/tester": "@dev",
 		"symfony/console": "~2.4"
 	},
-	"minimum-stability": "beta",
 	"autoload": {
 		"psr-0": {
 			"Kdyby\\Translation": "src/"
