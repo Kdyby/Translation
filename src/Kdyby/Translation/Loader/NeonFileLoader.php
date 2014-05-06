@@ -10,14 +10,18 @@
 
 namespace Kdyby\Translation\Loader;
 
-use Nette\Utils\Neon;
-use Nette\Utils\NeonException;
+use Nette;
+use Nette\Neon;
 use Symfony\Component\Translation\Exception\InvalidResourceException;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\Translation\Loader\ArrayLoader;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 
+
+if (!class_exists('Nette\Neon\Neon')) {
+	class_alias('Nette\Utils\Neon', 'Nette\Neon\Neon');
+}
 
 
 /**
@@ -42,9 +46,12 @@ class NeonFileLoader extends ArrayLoader implements LoaderInterface
         }
 
         try {
-            $messages = Neon::decode(file_get_contents($resource));
+            $messages = Neon\Neon::decode(file_get_contents($resource));
 
-        } catch (NeonException $e) {
+        } catch (Nette\Utils\NeonException $e) {
+            throw new InvalidResourceException('Error parsing Neon.', 0, $e);
+
+        } catch (Nette\Neon\Exception $e) {
             throw new InvalidResourceException('Error parsing Neon.', 0, $e);
         }
 
