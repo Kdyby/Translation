@@ -48,8 +48,9 @@
 		"symfony/yaml": "If you wanna store translations in YAML format - supports multiline strings."
 	},
 	"require-dev": {
+		"symfony/console": "~2.4",
 		"nette/tester": "@dev",
-		"symfony/console": "~2.4"
+		"jakub-onderka/php-parallel-lint": "~0.6"
 	},
 	"autoload": {
 		"psr-0": {
