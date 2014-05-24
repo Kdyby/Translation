@@ -27,10 +27,9 @@
 		"nette/reflection": "~2.2@dev",
 		"nette/utils": "~2.2@dev",
 
-		"symfony/translation": "~2.4@stable",
-		"symfony/config": "~2.4@stable"
+		"symfony/translation": "~2.4",
+		"symfony/config": "~2.4"
 	},
-	"minimum-stability": "RC",
 	"suggest": {
 		"tracy/tracy": "Diagnostics tool from Nette",
 		"symfony/locale": "Locale component provides fallback code to handle cases when the intl extension is missing.",
