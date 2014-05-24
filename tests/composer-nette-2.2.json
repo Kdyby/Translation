@@ -17,37 +17,30 @@
 		"issues": "https://github.com/kdyby/translation/issues"
 	},
 	"require": {
-		"nette/nette": "@dev",
-		"nette/application": "@dev",
-		"nette/bootstrap": "@dev",
-		"nette/caching": "@dev",
-		"nette/component-model": "@dev",
-		"nette/database": "@dev",
-		"nette/di": "@dev",
-		"nette/finder": "@dev",
-		"nette/forms": "@dev",
-		"nette/http": "@dev",
-		"nette/mail": "@dev",
-		"nette/neon": "@dev",
-		"nette/php-generator": "@dev",
-		"nette/reflection": "@dev",
-		"nette/robot-loader": "@dev",
-		"nette/safe-stream": "@dev",
-		"nette/security": "@dev",
-		"nette/tokenizer": "@dev",
-		"nette/utils": "@dev",
-		"latte/latte": "@dev",
-		"tracy/tracy": "@dev",
+		"latte/latte": "~2.2",
+		"nette/caching": "~2.2",
+		"nette/di": "~2.2",
+		"nette/finder": "~2.2",
+		"nette/http": "~2.2",
+		"nette/neon": "~2.2",
+		"nette/php-generator": "~2.2",
+		"nette/reflection": "~2.2",
+		"nette/utils": "~2.2",
 
-		"symfony/translation": "~2.4",
-		"symfony/config": "~2.4"
+		"symfony/translation": "~2.4@stable",
+		"symfony/config": "~2.4@stable"
 	},
+	"minimum-stability": "RC",
 	"suggest": {
+		"tracy/tracy": "Diagnostics tool from Nette",
 		"symfony/locale": "Locale component provides fallback code to handle cases when the intl extension is missing.",
 		"kdyby/console": "If you wanna use extract command and much others, install also console.",
 		"symfony/yaml": "If you wanna store translations in YAML format - supports multiline strings."
 	},
 	"require-dev": {
+		"nette/nette": "~2.2",
+		"nette/bootstrap": "~2.2",
+
 		"symfony/console": "~2.4",
 		"nette/tester": "@dev",
 		"jakub-onderka/php-parallel-lint": "~0.6"
