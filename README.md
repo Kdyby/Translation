@@ -2,7 +2,7 @@ Kdyby/Translation
 ======
 
 [![Build Status](https://travis-ci.org/Kdyby/Translation.svg?branch=master)](https://travis-ci.org/Kdyby/Translation)
-[![Downloads this Month](https://img.shields.io/packagist/dm/Kdyby/Translation.svg)](https://packagist.org/packages/Kdyby/Translation)
+[![Downloads this Month](https://img.shields.io/packagist/dm/kdyby/translation.svg)](https://packagist.org/packages/kdyby/translation)
 [![Latest stable](https://img.shields.io/packagist/v/kdyby/translation.svg)](https://packagist.org/packages/kdyby/translation)
 
 
