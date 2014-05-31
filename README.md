@@ -1,5 +1,9 @@
-Kdyby/Translation [![Build Status](https://secure.travis-ci.org/Kdyby/Translation.png?branch=master)](http://travis-ci.org/Kdyby/Translation)
-===========================
+Kdyby/Translation
+======
+
+[![Build Status](https://travis-ci.org/Kdyby/Translation.svg?branch=master)](https://travis-ci.org/Kdyby/Translation)
+[![Downloads this Month](https://img.shields.io/packagist/dm/Kdyby/Translation.svg)](https://packagist.org/packages/Kdyby/Translation)
+[![Latest stable](img.shields.io/packagist/v/Kdyby/Translation.svg)](https://packagist.org/packages/Kdyby/Translation)
 
 
 Requirements
