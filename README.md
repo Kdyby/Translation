@@ -1,5 +1,9 @@
-Kdyby/Translation [![Build Status](https://secure.travis-ci.org/Kdyby/Translation.png?branch=master)](http://travis-ci.org/Kdyby/Translation)
-===========================
+Kdyby/Translation
+======
+
+[![Build Status](https://travis-ci.org/Kdyby/Translation.svg?branch=nette-2.0)](https://travis-ci.org/Kdyby/Translation)
+[![Downloads this Month](https://img.shields.io/packagist/dm/kdyby/translation.svg)](https://packagist.org/packages/kdyby/translation)
+[![Latest stable](https://img.shields.io/packagist/v/kdyby/translation.svg)](https://packagist.org/packages/kdyby/translation)
 
 
 Requirements
@@ -7,30 +11,25 @@ Requirements
 
 Kdyby/Translation requires PHP 5.3.2 or higher.
 
-- [Nette Framework 2.0.x](https://github.com/nette/nette)
-- [Symfony Translation 2.2.x](https://github.com/symfony/translation)
-- [Symfony Config 2.2.x](https://github.com/symfony/config)
+- [Nette Framework](https://github.com/nette/nette)
+- [Symfony Translation](https://github.com/symfony/translation)
+- [Symfony Config](https://github.com/symfony/config)
 
 
 Installation
 ------------
 
-The best way to install Kdyby/Translation is using  [Composer](http://getcomposer.org/):
-
-With dev Nette, this is how you install the extension
+The best way to install Kdyby/Translation is using the [Composer](http://getcomposer.org/):
 
 ```sh
-$ composer require kdyby/translation:@dev
+$ composer require kdyby/translation:~0.10.2
 ```
 
-If you're using stable Nette, the series `0.10` is for you, so install it using this command
 
-```sh
-$ composer require kdyby/translation:~0.10
-```
+Documentation
+------------
 
-For the configuration, follow the [detailed documentation](https://github.com/Kdyby/Translation/blob/master/docs/en/index.md).
-
+Lear more in the [documentation](https://github.com/Kdyby/Translation/blob/nette-2.0/docs/en/index.md).
 
 
 -----
