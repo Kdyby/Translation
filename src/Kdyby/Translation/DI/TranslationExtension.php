@@ -17,6 +17,7 @@ use Nette\DI\Statement;
 use Nette\PhpGenerator as Code;
 use Nette\Reflection;
 use Nette\Utils\Arrays;
+use Nette\Utils\Callback;
 use Nette\Utils\Finder;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
@@ -313,7 +314,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$config['dirs'] = array_merge($config['dirs'], array_values($extension->getTranslationResources()));
 		}
 
-		if ($dirs = array_values(array_filter($config['dirs'], callback('is_dir')))) {
+		if ($dirs = array_values(array_filter($config['dirs'], Callback::closure('is_dir')))) {
 			foreach ($dirs as $dir) {
 				$builder->addDependency($dir);
 			}
