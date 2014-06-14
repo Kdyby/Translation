@@ -29,7 +29,7 @@ $ composer require kdyby/translation:~2.0
 Documentation
 ------------
 
-Lear more in the [documentation](https://github.com/Kdyby/Translation/blob/master/docs/en/index.md).
+Learn more in the [documentation](https://github.com/Kdyby/Translation/blob/master/docs/en/index.md).
 
 
 -----
