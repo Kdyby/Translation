@@ -29,7 +29,7 @@ $ composer require kdyby/translation:~1.2.1
 Documentation
 ------------
 
-Lear more in the [documentation](https://github.com/Kdyby/Translation/blob/nette-2.1/docs/en/index.md).
+Learn more in the [documentation](https://github.com/Kdyby/Translation/blob/nette-2.1/docs/en/index.md).
 
 
 -----
