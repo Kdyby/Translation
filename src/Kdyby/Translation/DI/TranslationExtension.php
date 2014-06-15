@@ -390,7 +390,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	public function afterCompile(Code\ClassType $class)
 	{
 		$initialize = $class->methods['initialize'];
-		$initialize->addBody('Kdyby\Translation\Diagnostics\Panel::registerBluescreen();');
+		$initialize->addBody('Kdyby\Translation\Diagnostics\Panel::registerBluescreen()');
 	}
 
 
