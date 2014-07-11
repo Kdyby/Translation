@@ -35,6 +35,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	const LOADER_TAG = 'translation.loader';
 	const DUMPER_TAG = 'translation.dumper';
 	const EXTRACTOR_TAG = 'translation.extractor';
+	const RESOLVER_TAG = 'translation.resolver';
 
 	const RESOLVER_REQUEST = 'request';
 	const RESOLVER_HEADER = 'header';
@@ -201,6 +202,24 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$chain->addSetup('addResolver', array($this->prefix('@userLocaleResolver.session')));
 		}
 
+		foreach ($config['resolvers'] as $key => $resolver) {
+			if (in_array($key, array(self::RESOLVER_HEADER, self::RESOLVER_REQUEST, self::RESOLVER_SESSION), TRUE)) {
+				continue;
+			}
+
+			$resolvers[] = $def = $builder->addDefinition($this->prefix('resolver.' . md5(Nette\Utils\Json::encode($resolver))));
+			list($def->factory) = Nette\DI\Compiler::filterArguments(array(
+				is_string($resolver) ? new Nette\DI\Statement($resolver) : $resolver
+			));
+
+			list($resolverClass) = (array) $builder->normalizeEntity($def->getFactory()->getEntity());
+			if (class_exists($resolverClass)) {
+				$def->setClass($resolverClass);
+			}
+
+			$def->addTag(self::RESOLVER_TAG);
+		}
+
 		if ($config['debugger'] && interface_exists('Tracy\IBarPanel')) {
 			$builder->getDefinition($this->prefix('panel'))
 				->addSetup('setLocaleResolvers', array(array_reverse($resolvers)));
@@ -272,6 +291,11 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$config = $this->getConfig();
 
 		Kdyby\Translation\Diagnostics\Panel::registerBluescreen();
+
+		$chain = $builder->getDefinition($this->prefix('userLocaleResolver'));
+		foreach ($this->getSortedServicesByTag(self::RESOLVER_TAG) as $serviceName) {
+			$chain->addSetup('addResolver', array('@' . $serviceName));
+		}
 
 		$extractor = $builder->getDefinition($this->prefix('extractor'));
 		foreach ($builder->findByTag(self::EXTRACTOR_TAG) as $extractorId => $meta) {
@@ -437,6 +461,27 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler) {
 			$compiler->addExtension('translation', new TranslationExtension());
 		};
+	}
+
+
+
+	/**
+	 * @param string
+	 * @return array
+	 */
+	private function getSortedServicesByTag($tag)
+	{
+		$container = $this->getContainerBuilder();
+
+		$services = array();
+		foreach ($container->findByTag($tag) as $def => $priority) {
+			$priority = is_numeric($priority) ? $priority : (int) $priority;
+			$services[$priority][] = $def;
+		}
+
+		krsort($services);
+
+		return Nette\Utils\Arrays::flatten($services);
 	}
 
 }
