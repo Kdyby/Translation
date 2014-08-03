@@ -229,7 +229,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	public function getLocale()
 	{
 		if ($this->locale === NULL) {
-			$this->locale = $this->localeResolver->resolve($this);
+			$this->setLocale($this->localeResolver->resolve($this));
 		}
 
 		return $this->locale;
