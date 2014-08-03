@@ -54,7 +54,7 @@ class CatalogueCompilerTest extends TestCase
 		/** @var \Kdyby\Translation\CatalogueCompiler $compiler */
 		$compiler = $container->getByType('Kdyby\Translation\CatalogueCompiler');
 
-		$catalogues = [];
+		$catalogues = array();
 		$compiler->compile($translator, $catalogues, 'fr-FR.UTF8');
 
 		$tempFiles = array_filter(get_included_files(), function ($path) {
