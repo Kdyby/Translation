@@ -127,7 +127,7 @@ class CatalogueCompiler extends Nette\Object
 		$fallbackContent = '';
 		$current = new Code\PhpLiteral('');
 		foreach ($this->fallbackResolver->compute($translator, $locale) as $fallback) {
-			$fallbackSuffix = new Code\PhpLiteral(ucfirst(str_replace('-', '_', $fallback)));
+			$fallbackSuffix = new Code\PhpLiteral(ucfirst(str_replace('-', '_', Nette\Utils\Strings::webalize($fallback, NULL, FALSE))));
 
 			$fallbackContent .= Code\Helpers::format(<<<EOF
 \$catalogue? = new MessageCatalogue(?, ?);
