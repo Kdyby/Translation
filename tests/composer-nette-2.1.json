@@ -19,8 +19,8 @@
 	"require": {
 		"nette/nette": "2.1.*",
 
-		"symfony/translation": "~2.4",
-		"symfony/config": "~2.4"
+		"symfony/translation": "~2.5",
+		"symfony/config": "~2.5"
 	},
 	"suggest": {
 		"symfony/locale": "Locale component provides fallback code to handle cases when the intl extension is missing.",
@@ -28,7 +28,7 @@
 		"symfony/yaml": "If you wanna store translations in YAML format - supports multiline strings."
 	},
 	"require-dev": {
-		"symfony/console": "~2.4",
+		"symfony/console": "~2.5",
 		"nette/tester": "@dev",
 		"jakub-onderka/php-parallel-lint": "~0.7"
 	},
