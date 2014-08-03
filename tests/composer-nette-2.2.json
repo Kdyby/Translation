@@ -27,8 +27,8 @@
 		"nette/reflection": "~2.2",
 		"nette/utils": "~2.2",
 
-		"symfony/translation": "~2.4",
-		"symfony/config": "~2.4"
+		"symfony/translation": "~2.5",
+		"symfony/config": "~2.5"
 	},
 	"suggest": {
 		"tracy/tracy": "Diagnostics tool from Nette",
@@ -40,7 +40,7 @@
 		"nette/nette": "~2.2",
 		"nette/bootstrap": "~2.2",
 
-		"symfony/console": "~2.4",
+		"symfony/console": "~2.5",
 		"nette/tester": "@dev",
 		"jakub-onderka/php-parallel-lint": "~0.6"
 	},
