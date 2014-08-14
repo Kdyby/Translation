@@ -106,10 +106,17 @@ class Translator extends BaseTranslator implements ITranslator
 	 *
 	 * @return string
 	 */
-	public function translate($message, $count = NULL, array $parameters = array(), $domain = NULL, $locale = NULL)
+	public function translate($message, $count = NULL, $parameters = array(), $domain = NULL, $locale = NULL)
 	{
 		if ($message instanceof Phrase) {
 			return $message->translate($this);
+		}
+
+		if (is_array($count)) {
+			$locale = $domain;
+			$domain = $parameters;
+			$parameters = $count;
+			$count = NULL;
 		}
 
 		if (empty($message)) {
