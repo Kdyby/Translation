@@ -108,8 +108,8 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 		}
 
 		if (is_array($count)) {
-			$locale = $domain;
-			$domain = $parameters;
+			$locale = $domain ?: NULL;
+			$domain = $parameters ?: NULL;
 			$parameters = $count;
 			$count = NULL;
 		}
