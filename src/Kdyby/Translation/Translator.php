@@ -115,6 +115,8 @@ class Translator extends BaseTranslator implements ITranslator
 		if (is_array($count)) {
 			$locale = $domain;
 			$domain = $parameters;
+			if ($domain === array())
+				$domain = NULL;
 			$parameters = $count;
 			$count = NULL;
 		}
