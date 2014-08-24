@@ -124,15 +124,6 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 			return $message; // todo: what now?
 		}
 
-		if ($domain === NULL) {
-			if (strpos($message, '.') !== FALSE && strpos($message, ' ') === FALSE) {
-				list($domain, $message) = explode('.', $message, 2);
-
-			} else {
-				$domain = 'messages';
-			}
-		}
-
 		$tmp = array();
 		foreach ($parameters as $key => $val) {
 			$tmp['%' . trim($key, '%') . '%'] = $val;
@@ -151,15 +142,25 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	/**
 	 * {@inheritdoc}
 	 */
-	public function trans($id, array $parameters = array(), $domain = NULL, $locale = NULL)
+	public function trans($message, array $parameters = array(), $domain = NULL, $locale = NULL)
 	{
-		if ($id instanceof Phrase) {
-			return $id->translate($this);
+		if ($message instanceof Phrase) {
+			return $message->translate($this);
+		}
+
+		if ($domain === NULL) {
+			list($domain, $id) = $this->extractMessageDomain($message);
+
+		} else {
+			$id = $message;
 		}
 
 		$result = parent::trans($id, $parameters, $domain, $locale);
-		if ($this->panel !== NULL && $id === $result) { // probably untranslated
-			$this->panel->markUntranslated($id);
+		if ($result === "\x01") {
+			if ($this->panel !== NULL) {
+				$this->panel->markUntranslated($message);
+			}
+			$result = $message;
 		}
 
 		return $result;
@@ -170,10 +171,17 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	/**
 	 * {@inheritdoc}
 	 */
-	public function transChoice($id, $number, array $parameters = array(), $domain = NULL, $locale = NULL)
+	public function transChoice($message, $number, array $parameters = array(), $domain = NULL, $locale = NULL)
 	{
-		if ($id instanceof Phrase) {
-			return $id->translate($this);
+		if ($message instanceof Phrase) {
+			return $message->translate($this);
+		}
+
+		if ($domain === NULL) {
+			list($domain, $id) = $this->extractMessageDomain($message);
+
+		} else {
+			$id = $message;
 		}
 
 		try {
@@ -186,8 +194,11 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 			}
 		}
 
-		if ($this->panel !== NULL && $id === $result) { // probably untranslated
-			$this->panel->markUntranslated($id);
+		if ($result === "\x01") {
+			if ($this->panel !== NULL) {
+				$this->panel->markUntranslated($message);
+			}
+			$result = $message;
 		}
 
 		return $result;
@@ -289,6 +300,24 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	protected function computeFallbackLocales($locale)
 	{
 		return $this->fallbackResolver->compute($this, $locale);
+	}
+
+
+
+	/**
+	 * @param $message
+	 * @return array
+	 */
+	private function extractMessageDomain($message)
+	{
+		if (strpos($message, '.') !== FALSE && strpos($message, ' ') === FALSE) {
+			list($domain, $message) = explode('.', $message, 2);
+
+		} else {
+			$domain = 'messages';
+		}
+
+		return array($domain, $message);
 	}
 
 

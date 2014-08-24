@@ -13,7 +13,6 @@ namespace Kdyby\Translation;
 use Kdyby;
 use Nette;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
-use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\MessageCatalogueInterface;
 
 

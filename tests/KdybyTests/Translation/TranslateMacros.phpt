@@ -37,17 +37,17 @@ Ahoj %name%
 Ahoj Peter
 Ahoj Peter
 
-missingKey.namedHello
-missingKey.namedHello
-missingKey.namedHello
+front.missingKey.namedHello
+front.missingKey.namedHello
+front.missingKey.namedHello
 
 Helloes %name%
 Helloes Peter
 Hello Peter|Helloes Peter
 
-missingKey.namedHelloCounting
-missingKey.namedHelloCounting
-missingKey.namedHelloCounting' . "\n", $template->__toString());
+front.missingKey.namedHelloCounting
+front.missingKey.namedHelloCounting
+front.missingKey.namedHelloCounting' . "\n", $template->__toString());
 	}
 
 
@@ -67,9 +67,9 @@ Ahoj Peter
 
 
 
-missingKey.namedHello
-missingKey.namedHello
-missingKey.namedHello
+front.missingKey.namedHello
+front.missingKey.namedHello
+front.missingKey.namedHello
 
 
 
@@ -79,9 +79,9 @@ Hello Peter|Helloes Peter
 
 
 
-missingKey.namedHelloCounting
-missingKey.namedHelloCounting
-missingKey.namedHelloCounting' . "\n", $template->__toString());
+front.missingKey.namedHelloCounting
+front.missingKey.namedHelloCounting
+front.missingKey.namedHelloCounting' . "\n", $template->__toString());
 	}
 
 
