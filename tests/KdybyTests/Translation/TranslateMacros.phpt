@@ -43,17 +43,17 @@ Ahoj %name%
 Ahoj Peter
 Ahoj Peter
 
-missingKey.namedHello
-missingKey.namedHello
-missingKey.namedHello
+front.missingKey.namedHello
+front.missingKey.namedHello
+front.missingKey.namedHello
 
 Helloes %name%
 Helloes Peter
 Hello Peter|Helloes Peter
 
-missingKey.namedHelloCounting
-missingKey.namedHelloCounting
-missingKey.namedHelloCounting' . "\n", (string) $template->setFile(__DIR__ . '/files/Homepage.default.latte'));
+front.missingKey.namedHelloCounting
+front.missingKey.namedHelloCounting
+front.missingKey.namedHelloCounting' . "\n", (string) $template->setFile(__DIR__ . '/files/Homepage.default.latte'));
 	}
 
 
@@ -73,9 +73,9 @@ Ahoj Peter
 
 
 
-missingKey.namedHello
-missingKey.namedHello
-missingKey.namedHello
+front.missingKey.namedHello
+front.missingKey.namedHello
+front.missingKey.namedHello
 
 
 
@@ -85,9 +85,9 @@ Hello Peter|Helloes Peter
 
 
 
-missingKey.namedHelloCounting
-missingKey.namedHelloCounting
-missingKey.namedHelloCounting' . "\n", (string) $template->setFile(__DIR__ . '/files/Order.default.latte'));
+front.missingKey.namedHelloCounting
+front.missingKey.namedHelloCounting
+front.missingKey.namedHelloCounting' . "\n", (string) $template->setFile(__DIR__ . '/files/Order.default.latte'));
 	}
 
 

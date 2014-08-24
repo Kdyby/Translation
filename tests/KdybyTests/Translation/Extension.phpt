@@ -36,6 +36,8 @@ class ExtensionTest extends TestCase
 
 		Assert::same("Ahoj světe", $translator->translate('homepage.hello', NULL, array(), 'front', 'cs'));
 		Assert::same("Hello world", $translator->translate('homepage.hello', NULL, array(), 'front', 'en'));
+
+		Assert::same("front.not.found", $translator->translate('front.not.found'));
 	}
 
 }

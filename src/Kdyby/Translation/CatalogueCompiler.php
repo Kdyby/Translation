@@ -14,7 +14,6 @@ use Kdyby;
 use Nette;
 use Nette\Caching\Cache;
 use Nette\PhpGenerator as Code;
-use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\MessageCatalogueInterface;
 
 
@@ -140,7 +139,7 @@ EOF
 		}
 
 		$content = Code\Helpers::format(<<<EOF
-use Symfony\Component\Translation\MessageCatalogue;
+use Kdyby\Translation\MessageCatalogue;
 
 \$catalogue = new MessageCatalogue(?, ?);
 
