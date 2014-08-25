@@ -8,10 +8,10 @@ It implements `Nette\Localization\ITranslator` using [Symfony/Translation](https
 
 The best way to install Kdyby/Translation is using  [Composer](http://getcomposer.org/):
 
-With Nette stable 2.1, this is how you install the extension
+With Nette stable 2.2, this is how you install the extension
 
 ```sh
-$ composer require kdyby/translation:~1.1
+$ composer require kdyby/translation:~2.0
 ```
 
 and you can enable the extension using your neon config
@@ -53,15 +53,10 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 	/** @persistent */
 	public $locale;
 
-	/** @var \Kdyby\Translation\Translator */
-	protected $translator;
+	/** @var \Kdyby\Translation\Translator @inject */
+	public $translator;
 
-	public function injectTranslator(\Kdyby\Translation\Translator $translator)
-	{
-		$this->translator = $translator;
-	}
-
-	// ...
+	// rest of your BasePresenter
 }
 ```
 
