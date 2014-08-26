@@ -104,7 +104,7 @@ missingKey.namedHelloCounting' . "\n", (string) $template->setFile(__DIR__ . '/f
 		$translator->setFallbackLocales(array('cs_CZ', 'cs'));
 		$translator->setLocale('cs');
 
-		return $container->getByType('Nette\Bridges\ApplicationLatte\TemplateFactory')->createTemplate(new ControlMock());
+		return $container->getByType('Nette\Bridges\ApplicationLatte\ITemplateFactory')->createTemplate(new ControlMock());
 	}
 
 }
