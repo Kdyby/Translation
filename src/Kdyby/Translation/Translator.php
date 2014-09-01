@@ -130,7 +130,7 @@ class Translator extends BaseTranslator implements ITranslator
 		}
 
 		if ($domain === NULL) {
-			if (strpos($message, '.') !== FALSE && strpos($message, ' ') === FALSE) {
+			if ($this->identifyAsIdentificator($message)) {
 				list($domain, $message) = explode('.', $message, 2);
 
 			} else {
@@ -164,7 +164,10 @@ class Translator extends BaseTranslator implements ITranslator
 
 		$result = parent::trans($id, $parameters, $domain, $locale);
 		if ($this->panel !== NULL && $id === $result) { // probably untranslated
-			$this->panel->markUntranslated($id);
+			if ($this->identifyAsIdentificator($id)) {
+				$result = $domain . '.' . $id;	
+			}
+			$this->panel->markUntranslated($result);
 		}
 
 		return $result;
@@ -192,7 +195,10 @@ class Translator extends BaseTranslator implements ITranslator
 		}
 
 		if ($this->panel !== NULL && $id === $result) { // probably untranslated
-			$this->panel->markUntranslated($id);
+			if ($this->identifyAsIdentificator($id)) {
+				$result = $domain . '.' . $id;
+			}
+			$this->panel->markUntranslated($result);
 		}
 
 		return $result;
@@ -241,7 +247,7 @@ class Translator extends BaseTranslator implements ITranslator
 	public function getLocale()
 	{
 		if ($this->locale === NULL) {
-			$this->setLocale($this->localeResolver->resolve($this));
+			$this->locale = $this->localeResolver->resolve($this);
 		}
 
 		return $this->locale;
@@ -294,6 +300,17 @@ class Translator extends BaseTranslator implements ITranslator
 	protected function computeFallbackLocales($locale)
 	{
 		return $this->fallbackResolver->compute($this, $locale);
+	}
+
+
+
+	/**
+	 * @param string $message
+	 * @return bool
+	 */
+	private function identifyAsIdentificator($message)
+	{
+		return strpos($message, '.') !== FALSE && strpos($message, ' ') === FALSE;
 	}
 
 
