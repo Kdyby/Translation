@@ -33,6 +33,18 @@ class TranslationLoader extends Nette\Object
 	 * @var array|LoaderInterface[]
 	 */
 	private $loaders = array();
+	/** @var  IMessagePreprocessor */
+	private $messagePreprocessor;
+
+
+
+	/**
+	 * @param IMessagePreprocessor $messagePreprocessor
+	 */
+	public function setMessagePreprocessor(IMessagePreprocessor $messagePreprocessor)
+	{
+		$this->messagePreprocessor = $messagePreprocessor;
+	}
 
 
 
@@ -83,7 +95,14 @@ class TranslationLoader extends Nette\Object
 			throw new LoaderNotFoundException(sprintf('The "%s" translation loader is not registered.', $resource[0]));
 		}
 
-		$catalogue->addCatalogue($this->loaders[$format]->load($resource, $catalogue->getLocale(), $domain));
+		$messageCatalogue = $this->loaders[$format]->load($resource, $catalogue->getLocale(), $domain);
+		if ($this->messagePreprocessor) {
+			$translations = $messageCatalogue->all();
+			foreach ($translations['messages'] as $key => $message) {
+				$messageCatalogue->set($key, $this->messagePreprocessor->process($message));
+			}
+		}
+		$catalogue->addCatalogue($messageCatalogue);
 	}
 
 }

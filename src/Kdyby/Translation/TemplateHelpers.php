@@ -13,6 +13,7 @@ namespace Kdyby\Translation;
 use Kdyby;
 use Latte\Engine;
 use Nette;
+use Nette\Utils\Html;
 
 
 
@@ -63,7 +64,8 @@ class TemplateHelpers extends Nette\Object
 			$count = NULL;
 		}
 
-		return $this->translator->translate($message, $count, (array) $parameters, $domain, $locale);
+		$translatedMessage = $this->translator->translate($message, $count, (array) $parameters, $domain, $locale);
+		return Html::el()->setHtml($translatedMessage);
 	}
 
 
