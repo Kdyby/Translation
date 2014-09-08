@@ -185,7 +185,10 @@ protected function createTemplate($class = NULL)
 {
 	$template = parent::createTemplate($class);
 	$template->registerHelperLoader(callback($this->translator->createTemplateHelpers(), 'loader'));
-
+	/**
+	* If you are using nette >= 2.2.x helper must register as follows:
+	* $template->getLatte()->addFilter(NULL, array($this->translator->createTemplateHelpers, 'loader'));
+	*/
 	return $template;
 }
 ```
