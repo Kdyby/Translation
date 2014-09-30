@@ -181,10 +181,16 @@ This macro needs one more thing - there must be registered class `Kdyby\Translat
 It's simple, all you have to do is add this to your `BasePresenter` and to your `BaseControl`, if you have any.
 
 ```php
+/**
+ * You don't have to do this, if you've registered the extension.
+ * It registers the helpers automatically.
+ */
 protected function createTemplate($class = NULL)
 {
 	$template = parent::createTemplate($class);
-	$template->registerHelperLoader(callback($this->translator->createTemplateHelpers(), 'loader'));
+
+	$this->translator->createTemplateHelpers()
+		->register($template->getLatte());
 
 	return $template;
 }
