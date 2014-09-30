@@ -179,12 +179,9 @@ Kdyby\Translation\Latte\TranslateMacros::install($engine->compiler);
 This macro needs one more thing - there must be registered class `Kdyby\Translation\TemplateHelpers` as a helper loader for your templates.
 
 It's simple, all you have to do is add this to your `BasePresenter` and to your `BaseControl`, if you have any.
+But you don't have to do this, if you've registered the `TranslationExtension`, it registers the helpers automatically.
 
 ```php
-/**
- * You don't have to do this, if you've registered the extension.
- * It registers the helpers automatically.
- */
 protected function createTemplate($class = NULL)
 {
 	$template = parent::createTemplate($class);
