@@ -144,14 +144,20 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$this->loadConsole($config);
 		}
 
-		$latteFactory = $builder->hasDefinition('nette.latteFactory')
-			? $builder->getDefinition('nette.latteFactory')
-			: $builder->getDefinition('nette.latte');
+		$registerToLatte = function (Nette\DI\ServiceDefinition $def) {
+			$def
+				->addSetup('Kdyby\Translation\Latte\TranslateMacros::install(?->getCompiler())', array('@self'))
+				->addSetup('addFilter', array('translate', array($this->prefix('@helpers'), 'translate')))
+				->addSetup('addFilter', array('getTranslator', array($this->prefix('@helpers'), 'getTranslator')));
+		};
 
-		$latteFactory
-			->addSetup('Kdyby\Translation\Latte\TranslateMacros::install(?->getCompiler())', array('@self'))
-			->addSetup('addFilter', array('translate', array($this->prefix('@helpers'), 'translate')))
-			->addSetup('addFilter', array('getTranslator', array($this->prefix('@helpers'), 'getTranslator')));
+		if ($builder->hasDefinition('nette.latteFactory')) {
+			$registerToLatte($builder->getDefinition('nette.latteFactory'));
+		}
+
+		if ($builder->hasDefinition('nette.latte')) {
+			$registerToLatte($builder->getDefinition('nette.latteFactory'));
+		}
 	}
 
 
