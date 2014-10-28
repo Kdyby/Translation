@@ -160,7 +160,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 			if ($this->panel !== NULL) {
 				$this->panel->markUntranslated($message);
 			}
-			$result = $message;
+			$result = strtr($message, $parameters);
 		}
 
 		return $result;
@@ -198,7 +198,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 			if ($this->panel !== NULL) {
 				$this->panel->markUntranslated($message);
 			}
-			$result = $message;
+			$result = strtr($message, $parameters);
 		}
 
 		return $result;
