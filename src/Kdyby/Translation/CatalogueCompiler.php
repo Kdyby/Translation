@@ -35,11 +35,6 @@ class CatalogueCompiler extends Nette\Object
 	private $fallbackResolver;
 
 	/**
-	 * @var LoadersInitializer
-	 */
-	private $loadersInitializer;
-
-	/**
 	 * @var CatalogueFactory
 	 */
 	private $catalogueFactory;
@@ -47,12 +42,11 @@ class CatalogueCompiler extends Nette\Object
 
 
 	public function __construct(Nette\Caching\IStorage $cacheStorage, FallbackResolver $fallbackResolver,
-		CatalogueFactory $catalogueFactory, LoadersInitializer $loadersInitializer)
+		CatalogueFactory $catalogueFactory)
 	{
 		$this->cache = new Cache($cacheStorage, 'Kdyby\\Translation\\Translator');
 		$this->fallbackResolver = $fallbackResolver;
 		$this->catalogueFactory = $catalogueFactory;
-		$this->loadersInitializer = $loadersInitializer;
 	}
 
 
@@ -92,7 +86,6 @@ class CatalogueCompiler extends Nette\Object
 				return $availableCatalogues;
 			}
 
-			$this->loadersInitializer->initialize($translator);
 			$this->catalogueFactory->createCatalogue($translator, $availableCatalogues, $locale);
 			$this->cache->save($cacheKey, $availableCatalogues[$locale]->all());
 			return $availableCatalogues;
@@ -102,7 +95,6 @@ class CatalogueCompiler extends Nette\Object
 
 		$cached = $compiled = $this->cache->load($cacheKey);
 		if ($compiled === NULL) {
-			$this->loadersInitializer->initialize($translator);
 			$this->catalogueFactory->createCatalogue($translator, $availableCatalogues, $locale);
 			$this->cache->save($cacheKey, $compiled = $this->compilePhpCache($translator, $availableCatalogues, $locale));
 			$cached = $this->cache->load($cacheKey);

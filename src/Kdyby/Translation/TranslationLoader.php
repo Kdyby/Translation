@@ -24,7 +24,7 @@ use Symfony\Component\Translation\MessageCatalogue;
  * @author Michel Salib <michelsalib@hotmail.com>
  * @author Filip Procházka <filip@prochazka.su>
  */
-class TranslationLoader extends Nette\Object
+class TranslationLoader extends Nette\Object implements IResourceLoader
 {
 
 	/**
@@ -33,6 +33,27 @@ class TranslationLoader extends Nette\Object
 	 * @var array|LoaderInterface[]
 	 */
 	private $loaders = array();
+
+	/**
+	 * @var array
+	 */
+	private $serviceIds = array();
+
+	/**
+	 * @var Nette\DI\Container
+	 */
+	private $serviceLocator;
+
+
+
+	/**
+	 * @internal
+	 */
+	public function injectServiceIds($serviceIds, Nette\DI\Container $serviceLocator)
+	{
+		$this->serviceIds = $serviceIds;
+		$this->serviceLocator = $serviceLocator;
+	}
 
 
 
@@ -50,6 +71,21 @@ class TranslationLoader extends Nette\Object
 
 
 	/**
+	 * @return LoaderInterface[]
+	 */
+	public function getLoaders()
+	{
+		foreach ($this->serviceIds as $format => $loaderId) {
+			$this->loaders[$format] = $this->serviceLocator->getService($loaderId);
+		}
+		$this->serviceIds = array();
+
+		return $this->loaders;
+	}
+
+
+
+	/**
 	 * Loads translation messages from a directory to the catalogue.
 	 *
 	 * @param string           $directory the directory to look into
@@ -57,7 +93,7 @@ class TranslationLoader extends Nette\Object
 	 */
 	public function loadMessages($directory, MessageCatalogue $catalogue)
 	{
-		foreach ($this->loaders as $format => $loader) {
+		foreach ($this->getLoaders() as $format => $loader) {
 			// load any existing translation files
 			$extension = $catalogue->getLocale() . '.' . $format;
 			foreach (Finder::findFiles('*.' . $extension)->from($directory) as $file) {
@@ -80,7 +116,12 @@ class TranslationLoader extends Nette\Object
 	public function loadResource($format, $resource, $domain, MessageCatalogue $catalogue)
 	{
 		if (!isset($this->loaders[$format])) {
-			throw new LoaderNotFoundException(sprintf('The "%s" translation loader is not registered.', $resource[0]));
+			if (!isset($this->serviceIds[$format])) {
+				throw new LoaderNotFoundException(sprintf('The "%s" translation loader is not registered.', $resource[0]));
+			}
+
+			$this->loaders[$format] = $this->serviceLocator->getService($this->serviceIds[$format]);
+			unset($this->serviceIds[$format]);
 		}
 
 		$catalogue->addCatalogue($this->loaders[$format]->load($resource, $catalogue->getLocale(), $domain));

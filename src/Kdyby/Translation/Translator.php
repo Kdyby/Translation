@@ -13,10 +13,16 @@ namespace Kdyby\Translation;
 use Kdyby;
 use Kdyby\Translation\Diagnostics\Panel;
 use Nette;
+use Nette\Utils\ObjectMixin;
+use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\Translator as BaseTranslator;
 
 
+
+if (!class_exists('Nette\Utils\ObjectMixin')) {
+	class_alias('Nette\ObjectMixin', 'Nette\Utils\ObjectMixin');
+}
 
 /**
  * Translator.
@@ -48,6 +54,11 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	private $catalogueFactory;
 
 	/**
+	 * @var IResourceLoader
+	 */
+	private $translationsLoader;
+
+	/**
 	 * @var Panel
 	 */
 	private $panel;
@@ -65,14 +76,16 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 * @param CatalogueCompiler $catalogueCompiler
 	 * @param CatalogueFactory $catalogueFactory
 	 * @param FallbackResolver $fallbackResolver
+	 * @param IResourceLoader $loader
 	 */
 	public function __construct(IUserLocaleResolver $localeResolver, MessageSelector $selector, CatalogueCompiler $catalogueCompiler,
-		CatalogueFactory $catalogueFactory, FallbackResolver $fallbackResolver)
+		CatalogueFactory $catalogueFactory, FallbackResolver $fallbackResolver, IResourceLoader $loader)
 	{
 		$this->localeResolver = $localeResolver;
 		$this->catalogueCompiler = $catalogueCompiler;
 		$this->catalogueFactory = $catalogueFactory;
 		$this->fallbackResolver = $fallbackResolver;
+		$this->translationsLoader = $loader;
 
 		parent::__construct(NULL, $selector);
 	}
@@ -202,6 +215,28 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 		}
 
 		return $result;
+	}
+
+
+
+	/**
+	 * @param string $format
+	 * @param LoaderInterface $loader
+	 */
+	public function addLoader($format, LoaderInterface $loader)
+	{
+		parent::addLoader($format, $loader);
+		$this->translationsLoader->addLoader($format, $loader);
+	}
+
+
+
+	/**
+	 * @return \Symfony\Component\Translation\Loader\LoaderInterface[]
+	 */
+	protected function getLoaders()
+	{
+		return $this->translationsLoader->getLoaders();
 	}
 
 
@@ -348,7 +383,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	public function __call($name, $args)
 	{
-		return Nette\ObjectMixin::call($this, $name, $args);
+		return ObjectMixin::call($this, $name, $args);
 	}
 
 
@@ -364,7 +399,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	public static function __callStatic($name, $args)
 	{
-		return Nette\ObjectMixin::callStatic(get_called_class(), $name, $args);
+		return ObjectMixin::callStatic(get_called_class(), $name, $args);
 	}
 
 
@@ -386,9 +421,9 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 			list($class, $name) = explode('::', $name);
 		}
 		if ($callback === NULL) {
-			return Nette\ObjectMixin::getExtensionMethod($class, $name);
+			return ObjectMixin::getExtensionMethod($class, $name);
 		} else {
-			Nette\ObjectMixin::setExtensionMethod($class, $name, $callback);
+			ObjectMixin::setExtensionMethod($class, $name, $callback);
 		}
 	}
 
@@ -404,7 +439,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	public function &__get($name)
 	{
-		return Nette\ObjectMixin::get($this, $name);
+		return ObjectMixin::get($this, $name);
 	}
 
 
@@ -420,7 +455,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	public function __set($name, $value)
 	{
-		Nette\ObjectMixin::set($this, $name, $value);
+		ObjectMixin::set($this, $name, $value);
 	}
 
 
@@ -434,7 +469,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	public function __isset($name)
 	{
-		return Nette\ObjectMixin::has($this, $name);
+		return ObjectMixin::has($this, $name);
 	}
 
 
@@ -449,7 +484,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	public function __unset($name)
 	{
-		Nette\ObjectMixin::remove($this, $name);
+		ObjectMixin::remove($this, $name);
 	}
 
 }

@@ -16,7 +16,6 @@ use Nette;
 use Nette\DI\Statement;
 use Nette\PhpGenerator as Code;
 use Nette\Reflection;
-use Nette\Utils\Arrays;
 use Nette\Utils\Finder;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
@@ -125,10 +124,6 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 		$builder->addDefinition($this->prefix('selector'))
 			->setClass('Symfony\Component\Translation\MessageSelector')
-			->setInject(FALSE);
-
-		$builder->addDefinition($this->prefix('loadersInitializer'))
-			->setClass('Kdyby\Translation\LoadersInitializer')
 			->setInject(FALSE);
 
 		$builder->addDefinition($this->prefix('extractor'))
@@ -296,18 +291,14 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		}
 
 		$this->loaders = array();
-		$loader = $builder->getDefinition($this->prefix('loader'));
 		foreach ($builder->findByTag(self::LOADER_TAG) as $loaderId => $meta) {
 			Validators::assert($meta, 'string:2..');
-
-			$this->loaders[$loaderId][] = $meta;
-			$loader->addSetup('addLoader', array($meta, '@' . $loaderId));
-
 			$builder->getDefinition($loaderId)->setAutowired(FALSE)->setInject(FALSE);
+			$this->loaders[$meta] = $loaderId;
 		}
 
-		$builder->getDefinition($this->prefix('loadersInitializer'))
-			->setArguments(array($this->loaders))
+		$builder->getDefinition($this->prefix('loader'))
+			->addSetup('injectServiceIds', array($this->loaders))
 			->setInject(FALSE);
 
 		foreach ($this->compiler->getExtensions() as $extension) {
@@ -325,7 +316,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 			$translator = $builder->getDefinition($this->prefix('default'));
 
-			foreach (Arrays::flatten($this->loaders) as $format) {
+			foreach (array_keys($this->loaders) as $format) {
 				foreach (Finder::findFiles('*.*.' . $format)->from($dirs) as $file) {
 					/** @var \SplFileInfo $file */
 					if ($m = Strings::match($file->getFilename(), '~^(?P<domain>.*?)\.(?P<locale>[^\.]+)\.' . preg_quote($format) . '$~')) {
@@ -357,35 +348,31 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 
-		foreach ($this->loaders as $id => $knownFormats) {
-			if (!in_array($format, $knownFormats, TRUE)) {
-				continue;
+		if (!isset($this->loaders[$format])) {
+			return;
+		}
+
+		try {
+			$def = $builder->getDefinition($this->loaders[$format]);
+			$refl = Reflection\ClassType::from($def->factory ? $def->factory->entity : $def->class);
+			if (($method = $refl->getConstructor()) && $method->getNumberOfRequiredParameters() > 1) {
+				return;
 			}
 
-			try {
-				$def = $builder->getDefinition($id);
-				$refl = Reflection\ClassType::from($def->factory ? $def->factory->entity : $def->class);
-				if (($method = $refl->getConstructor()) && $method->getNumberOfRequiredParameters() > 1) {
-					continue;
-				}
-
-				$loader = $refl->newInstance();
-				if (!$loader instanceof LoaderInterface) {
-					continue;
-				}
-
-			} catch (\ReflectionException $e) {
-				continue;
+			$loader = $refl->newInstance();
+			if (!$loader instanceof LoaderInterface) {
+				return;
 			}
 
-			try {
-				$loader->load($file, $locale, $domain);
+		} catch (\ReflectionException $e) {
+			return;
+		}
 
-			} catch (\Exception $e) {
-				throw new InvalidResourceException("Resource $file is not valid and cannot be loaded.", 0, $e);
-			}
+		try {
+			$loader->load($file, $locale, $domain);
 
-			break;
+		} catch (\Exception $e) {
+			throw new InvalidResourceException("Resource $file is not valid and cannot be loaded.", 0, $e);
 		}
 	}
 
