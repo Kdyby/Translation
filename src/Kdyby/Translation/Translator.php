@@ -49,11 +49,6 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	private $fallbackResolver;
 
 	/**
-	 * @var CatalogueFactory
-	 */
-	private $catalogueFactory;
-
-	/**
 	 * @var IResourceLoader
 	 */
 	private $translationsLoader;
@@ -78,12 +73,11 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 * @param FallbackResolver $fallbackResolver
 	 * @param IResourceLoader $loader
 	 */
-	public function __construct(IUserLocaleResolver $localeResolver, MessageSelector $selector, CatalogueCompiler $catalogueCompiler,
-		CatalogueFactory $catalogueFactory, FallbackResolver $fallbackResolver, IResourceLoader $loader)
+	public function __construct(IUserLocaleResolver $localeResolver, MessageSelector $selector,
+		CatalogueCompiler $catalogueCompiler, FallbackResolver $fallbackResolver, IResourceLoader $loader)
 	{
 		$this->localeResolver = $localeResolver;
 		$this->catalogueCompiler = $catalogueCompiler;
-		$this->catalogueFactory = $catalogueFactory;
 		$this->fallbackResolver = $fallbackResolver;
 		$this->translationsLoader = $loader;
 
@@ -246,7 +240,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	public function addResource($format, $resource, $locale, $domain = NULL)
 	{
-		$this->catalogueFactory->addResource($format, $resource, $locale, $domain);
+		$this->catalogueCompiler->addResource($format, $resource, $locale, $domain);
 		parent::addResource($format, $resource, $locale, $domain);
 		$this->availableResourceLocales[$locale] = TRUE;
 	}
