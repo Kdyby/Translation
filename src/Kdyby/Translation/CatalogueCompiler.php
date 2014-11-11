@@ -62,6 +62,19 @@ class CatalogueCompiler extends Nette\Object
 
 
 	/**
+	 * @param string $format
+	 * @param string $resource
+	 * @param string $locale
+	 * @param string|NULL $domain
+	 */
+	public function addResource($format, $resource, $locale, $domain = NULL)
+	{
+		$this->catalogueFactory->addResource($format, $resource, $locale, $domain);
+	}
+
+
+
+	/**
 	 * @param Translator $translator
 	 * @param MessageCatalogueInterface[] $availableCatalogues
 	 * @param string $locale
