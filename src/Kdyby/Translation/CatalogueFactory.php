@@ -29,7 +29,7 @@ class CatalogueFactory extends Nette\Object
 	private $fallbackResolver;
 
 	/**
-	 * @var TranslationLoader
+	 * @var IResourceLoader
 	 */
 	private $loader;
 
@@ -40,7 +40,7 @@ class CatalogueFactory extends Nette\Object
 
 
 
-	public function __construct(FallbackResolver $fallbackResolver, TranslationLoader $loader)
+	public function __construct(FallbackResolver $fallbackResolver, IResourceLoader $loader)
 	{
 		$this->fallbackResolver = $fallbackResolver;
 		$this->loader = $loader;

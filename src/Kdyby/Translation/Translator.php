@@ -14,6 +14,7 @@ use Kdyby;
 use Kdyby\Translation\Diagnostics\Panel;
 use Nette;
 use Nette\Utils\ObjectMixin;
+use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\Translator as BaseTranslator;
 
@@ -53,6 +54,11 @@ class Translator extends BaseTranslator implements ITranslator
 	private $catalogueFactory;
 
 	/**
+	 * @var IResourceLoader
+	 */
+	private $translationsLoader;
+
+	/**
 	 * @var Panel
 	 */
 	private $panel;
@@ -70,14 +76,16 @@ class Translator extends BaseTranslator implements ITranslator
 	 * @param CatalogueCompiler $catalogueCompiler
 	 * @param CatalogueFactory $catalogueFactory
 	 * @param FallbackResolver $fallbackResolver
+	 * @param IResourceLoader $loader
 	 */
 	public function __construct(IUserLocaleResolver $localeResolver, MessageSelector $selector, CatalogueCompiler $catalogueCompiler,
-		CatalogueFactory $catalogueFactory, FallbackResolver $fallbackResolver)
+		CatalogueFactory $catalogueFactory, FallbackResolver $fallbackResolver, IResourceLoader $loader)
 	{
 		$this->localeResolver = $localeResolver;
 		$this->catalogueCompiler = $catalogueCompiler;
 		$this->catalogueFactory = $catalogueFactory;
 		$this->fallbackResolver = $fallbackResolver;
+		$this->translationsLoader = $loader;
 
 		parent::__construct(NULL, $selector);
 	}
@@ -207,6 +215,28 @@ class Translator extends BaseTranslator implements ITranslator
 		}
 
 		return $result;
+	}
+
+
+
+	/**
+	 * @param string $format
+	 * @param LoaderInterface $loader
+	 */
+	public function addLoader($format, LoaderInterface $loader)
+	{
+		parent::addLoader($format, $loader);
+		$this->translationsLoader->addLoader($format, $loader);
+	}
+
+
+
+	/**
+	 * @return \Symfony\Component\Translation\Loader\LoaderInterface[]
+	 */
+	protected function getLoaders()
+	{
+		return $this->translationsLoader->getLoaders();
 	}
 
 
