@@ -101,6 +101,14 @@ class TranslatorTest extends TestCase
 		), $catalogueFactory->getResources());
 	}
 
+
+
+	public function testAvailableLocales()
+	{
+		$translator = $this->createTranslator();
+		Assert::same(array('cs_CZ', 'en_US', 'sk_SK'), $translator->getAvailableLocales());
+	}
+
 }
 
 \run(new TranslatorTest());
