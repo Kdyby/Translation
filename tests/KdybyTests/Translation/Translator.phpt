@@ -52,6 +52,26 @@ class TranslatorTest extends TestCase
 		}, 'InvalidArgumentException');
 	}
 
+
+
+	public function testAddLoader()
+	{
+		$container = $this->createContainer();
+
+		$loader = new Kdyby\Translation\TranslationLoader();
+
+		/** @var Kdyby\Translation\Translator $translator */
+		$translator = $container->createInstance('Kdyby\Translation\Translator', array(
+			'localeResolver' => $container->getService('translation.userLocaleResolver'),
+			'loader' => $loader
+		));
+
+		Assert::same(array(), $loader->getLoaders());
+
+		$translator->addLoader('neon', $neonLoader = new Kdyby\Translation\Loader\NeonFileLoader());
+		Assert::same(array('neon' => $neonLoader), $loader->getLoaders());
+	}
+
 }
 
 \run(new TranslatorTest());
