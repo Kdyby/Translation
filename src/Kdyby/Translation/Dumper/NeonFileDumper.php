@@ -10,7 +10,7 @@
 
 namespace Kdyby\Translation\Dumper;
 
-use Nette\Utils\Neon;
+use Nette\Neon\Neon;
 use Symfony\Component\Translation\Dumper\FileDumper;
 use Symfony\Component\Translation\MessageCatalogue;
 
