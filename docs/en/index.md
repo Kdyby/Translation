@@ -21,25 +21,6 @@ extensions:
 	translation: Kdyby\Translation\DI\TranslationExtension
 ```
 
-You might also wanna add the `@dev` stability flag if you like to live on the edge.
-
-
-
-And if you're using old stable Nette `2.0.*`, there is release for you but it's not developed anymore, only bugfix patches are being released.
-
-```sh
-$ composer require kdyby/translation:~0.10
-```
-
-and you have to register it in `app/bootstrap.php`
-
-
-```php
-Kdyby\Translation\DI\TranslationExtension::register($configurator);
-
-return $configurator->createContainer();
-```
-
 
 ## Setup
 
