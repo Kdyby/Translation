@@ -23,7 +23,9 @@ use Nette;
 class PhpFileStorage extends Nette\Caching\Storages\FileStorage implements Nette\Caching\IStorage
 {
 
-	/** @var string */
+	/**
+	 * @var string
+	 */
 	public $hint;
 
 
