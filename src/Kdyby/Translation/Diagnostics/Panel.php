@@ -54,7 +54,7 @@ class Panel extends Nette\Object implements IBarPanel
 	/**
 	 * @var array
 	 */
-	private $resourceWhitelist = array();
+	private $localeWhitelist = array();
 
 	/**
 	 * @var array|Kdyby\Translation\IUserLocaleResolver[]
@@ -151,7 +151,7 @@ class Panel extends Nette\Object implements IBarPanel
 			}
 
 			$panel[] = '<h2>Ignored resources</h2>';
-			$panel[] = '<p>Whitelist config: ' . implode(', ', array_map($h, $this->resourceWhitelist)) . '</p>';
+			$panel[] = '<p>Whitelist config: ' . implode(', ', array_map($h, $this->localeWhitelist)) . '</p>';
 			$panel[] = $this->renderResources($this->ignoredResources);
 		}
 
@@ -246,9 +246,9 @@ class Panel extends Nette\Object implements IBarPanel
 
 
 
-	public function setResourceWhitelist($whitelist)
+	public function setLocaleWhitelist($whitelist)
 	{
-		$this->resourceWhitelist = $whitelist;
+		$this->localeWhitelist = $whitelist;
 	}
 
 

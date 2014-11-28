@@ -68,6 +68,11 @@ class Translator extends BaseTranslator implements ITranslator
 	 */
 	private $defaultLocale;
 
+	/**
+	 * @var string
+	 */
+	private $localeWhitelist;
+
 
 
 	/**
@@ -240,13 +245,35 @@ class Translator extends BaseTranslator implements ITranslator
 
 
 	/**
+	 * @param array $whitelist
+	 * @return Translator
+	 */
+	public function setLocaleWhitelist(array $whitelist = NULL)
+	{
+		$this->localeWhitelist = self::buildWhitelistRegexp($whitelist);
+	}
+
+
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function addResource($format, $resource, $locale, $domain = NULL)
 	{
+		if ($this->localeWhitelist && !preg_match($this->localeWhitelist, $locale)) {
+			if ($this->panel) {
+				$this->panel->addIgnoredResource($format, $resource, $locale, $domain);
+			}
+			return;
+		}
+
 		$this->catalogueCompiler->addResource($format, $resource, $locale, $domain);
 		parent::addResource($format, $resource, $locale, $domain);
 		$this->availableResourceLocales[$locale] = TRUE;
+
+		if ($this->panel) {
+			$this->panel->addResource($format, $resource, $locale, $domain);
+		}
 	}
 
 
@@ -374,6 +401,17 @@ class Translator extends BaseTranslator implements ITranslator
 		}
 
 		return array($domain, $message);
+	}
+
+
+
+	/**
+	 * @param null|string $whitelist
+	 * @return null|string
+	 */
+	public static function buildWhitelistRegexp($whitelist)
+	{
+		return $whitelist ? '~^(' . implode('|', $whitelist) . ')~i' : NULL;
 	}
 
 

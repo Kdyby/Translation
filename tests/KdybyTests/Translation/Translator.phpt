@@ -109,6 +109,36 @@ class TranslatorTest extends TestCase
 		Assert::same(array('cs_CZ', 'en_US', 'sk_SK'), $translator->getAvailableLocales());
 	}
 
+
+
+	public function dataWhitelistRegexp()
+	{
+		return array(
+			array('cs', TRUE),
+			array('cs_CZ', TRUE),
+			array('en', TRUE),
+			array('en_US', TRUE),
+			array('en_GB', TRUE),
+			array('de', TRUE),
+			array('fr', FALSE),
+			array('hu', FALSE),
+			array('eu', FALSE),
+			array('ru', FALSE),
+		);
+	}
+
+
+
+	/**
+	 * @dataProvider dataWhitelistRegexp
+	 */
+	public function testWhitelistRegexp($locale, $isMatching)
+	{
+		$regexp = Kdyby\Translation\Translator::buildWhitelistRegexp(array('cs', 'en', 'de'));
+
+		Assert::same($isMatching, (bool) preg_match($regexp, $locale));
+	}
+
 }
 
 \run(new TranslatorTest());

@@ -56,11 +56,8 @@ To change the default language, place this in your `app/config/config.neon`
 ```yml
 translation:
 	default: cs
-	whitelist: [cs, en, de] #....
 	fallback: [cs_CZ, cs]
 ```
-
-Whitelist has default value `[cs, en]`, it's used in compile-time and prevents loading of resources that will not be used.
 
 
 ## Usage
@@ -195,6 +192,25 @@ Enables and disables Nette debugger bar panel
 translation:
 	debugger: off
 ```
+
+### Whitelisting of resources
+
+You might happen to have a multilingual system, that already has loads fo translations available, but you only need, let's say, 3.
+Nice example is `symfony/validator`, it's translated to lots of languages but you don't want to process all of them.
+
+Whitelist is used in compile-time and prevents loading of resources that will not be used.
+
+It's by default disabled, but you can enabled it by passing an array of regular expressions, where the simples might be simple `cs` or `en`.
+
+```yml
+translation:
+	whitelist: [cs, en, de]
+```
+
+This allows you to include components like `symfony/validator` and still have relevant output of `Translator::getAvailableLocales()`.
+If you wouldn't enable the whitelisting, instead of only locales you wanna use in your current app,
+you'll see all the locales of all the resources that are added by each component.
+
 
 ### Locale resolvers
 
