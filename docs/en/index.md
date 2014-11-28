@@ -219,7 +219,7 @@ translation:
 
 There are several resolvers that take care of figuring out what locale should be used in translator as default.
 
-Special case of resolvers is DefaultLocaleResolver that is configured by `translation: default:`
+Default locale can be configured by `translation: default:`
 
 #### Session
 

@@ -51,7 +51,7 @@ class ChainResolver extends Nette\Object implements IUserLocaleResolver
 			}
 		}
 
-		return NULL;
+		return $translator->getDefaultLocale();
 	}
 
 }

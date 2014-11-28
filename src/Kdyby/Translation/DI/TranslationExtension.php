@@ -80,6 +80,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$translator = $builder->addDefinition($this->prefix('default'))
 			->setClass('Kdyby\Translation\Translator', array($this->prefix('@userLocaleResolver')))
 			->addSetup('?->setTranslator(?)', array($this->prefix('@userLocaleResolver.param'), '@self'))
+			->addSetup('setDefaultLocale', array($config['default']))
 			->setInject(FALSE);
 
 		Validators::assertField($config, 'fallback', 'list');
@@ -181,13 +182,9 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$chain = $builder->addDefinition($this->prefix('userLocaleResolver'))
 			->setClass('Kdyby\Translation\IUserLocaleResolver')
 			->setFactory('Kdyby\Translation\LocaleResolver\ChainResolver')
-			->addSetup('addResolver', array(new Statement('Kdyby\Translation\LocaleResolver\DefaultLocale', array($config['default']))))
 			->setInject(FALSE);
 
-		$resolvers = array(
-			new Statement('Kdyby\Translation\LocaleResolver\DefaultLocale', array($config['default']))
-		);
-
+		$resolvers = array();
 		if ($config['resolvers'][self::RESOLVER_HEADER]) {
 			$resolvers[] = $this->prefix('@userLocaleResolver.acceptHeader');
 			$chain->addSetup('addResolver', array($this->prefix('@userLocaleResolver.acceptHeader')));
