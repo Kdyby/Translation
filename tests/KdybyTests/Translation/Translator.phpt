@@ -72,6 +72,35 @@ class TranslatorTest extends TestCase
 		Assert::same(array('neon' => $neonLoader), $loader->getLoaders());
 	}
 
+
+
+	public function testAddResource()
+	{
+		$container = $this->createContainer();
+
+		/** @var Kdyby\Translation\CatalogueFactory $catalogueFactory */
+		$catalogueFactory = $container->createInstance('Kdyby\Translation\CatalogueFactory');
+
+		/** @var Kdyby\Translation\CatalogueCompiler $catalogueCompiler */
+		$catalogueCompiler = $container->createInstance('Kdyby\Translation\CatalogueCompiler', array(
+			'catalogueFactory' => $catalogueFactory,
+		));
+
+		/** @var Kdyby\Translation\Translator $translator */
+		$translator = $container->createInstance('Kdyby\Translation\Translator', array(
+			'catalogueCompiler' => $catalogueCompiler,
+			'localeResolver' => $container->getService('translation.userLocaleResolver')
+		));
+
+		Assert::same(array(), $catalogueFactory->getResources());
+
+		$translator->addResource('neon', __DIR__ . '/files/front.cs_CZ.neon', 'cs_CZ', 'front');
+
+		Assert::same(array(
+			__DIR__ . '/files/front.cs_CZ.neon'
+		), $catalogueFactory->getResources());
+	}
+
 }
 
 \run(new TranslatorTest());

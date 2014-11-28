@@ -59,6 +59,23 @@ class CatalogueFactory extends Nette\Object
 
 
 	/**
+	 * @return array
+	 */
+	public function getResources()
+	{
+		$list = array();
+		foreach ($this->resources as $locale => $resources) {
+			foreach ($resources as $meta) {
+				$list[] = $meta[1]; // resource file
+			}
+		}
+
+		return $list;
+	}
+
+
+
+	/**
 	 * @param Translator $translator
 	 * @param MessageCatalogueInterface[] $availableCatalogues
 	 * @param string $locale
