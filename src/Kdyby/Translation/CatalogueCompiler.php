@@ -61,6 +61,12 @@ class CatalogueCompiler extends Nette\Object
 
 
 
+	public function invalidateCache()
+	{
+		$this->cache->clean([Cache::ALL => TRUE]);
+	}
+
+
 	/**
 	 * @param string $format
 	 * @param string $resource
