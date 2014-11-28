@@ -56,6 +56,8 @@ class LatteExtractor extends Nette\Object implements ExtractorInterface
 	{
 		$buffer = NULL;
 		$parser = new Parser();
+		$parser->shortNoEscape = TRUE;
+
 		foreach ($tokens = $parser->parse(file_get_contents($file)) as $token) {
 			if ($token->type !== $token::MACRO_TAG || !in_array($token->name, array('_', '/_'), TRUE)) {
 				if ($buffer !== NULL) {
