@@ -52,7 +52,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	 * @var array
 	 */
 	public $defaults = array(
-		// 'whitelist' => array('cs', 'en'),
+		'whitelist' => NULL, // array('cs', 'en'),
 		'default' => 'en',
 		// 'fallback' => array('en_US', 'en'), // using custom merge strategy becase Nette's config merger appends lists of values
 		'dirs' => array('%appDir%/lang', '%appDir%/locale'),
@@ -90,6 +90,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			->setClass('Kdyby\Translation\Translator', array($this->prefix('@userLocaleResolver')))
 			->addSetup('?->setTranslator(?)', array($this->prefix('@userLocaleResolver.param'), '@self'))
 			->addSetup('setDefaultLocale', array($config['default']))
+			->addSetup('setLocaleWhitelist', array($config['whitelist']))
 			->setInject(FALSE);
 
 		Validators::assertField($config, 'fallback', 'list');
@@ -102,7 +103,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		if ($config['debugger']) {
 			$builder->addDefinition($this->prefix('panel'))
 				->setClass('Kdyby\Translation\Diagnostics\Panel', array(dirname($builder->expand('%appDir%'))))
-				->addSetup('setResourceWhitelist', array($config['whitelist']));
+				->addSetup('setLocaleWhitelist', array($config['whitelist']));
 
 			$translator->addSetup('?->register(?)', array($this->prefix('@panel'), '@self'));
 			$catalogueCompiler->addSetup('enableDebugMode');
@@ -311,30 +312,34 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 				$builder->addDependency($dir);
 			}
 
-			$translator = $builder->getDefinition($this->prefix('default'));
+			$this->loadResourcesFromDirs($dirs);
+		}
+	}
 
-			foreach (array_keys($this->loaders) as $format) {
-				foreach (Finder::findFiles('*.*.' . $format)->from($dirs) as $file) {
-					/** @var \SplFileInfo $file */
-					if ($m = Strings::match($file->getFilename(), '~^(?P<domain>.*?)\.(?P<locale>[^\.]+)\.' . preg_quote($format) . '$~')) {
-						if (!in_array(substr($m['locale'], 0, 2), $config['whitelist'])) {
-							if ($config['debugger']) {
-								$builder->getDefinition($this->prefix('panel'))
-									->addSetup('addIgnoredResource', array($format, $file->getPathname(), $m['locale'], $m['domain']));
-							}
-							continue; // ignore
-						}
 
-						$this->validateResource($format, $file->getPathname(), $m['locale'], $m['domain']);
-						$translator->addSetup('addResource', array($format, $file->getPathname(), $m['locale'], $m['domain']));
-						$builder->addDependency($file->getPathname());
 
-						if ($config['debugger']) {
-							$builder->getDefinition($this->prefix('panel'))
-								->addSetup('addResource', array($format, $file->getPathname(), $m['locale'], $m['domain']));
-						}
-					}
+	protected function loadResourcesFromDirs($dirs)
+	{
+		$builder = $this->getContainerBuilder();
+		$config = $this->getConfig();
+
+		$whitelistRegexp = Kdyby\Translation\Translator::buildWhitelistRegexp($config['whitelist']);
+		$translator = $builder->getDefinition($this->prefix('default'));
+
+		foreach (array_keys($this->loaders) as $format) {
+			foreach (Finder::findFiles('*.*.' . $format)->from($dirs) as $file) {
+				/** @var \SplFileInfo $file */
+				if (!$m = Strings::match($file->getFilename(), '~^(?P<domain>.*?)\.(?P<locale>[^\.]+)\.' . preg_quote($format) . '$~')) {
+					continue;
 				}
+
+				if ($whitelistRegexp && !preg_match($whitelistRegexp, $m['locale']) && $builder->parameters['productionMode']) {
+					continue; // ignore in production mode, there is no need to pass the ignored resources
+				}
+
+				$this->validateResource($format, $file->getPathname(), $m['locale'], $m['domain']);
+				$translator->addSetup('addResource', array($format, $file->getPathname(), $m['locale'], $m['domain']));
+				$builder->addDependency($file->getPathname());
 			}
 		}
 	}
@@ -406,7 +411,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	 */
 	public function getConfig(array $defaults = NULL, $expand = TRUE)
 	{
-		return parent::getConfig($this->defaults) + array('fallback' => array('en_US'), 'whitelist' => array('cs', 'en'));
+		return parent::getConfig($this->defaults) + array('fallback' => array('en_US'));
 	}
 
 
