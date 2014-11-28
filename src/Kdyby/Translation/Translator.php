@@ -296,7 +296,9 @@ class Translator extends BaseTranslator implements ITranslator
 	 */
 	public function getAvailableLocales()
 	{
-		return array_keys($this->availableResourceLocales);
+		$locales = array_keys($this->availableResourceLocales);
+		sort($locales);
+		return $locales;
 	}
 
 
