@@ -47,7 +47,7 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 
 
 
-	public function translate($message, $count = NULL, array $parameters = array(), $domain = NULL, $locale = NULL)
+	public function translate($message, $count = NULL, $parameters = array(), $domain = NULL, $locale = NULL)
 	{
 		if (is_array($count)) {
 			$locale = $domain ? : NULL;
