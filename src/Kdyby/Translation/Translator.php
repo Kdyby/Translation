@@ -63,6 +63,11 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	private $availableResourceLocales = array();
 
+	/**
+	 * @var string
+	 */
+	private $defaultLocale;
+
 
 
 	/**
@@ -280,6 +285,29 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 		}
 
 		return $this->locale;
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function getDefaultLocale()
+	{
+		return $this->defaultLocale;
+	}
+
+
+
+	/**
+	 * @param string $locale
+	 * @return Translator
+	 */
+	public function setDefaultLocale($locale)
+	{
+		self::assertValidLocale($locale);
+		$this->defaultLocale = $locale;
+		return $this;
 	}
 
 
