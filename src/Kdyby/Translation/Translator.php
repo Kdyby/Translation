@@ -74,7 +74,6 @@ class Translator extends BaseTranslator implements ITranslator
 	 * @param IUserLocaleResolver $localeResolver
 	 * @param MessageSelector $selector The message selector for pluralization
 	 * @param CatalogueCompiler $catalogueCompiler
-	 * @param CatalogueFactory $catalogueFactory
 	 * @param FallbackResolver $fallbackResolver
 	 * @param IResourceLoader $loader
 	 */
