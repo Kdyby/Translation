@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Test: Kdyby\Translation\Phase.
+ * Test: Kdyby\Translation\Phrase.
  *
- * @testCase KdybyTests\Translation\PhaseTest
+ * @testCase KdybyTests\Translation\PhraseTest
  * @author Filip Procházka <filip@prochazka.su>
  * @package Kdyby\Translation
  */
