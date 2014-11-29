@@ -139,6 +139,16 @@ class TranslatorTest extends TestCase
 		Assert::same($isMatching, (bool) preg_match($regexp, $locale));
 	}
 
+
+
+	public function testNonIdTranslations()
+	{
+		$translator = $this->createTranslator();
+		$translator->setLocale('cs');
+
+		Assert::same("Ahoj světe", $translator->translate('Hello World')); // default domain is 'messages'
+	}
+
 }
 
 \run(new TranslatorTest());
