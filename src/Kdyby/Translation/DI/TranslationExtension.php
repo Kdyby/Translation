@@ -154,7 +154,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		}
 
 		if ($builder->hasDefinition('nette.latte')) {
-			$registerToLatte($builder->getDefinition('nette.latteFactory'));
+			$registerToLatte($builder->getDefinition('nette.latte'));
 		}
 	}
 
