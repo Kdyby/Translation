@@ -144,7 +144,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$self = $this;
 		$registerToLatte = function (Nette\DI\ServiceDefinition $def) use ($self) {
 			$def
-				->addSetup('Kdyby\Translation\Latte\TranslateMacros::install(?->getCompiler())', array('@self'))
+				->addSetup('?->onCompile[] = function($engine) { Kdyby\Translation\Latte\TranslateMacros::install($engine->getCompiler()); }', array('@self'))
 				->addSetup('addFilter', array('translate', array($self->prefix('@helpers'), 'translate')))
 				->addSetup('addFilter', array('getTranslator', array($self->prefix('@helpers'), 'getTranslator')));
 		};
