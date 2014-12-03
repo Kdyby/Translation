@@ -22,13 +22,17 @@ use Tester;
 abstract class TestCase extends Tester\TestCase
 {
 
-	protected function createContainer()
+	protected function createContainer($configName = NULL)
 	{
 		$config = new Nette\Configurator();
 		$config->setTempDirectory(TEMP_DIR);
 		$config->addParameters(array('appDir' => __DIR__));
 		Kdyby\Translation\DI\TranslationExtension::register($config);
 		$config->addConfig(__DIR__ . '/../nette-reset.neon');
+
+		if ($configName) {
+			$config->addConfig(__DIR__ . '/config/' . $configName . '.neon');
+		}
 
 		$container = $config->createContainer();
 		/** @var \Nette\DI\Container|\SystemContainer $container */
@@ -38,9 +42,9 @@ abstract class TestCase extends Tester\TestCase
 
 
 
-	protected function createTranslator()
+	protected function createTranslator($configName = NULL)
 	{
-		$container = $this->createContainer();
+		$container = $this->createContainer($configName);
 
 		$translator = $container->getByType('Nette\Localization\ITranslator');
 		/** @var Kdyby\Translation\Translator $translator */
