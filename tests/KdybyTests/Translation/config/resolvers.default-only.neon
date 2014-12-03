@@ -1,0 +1,6 @@
+translation:
+    default: cs
+    resolvers:
+        session: off
+        request: off
+        header: off
