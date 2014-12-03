@@ -27,8 +27,8 @@
 		"nette/reflection": "~2.2@dev",
 		"nette/utils": "~2.2@dev",
 
-		"symfony/translation": "~2.5",
-		"symfony/config": "~2.5"
+		"symfony/translation": "~2.6",
+		"symfony/config": "~2.6"
 	},
 	"suggest": {
 		"tracy/tracy": "Diagnostics tool from Nette",
