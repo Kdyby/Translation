@@ -283,7 +283,7 @@ class Panel extends Nette\Object implements IBarPanel
 
 	public function onRequest(Application $app, Request $request)
 	{
-		$snapshot = array('request' => $request, 'locale' => $this->translator->getLocale());
+		$snapshot = array('request' => $request, 'locale' => $this->translator->getLocale(), 'resolvers' => array());
 		foreach ($this->localeResolvers as $name => $resolver) {
 			$snapshot['resolvers'][$name] = $resolver->resolve($this->translator);
 		}
