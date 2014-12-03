@@ -267,8 +267,8 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 			return;
 		}
 
-		$this->catalogueCompiler->addResource($format, $resource, $locale, $domain);
 		parent::addResource($format, $resource, $locale, $domain);
+		$this->catalogueCompiler->addResource($format, $resource, $locale, $domain);
 		$this->availableResourceLocales[$locale] = TRUE;
 
 		if ($this->panel) {
@@ -333,7 +333,7 @@ class Translator extends BaseTranslator implements Nette\Localization\ITranslato
 	 */
 	public function setDefaultLocale($locale)
 	{
-		self::assertValidLocale($locale);
+		$this->assertValidLocale($locale);
 		$this->defaultLocale = $locale;
 		return $this;
 	}

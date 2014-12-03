@@ -19,8 +19,8 @@
 	"require": {
 		"nette/nette": "2.1.*@dev",
 
-		"symfony/translation": "~2.5",
-		"symfony/config": "~2.5"
+		"symfony/translation": "~2.6",
+		"symfony/config": "~2.6"
 	},
 	"suggest": {
 		"symfony/locale": "Locale component provides fallback code to handle cases when the intl extension is missing.",
