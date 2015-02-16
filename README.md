@@ -22,7 +22,7 @@ Installation
 The best way to install Kdyby/Translation is using the [Composer](http://getcomposer.org/):
 
 ```sh
-$ composer require kdyby/translation:~2.0
+$ composer require kdyby/translation
 ```
 
 
