@@ -54,9 +54,10 @@ If it fails, it tries to look at `Accept-Language` header, and if that fails, it
 To change the default language, place this in your `app/config/config.neon`
 
 ```yml
-translation:
-	default: cs
-	fallback: [cs_CZ, cs]
+parameters:
+	translation:
+		default: cs
+		fallback: [cs_CZ, cs]
 ```
 
 
