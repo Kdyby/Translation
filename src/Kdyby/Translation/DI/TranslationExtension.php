@@ -140,22 +140,6 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		if ($this->isRegisteredConsoleExtension()) {
 			$this->loadConsole($config);
 		}
-
-		$self = $this;
-		$registerToLatte = function (Nette\DI\ServiceDefinition $def) use ($self) {
-			$def
-				->addSetup('?->onCompile[] = function($engine) { Kdyby\Translation\Latte\TranslateMacros::install($engine->getCompiler()); }', array('@self'))
-				->addSetup('addFilter', array('translate', array($self->prefix('@helpers'), 'translate')))
-				->addSetup('addFilter', array('getTranslator', array($self->prefix('@helpers'), 'getTranslator')));
-		};
-
-		if ($builder->hasDefinition('nette.latteFactory')) {
-			$registerToLatte($builder->getDefinition('nette.latteFactory'));
-		}
-
-		if ($builder->hasDefinition('nette.latte')) {
-			$registerToLatte($builder->getDefinition('nette.latte'));
-		}
 	}
 
 
@@ -168,9 +152,6 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			->setClass('Kdyby\Translation\LocaleResolver\LocaleParamResolver')
 			->setAutowired(FALSE)
 			->setInject(FALSE);
-
-		$builder->getDefinition('application')
-			->addSetup('$service->onRequest[] = ?', array(array($this->prefix('@userLocaleResolver.param'), 'onRequest')));
 
 		$builder->addDefinition($this->prefix('userLocaleResolver.acceptHeader'))
 			->setClass('Kdyby\Translation\LocaleResolver\AcceptHeaderResolver')
@@ -204,10 +185,6 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		if ($config['debugger'] && interface_exists('Tracy\IBarPanel')) {
 			$builder->getDefinition($this->prefix('panel'))
 				->addSetup('setLocaleResolvers', array(array_reverse($resolvers)));
-
-			$builder->getDefinition('application')
-				->addSetup('$self = $this; $service->onStartup[] = function () use ($self) { $self->getService(?); }', array($this->prefix('default')))
-				->addSetup('$service->onRequest[] = ?', array(array($this->prefix('@panel'), 'onRequest')));
 		}
 	}
 
@@ -270,6 +247,33 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
+
+		$self = $this;
+		$registerToLatte = function (Nette\DI\ServiceDefinition $def) use ($self) {
+			$def
+				->addSetup('?->onCompile[] = function($engine) { Kdyby\Translation\Latte\TranslateMacros::install($engine->getCompiler()); }', array('@self'))
+				->addSetup('addFilter', array('translate', array($self->prefix('@helpers'), 'translate')))
+				->addSetup('addFilter', array('getTranslator', array($self->prefix('@helpers'), 'getTranslator')));
+		};
+
+		$latteFactoryService = $builder->getByType('Nette\Bridges\ApplicationLatte\ILatteFactory') ?: 'nette.latteFactory';
+		if ($builder->hasDefinition($latteFactoryService)) {
+			$registerToLatte($builder->getDefinition($latteFactoryService));
+		}
+
+		if ($builder->hasDefinition('nette.latte')) {
+			$registerToLatte($builder->getDefinition('nette.latte'));
+		}
+
+		$applicationService = $builder->getByType('Nette\Application\Application') ?: 'application';
+		$builder->getDefinition($applicationService)
+			->addSetup('$service->onRequest[] = ?', array(array($this->prefix('@userLocaleResolver.param'), 'onRequest')));
+
+		if ($config['debugger'] && interface_exists('Tracy\IBarPanel')) {
+			$builder->getDefinition($applicationService)
+				->addSetup('$self = $this; $service->onStartup[] = function () use ($self) { $self->getService(?); }', array($this->prefix('default')))
+				->addSetup('$service->onRequest[] = ?', array(array($this->prefix('@panel'), 'onRequest')));
+		}
 
 		Kdyby\Translation\Diagnostics\Panel::registerBluescreen();
 
