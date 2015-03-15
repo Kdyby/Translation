@@ -32,41 +32,41 @@ if (!class_exists('Nette\Neon\Neon')) {
 class NeonFileLoader extends ArrayLoader implements LoaderInterface
 {
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load($resource, $locale, $domain = 'messages')
-    {
-        if (!stream_is_local($resource)) {
-            throw new InvalidResourceException(sprintf('This is not a local file "%s".', $resource));
-        }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function load($resource, $locale, $domain = 'messages')
+	{
+		if (!stream_is_local($resource)) {
+			throw new InvalidResourceException(sprintf('This is not a local file "%s".', $resource));
+		}
 
-        if (!file_exists($resource)) {
-            throw new NotFoundResourceException(sprintf('File "%s" not found.', $resource));
-        }
+		if (!file_exists($resource)) {
+			throw new NotFoundResourceException(sprintf('File "%s" not found.', $resource));
+		}
 
-        try {
-            $messages = Neon\Neon::decode(file_get_contents($resource));
+		try {
+			$messages = Neon\Neon::decode(file_get_contents($resource));
 
-        } catch (Nette\Utils\NeonException $e) {
-            throw new InvalidResourceException(sprintf("Error parsing Neon: %s", $e->getMessage()), 0, $e);
+		} catch (Nette\Utils\NeonException $e) {
+			throw new InvalidResourceException(sprintf("Error parsing Neon: %s", $e->getMessage()), 0, $e);
 
-        } catch (Nette\Neon\Exception $e) {
-            throw new InvalidResourceException(sprintf("Error parsing Neon: %s", $e->getMessage()), 0, $e);
-        }
+		} catch (Nette\Neon\Exception $e) {
+			throw new InvalidResourceException(sprintf("Error parsing Neon: %s", $e->getMessage()), 0, $e);
+		}
 
-        if (empty($messages)) {
-            $messages = array();
-        }
+		if (empty($messages)) {
+			$messages = array();
+		}
 
-        if (!is_array($messages)) {
-            throw new InvalidResourceException(sprintf('The file "%s" must contain a Neon array.', $resource));
-        }
+		if (!is_array($messages)) {
+			throw new InvalidResourceException(sprintf('The file "%s" must contain a Neon array.', $resource));
+		}
 
-        $catalogue = parent::load($messages, $locale, $domain);
-        $catalogue->addResource(new FileResource($resource));
+		$catalogue = parent::load($messages, $locale, $domain);
+		$catalogue->addResource(new FileResource($resource));
 
-        return $catalogue;
-    }
+		return $catalogue;
+	}
 
 }

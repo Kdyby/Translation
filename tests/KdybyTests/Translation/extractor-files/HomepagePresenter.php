@@ -46,7 +46,7 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 			->addCondition($form::EQUAL, 1)
 				->addRule($form::FILLED, "The image is missing!", 4);
 
-	    $form->addSubmit("send", "Submit");
+		$form->addSubmit("send", "Submit");
 		$form->onSuccess[] = $this->saveSucceeded;
 
 		return $form;

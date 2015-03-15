@@ -124,4 +124,3 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 	}
 
 }
-

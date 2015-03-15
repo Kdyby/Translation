@@ -150,7 +150,7 @@ EOF
 		}
 
 		$content = Code\Helpers::format(<<<EOF
-use Kdyby\Translation\MessageCatalogue;
+use Kdyby\\Translation\\MessageCatalogue;
 
 \$catalogue = new MessageCatalogue(?, ?);
 
