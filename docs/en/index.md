@@ -63,7 +63,7 @@ translation:
 The default directory for translation files is `%appDir%/lang` and they have to be named in specific way.
 The mask is `<category>.<language>.<type>`, this means for example `app/lang/messages.en_US.neon`.
 
-This example file `messages.en_US.neon` would look like
+This example file `messages.en_US.neon` would look liket
 
 ```yml
 homepage:
@@ -106,7 +106,7 @@ But you cannot just paste the variable inside the message, how would you transla
 Instead of writing a translation for every possible iteration of the `$name` variable, you can replace the variable with a "placeholder".
 
 ```php
-$this->translator->translate("Hello %name%", NULL, array('name' => $name));
+$this->translator->translate("Hello %name%", ['name' => $name]);
 ```
 
 And we should probably move it to catalogue file right away
@@ -117,7 +117,7 @@ homepage:
 ```
 
 ```php
-$this->translator->translate('messages.homepage.helloName', NULL, array('name' => $name));
+$this->translator->translate('messages.homepage.helloName', ['name' => $name]);
 ```
 
 The translator will look for the given message, and replace the parameters after it finds the translation.
