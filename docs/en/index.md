@@ -63,7 +63,7 @@ translation:
 The default directory for translation files is `%appDir%/lang` and they have to be named in specific way.
 The mask is `<category>.<language>.<type>`, this means for example `app/lang/messages.en_US.neon`.
 
-This example file `messages.en_US.neon` would look liket
+This example file `messages.en_US.neon` would look like
 
 ```yml
 homepage:
