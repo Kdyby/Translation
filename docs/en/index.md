@@ -22,8 +22,8 @@ extensions:
 
 ## Setup
 
-We have to somehow tell the translator, what is the language, that the user want's to see the website in.
-You should define persistent parameter `$locale` in your presenter. That way you can keep in url the language, or read it from the url.
+We have to tell the translator in what language user wants to see the website.
+You should define persistent parameter `$locale` in your presenter. That way you can keep the language in the url.
 Also, you probably want to inject the translator to the presenter, so let's write that code too.
 
 ```php
@@ -45,9 +45,8 @@ Example router might look like this
 $router[] = new Route('[<locale=cs cs|en>/]<presenter>/<action>', "Homepage:default");
 ```
 
-There is also an interface `IUserLocaleResolver` and few default implementations, they try to figure out, what language does the visitor wanna use the website in.
-The first one looks in request parameters and searches for `locale`, that's why there is the persistent parameter and example route.
-If it fails, it tries to look at `Accept-Language` header, and if that fails, it fallbacks to default locale.
+There is also an interface `IUserLocaleResolver` and few default implementations. These implementations try to figure out, in what language should the website be displayed.
+The first one looks in request parameters and searches for `locale`, that's why there is the persistent parameter and example route. If it fails, it tries to look at `Accept-Language` header, and if that fails, it fallbacks to default locale.
 
 To change the default language, place this in your `app/config/config.neon`
 
@@ -63,7 +62,7 @@ translation:
 The default directory for translation files is `%appDir%/lang` and they have to be named in specific way.
 The mask is `<category>.<language>.<type>`, this means for example `app/lang/messages.en_US.neon`.
 
-This example file `messages.en_US.neon` would look liket
+This example file `messages.en_US.neon` would look like this
 
 ```yml
 homepage:
@@ -193,12 +192,12 @@ translation:
 
 ### Whitelisting of resources
 
-You might happen to have a multilingual system, that already has loads fo translations available, but you only need, let's say, 3.
+You might happen to have a multilingual system, that has many available translations, but you only need, let's say, 3.
 Nice example is `symfony/validator`, it's translated to lots of languages but you don't want to process all of them.
 
 Whitelist is used in compile-time and prevents loading of resources that will not be used.
 
-It's by default disabled, but you can enabled it by passing an array of regular expressions, where the simples might be simple `cs` or `en`.
+It's disabled by default, but you can enable it by passing an array of regular expressions, where the simplest might be simple `cs` or `en`.
 
 ```yml
 translation:
@@ -206,8 +205,7 @@ translation:
 ```
 
 This allows you to include components like `symfony/validator` and still have relevant output of `Translator::getAvailableLocales()`.
-If you wouldn't enable the whitelisting, instead of only locales you wanna use in your current app,
-you'll see all the locales of all the resources that are added by each component.
+If you wouldn't enable the whitelisting, instead of only locales you want to use in your current app, you would see all the locales of all the resources that are added by each component.
 
 
 ### Locale resolvers
