@@ -49,6 +49,11 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 
 	public function translate($message, $count = NULL, $parameters = array(), $domain = NULL, $locale = NULL)
 	{
+		if ($message instanceof Phrase) {
+			$message = new Phrase($this->prefix . '.' . $message->message, $message->count, $message->parameters, $message->domain, $message->locale);
+			return $this->translator->translate($message);
+		}
+
 		if (is_array($count)) {
 			$locale = $domain ? : NULL;
 			$domain = $parameters ? : NULL;
