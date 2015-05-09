@@ -17,15 +17,15 @@
 		"issues": "https://github.com/kdyby/translation/issues"
 	},
 	"require": {
-		"latte/latte": "~2.2@dev",
-		"nette/caching": "~2.2@dev",
-		"nette/di": "~2.2@dev",
-		"nette/finder": "~2.2@dev",
-		"nette/http": "~2.2@dev",
-		"nette/neon": "~2.2@dev",
-		"nette/php-generator": "~2.2@dev",
-		"nette/reflection": "~2.2@dev",
-		"nette/utils": "~2.2@dev",
+		"latte/latte": "~2.3@dev",
+		"nette/caching": "~2.3@dev",
+		"nette/di": "~2.3@dev",
+		"nette/finder": "~2.3@dev",
+		"nette/http": "~2.3@dev",
+		"nette/neon": "~2.3@dev",
+		"nette/php-generator": "~2.3@dev",
+		"nette/reflection": "~2.3@dev",
+		"nette/utils": "~2.3@dev",
 
 		"symfony/translation": "~2.6",
 		"symfony/config": "~2.6"
@@ -72,7 +72,7 @@
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-master": "2.0-dev"
+			"dev-master": "2.2-dev"
 		}
 	}
 }
