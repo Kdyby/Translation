@@ -1,0 +1,41 @@
+{_front.noescape.namedHello, 3}
+{_front.noescape.namedHello, 3, [name => 'Peter']}
+{_front.noescape.namedHello, [name => 'Peter']}
+
+{_front.noescape.namedHello, 3, NULL, NULL, 'cs'}
+{_front.noescape.namedHello, 3, array('name' => 'Peter'), NULL, 'cs'}
+{_front.noescape.namedHello, array('name' => 'Peter'), NULL, 'cs'}
+
+{_front.missingKey.namedHello, 3, NULL, NULL, 'cs'}
+{_front.missingKey.namedHello, 3, array('name' => 'Peter'), NULL, 'cs'}
+{_front.missingKey.namedHello, array('name' => 'Peter'), NULL, 'cs'}
+
+{_front.noescape.namedHelloCounting, 3, NULL, NULL, 'en'}
+{_front.noescape.namedHelloCounting, 3, array('name' => 'Peter'), NULL, 'en'}
+{_front.noescape.namedHelloCounting, array('name' => 'Peter'), NULL, 'en'}
+
+{_front.missingKey.namedHelloCounting, 3, NULL, NULL, 'en'}
+{_front.missingKey.namedHelloCounting, 3, array('name' => 'Peter'), NULL, 'en'}
+{_front.missingKey.namedHelloCounting, array('name' => 'Peter'), NULL, 'en'}
+
+<hr>
+
+{_front.noescape.namedHello, 3|noescape}
+{_front.noescape.namedHello, 3, [name => 'Peter']|noescape}
+{_front.noescape.namedHello, [name => 'Peter']|noescape}
+
+{_front.noescape.namedHello, 3, NULL, NULL, 'cs'|noescape}
+{_front.noescape.namedHello, 3, array('name' => 'Peter'), NULL, 'cs'|noescape}
+{_front.noescape.namedHello, array('name' => 'Peter'), NULL, 'cs'|noescape}
+
+{_front.missingKey.namedHello, 3, NULL, NULL, 'cs'|noescape}
+{_front.missingKey.namedHello, 3, array('name' => 'Peter'), NULL, 'cs'|noescape}
+{_front.missingKey.namedHello, array('name' => 'Peter'), NULL, 'cs'|noescape}
+
+{_front.noescape.namedHelloCounting, 3, NULL, NULL, 'en'|noescape}
+{_front.noescape.namedHelloCounting, 3, array('name' => 'Peter'), NULL, 'en'|noescape}
+{_front.noescape.namedHelloCounting, array('name' => 'Peter'), NULL, 'en'|noescape}
+
+{_front.missingKey.namedHelloCounting, 3, NULL, NULL, 'en'|noescape}
+{_front.missingKey.namedHelloCounting, 3, array('name' => 'Peter'), NULL, 'en'|noescape}
+{_front.missingKey.namedHelloCounting, array('name' => 'Peter'), NULL, 'en'|noescape}

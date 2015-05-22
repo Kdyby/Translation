@@ -3,5 +3,10 @@ homepage:
 	namedHello: Ahoj %name%
 	namedHelloCounting: Ahoj %name%|Hola %name%
 
+noescape:
+	hello: Ahoj <b>world</b>
+	namedHello: Ahoj <b>%name%</b>
+	namedHelloCounting: Ahoj <i>%name%</i>|Hola <i>%name%</i>
+
 orderForm:
 	useCredits: Použít %count% kredit|Použít %count% kredity|Použít %count% kreditů

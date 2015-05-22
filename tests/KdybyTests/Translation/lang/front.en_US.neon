@@ -3,5 +3,10 @@ homepage:
 	namedHello: Hello %name%
 	namedHelloCounting: Hello %name%|Helloes %name%
 
+noescape:
+	hello: Hello <b>world</b>
+	namedHello: Hello <b>%name%</b>
+	namedHelloCounting: Hello <i>%name%</i>|Helloes <i>%name%</i>
+
 orderForm:
 	useCredits: Use %count% credit|Use %count% credits
