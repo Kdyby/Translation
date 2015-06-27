@@ -232,7 +232,10 @@ class Panel extends Nette\Object implements IBarPanel
 
 
 
-	public function choiceError(\Exception $e)
+	/**
+	 * @param \Exception|\Throwable $e
+	 */
+	public function choiceError($e)
 	{
 		$this->untranslated[] = $e;
 	}
@@ -305,7 +308,7 @@ class Panel extends Nette\Object implements IBarPanel
 
 
 
-	public static function renderException(\Exception $e = NULL)
+	public static function renderException($e = NULL)
 	{
 		if (!$e instanceof InvalidResourceException || !($previous = $e->getPrevious())) {
 			return NULL;
