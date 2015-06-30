@@ -54,6 +54,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			self::RESOLVER_REQUEST => TRUE,
 			self::RESOLVER_HEADER => TRUE,
 		),
+		'hookToMonolog' => TRUE, // checks for \Monolog\Logger and automatically hooks logging of untranslated messages
 	);
 
 	/**
@@ -98,6 +99,10 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 			$translator->addSetup('?->register(?)', array($this->prefix('@panel'), '@self'));
 			$catalogueCompiler->addSetup('enableDebugMode');
+		}
+
+		if ( $config['hookToMonolog'] && class_exists('\Monolog\Logger' ) ) {
+			$translator->addSetup('setLogger', array( '@Monolog\Logger' ));
 		}
 
 		$this->loadLocaleResolver($config);

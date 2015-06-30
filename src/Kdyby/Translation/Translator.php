@@ -73,7 +73,11 @@ class Translator extends BaseTranslator implements ITranslator
 	 */
 	private $localeWhitelist;
 
+	/** @var callable[] */
+	public $onUntranslated;
 
+	/** @var \Monolog\Logger */
+	private $logger;
 
 	/**
 	 * @param IUserLocaleResolver $localeResolver
@@ -134,6 +138,9 @@ class Translator extends BaseTranslator implements ITranslator
 			return $message;
 
 		} elseif ($message instanceof Nette\Utils\Html) {
+			if (!empty($this->onUntranslated) )
+				$this->onUntranslated( $message );
+
 			if ($this->panel) {
 				$this->panel->markUntranslated($message);
 			}
@@ -173,6 +180,9 @@ class Translator extends BaseTranslator implements ITranslator
 
 		$result = parent::trans($id, $parameters, $domain, $locale);
 		if ($result === "\x01") {
+			if (!empty($this->onUntranslated) )
+				$this->onUntranslated( $message );
+
 			if ($this->panel !== NULL) {
 				$this->panel->markUntranslated($message);
 			}
@@ -211,6 +221,9 @@ class Translator extends BaseTranslator implements ITranslator
 		}
 
 		if ($result === "\x01") {
+			if (!empty($this->onUntranslated) )
+				$this->onUntranslated( $message );
+
 			if ($this->panel !== NULL) {
 				$this->panel->markUntranslated($message);
 			}
@@ -416,6 +429,26 @@ class Translator extends BaseTranslator implements ITranslator
 		return $whitelist ? '~^(' . implode('|', $whitelist) . ')~i' : NULL;
 	}
 
+	/**
+	 * @param \Monolog\Logger $logger
+	 * @return Translator
+	 */
+	public function setLogger( $logger ) {
+		$this->logger = $logger;
+		if ( $logger !== NULL ) {
+			$this->onUntranslated[] = array( $this, 'logUntranslated' );
+		}
+		return $this;
+	}
+
+	/**
+	 * @param string $message
+	 */
+	public function logUntranslated($message) {
+		if ( $this->logger !== NULL ) {
+			$this->logger->warning( "Untranslated message '{$message}'" );
+		}
+	}
 
 
 	/*************************** Nette\Object ***************************/
