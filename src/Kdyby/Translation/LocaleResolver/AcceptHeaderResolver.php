@@ -29,9 +29,9 @@ class AcceptHeaderResolver extends Nette\Object implements Kdyby\Translation\IUs
 
 
 	/**
-	 * @param Nette\Http\Request $httpRequest
+	 * @param Nette\Http\IRequest $httpRequest
 	 */
-	public function __construct(Nette\Http\Request $httpRequest)
+	public function __construct(Nette\Http\IRequest $httpRequest)
 	{
 		$this->httpRequest = $httpRequest;
 	}
@@ -44,6 +44,10 @@ class AcceptHeaderResolver extends Nette\Object implements Kdyby\Translation\IUs
 	 */
 	public function resolve(Kdyby\Translation\Translator $translator)
 	{
+		if (!method_exists($this->httpRequest, 'detectLanguage')) {
+			return NULL;
+		}
+
 		$short = array_map(function ($locale) {
 			return substr($locale, 0, 2);
 		}, $translator->getAvailableLocales());
