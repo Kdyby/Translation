@@ -143,32 +143,7 @@ For the exact format and all it's possibilities please check [the current Symfon
 ## Templates
 
 You don't have to call this verbose method in templates, there is a macro prepared for you!
-If you're not hacking the `Latte\Engine` creation in any way, it will work right away, because the extension will register it.
-
-If not, you have to register it manually
-
-```php
-Kdyby\Translation\Latte\TranslateMacros::install($engine->compiler);
-```
-
-This macro needs one more thing - there must be registered class `Kdyby\Translation\TemplateHelpers` as a helper loader for your templates.
-
-It's simple, all you have to do is add this to your `BasePresenter` and to your `BaseControl`, if you have any.
-But you don't have to do this, if you've registered the `TranslationExtension`, it registers the helpers automatically.
-
-```php
-protected function createTemplate($class = NULL)
-{
-	$template = parent::createTemplate($class);
-
-	$this->translator->createTemplateHelpers()
-		->register($template->getLatte());
-
-	return $template;
-}
-```
-
-And that's all, you're ready to translate templates.
+If you're not hacking the `Latte\Engine` creation, it will work right away, because the extension will register it.
 
 ```smarty
 <p>{_messages.homepage.hello}</p>
