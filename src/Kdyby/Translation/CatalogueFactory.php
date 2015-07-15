@@ -95,13 +95,20 @@ class CatalogueFactory extends Nette\Object
 
 		$current = $availableCatalogues[$locale];
 
+		$chain = array($locale => TRUE);
 		foreach ($this->fallbackResolver->compute($translator, $locale) as $fallback) {
 			if (!isset($availableCatalogues[$fallback])) {
 				$this->doLoadCatalogue($availableCatalogues, $fallback);
 			}
 
-			$current->addFallbackCatalogue($availableCatalogues[$fallback]);
-			$current = $availableCatalogues[$fallback];
+			$newFallback = $availableCatalogues[$fallback];
+			if (($newFallbackFallback = $newFallback->getFallbackCatalogue()) && isset($chain[$newFallbackFallback->getLocale()])) {
+				break;
+			}
+
+			$current->addFallbackCatalogue($newFallback);
+			$current = $newFallback;
+			$chain[$fallback] = TRUE;
 		}
 
 		return $availableCatalogues[$locale];

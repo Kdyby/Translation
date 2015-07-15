@@ -60,7 +60,8 @@
 		"tracy/tracy": "~2.3@dev",
 
 		"symfony/console": "~2.3",
-		"nette/tester": "~1.4"
+		"nette/tester": "~1.4",
+		"mockery/mockery": "~0.9"
 	},
 	"autoload": {
 		"psr-0": {
