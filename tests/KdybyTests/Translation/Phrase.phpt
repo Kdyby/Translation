@@ -29,8 +29,6 @@ class PhraseTest extends TestCase
 
 	public function testCheckboxCaption()
 	{
-		Tester\Environment::skip('Nette\Forms\Controls\BaseControl::translate() line 5: phase must not be serialised to string before passing to translator');
-
 		$translator = $this->createTranslator();
 
 		$form = new Form();
