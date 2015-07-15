@@ -1,5 +1,7 @@
 language: php
 
+sudo: false
+
 env:
   matrix:
     - NETTE=nette-2.3-dev COMPOSER_EXTRA_ARGS=""
