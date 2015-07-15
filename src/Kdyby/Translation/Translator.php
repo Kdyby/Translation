@@ -20,10 +20,6 @@ use Symfony\Component\Translation\Translator as BaseTranslator;
 
 
 
-if (!class_exists('Nette\Utils\ObjectMixin')) {
-	class_alias('Nette\ObjectMixin', 'Nette\Utils\ObjectMixin');
-}
-
 /**
  * Translator.
  *

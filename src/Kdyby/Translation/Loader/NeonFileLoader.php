@@ -19,10 +19,6 @@ use Symfony\Component\Translation\Loader\ArrayLoader;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 
 
-if (!class_exists('Nette\Neon\Neon')) {
-	class_alias('Nette\Utils\Neon', 'Nette\Neon\Neon');
-}
-
 
 /**
  * Loads translations from Neon files.
