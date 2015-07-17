@@ -22,7 +22,7 @@ class AcceptHeaderResolver extends Nette\Object implements Kdyby\Translation\IUs
 {
 
 	/**
-	 * @var \Nette\Http\Request
+	 * @var Nette\Http\Request
 	 */
 	private $httpRequest;
 
@@ -39,20 +39,52 @@ class AcceptHeaderResolver extends Nette\Object implements Kdyby\Translation\IUs
 
 
 	/**
-	 * @param \Kdyby\Translation\Translator $translator
+	 * Detects language from the Accept-Language header.
+	 * This method uses the code from Nette\Http\Request::detectLanguage.
+	 * @link https://github.com/nette/http/blob/0d9ef49051fba799148ef877dd32928a68731766/src/Http/Request.php#L294-L326
+	 * @author David Grudl
+	 * @param Kdyby\Translation\Translator $translator
 	 * @return string|NULL
 	 */
 	public function resolve(Kdyby\Translation\Translator $translator)
 	{
-		if (!method_exists($this->httpRequest, 'detectLanguage')) {
+		$header = $this->httpRequest->getHeader('Accept-Language');
+		if (!$header) {
 			return NULL;
 		}
 
-		$short = array_map(function ($locale) {
-			return substr($locale, 0, 2);
-		}, $translator->getAvailableLocales());
+		$langs = [];
+		foreach ($translator->getAvailableLocales() as $locale) {
+			$langs[] = $locale;
+			if (strlen($locale) > 2) {
+				$langs[] = substr($locale, 0, 2);
+			}
+		}		
 
-		return $this->httpRequest->detectLanguage($short) ?: NULL;
+		if (!$langs) {
+			return NULL;
+		}
+
+		$s = strtolower($header);  // case insensitive
+		$s = strtr($s, '_', '-');  // cs_CZ means cs-CZ
+		rsort($langs);             // first more specific
+		preg_match_all('#(' . implode('|', $langs) . ')(?:-[^\s,;=]+)?\s*(?:;\s*q=([0-9.]+))?#', $s, $matches);
+
+		if (!$matches[0]) {
+			return NULL;
+		}
+
+		$max = 0;
+		$lang = NULL;
+		foreach ($matches[1] as $key => $value) {
+			$q = $matches[2][$key] === '' ? 1.0 : (float) $matches[2][$key];
+			if ($q > $max) {
+				$max = $q;
+				$lang = $value;
+			}
+		}
+
+		return $lang;
 	}
 
 }
