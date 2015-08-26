@@ -143,7 +143,7 @@ class Translator extends BaseTranslator implements ITranslator
 		$parameters = $tmp;
 
 		if ($count !== NULL && is_scalar($count)) {
-			return $this->transChoice($message, preg_replace('~[^0-9,.]~', '', $count), $parameters + array('%count%' => $count), $domain, $locale);
+			return $this->transChoice($message, preg_replace('~[^0-9,.\-]~', '', $count), $parameters + array('%count%' => $count), $domain, $locale);
 		}
 
 		return $this->trans($message, $parameters, $domain, $locale);
