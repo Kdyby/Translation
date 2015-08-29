@@ -30,7 +30,6 @@ abstract class DatabaseLoader implements IDatabaseLoader {
 
     public function addResources(Translator $translator)
     {
-        Debugger::barDump(get_called_class(), 'add resources');
         foreach ($this->getLocales() as $locale) {
 //            $translator->addResource('doctrine', new DatabaseResource('doctrine'), $locale);
             $translator->addResource($this->getResourceName(), $this->getResourceName(), $locale);

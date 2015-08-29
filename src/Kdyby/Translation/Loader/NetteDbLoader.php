@@ -50,14 +50,12 @@ class NetteDbLoader extends DatabaseLoader {
     }
 
     function load($resource, $locale, $domain = NULL) {
-        Debugger::barDump(func_get_args(), 'loading ndb');
         $catalogue = new MessageCatalogue($locale);
 
         $stmt = $this->db->table($this->table)
             ->select("`$this->key` AS `key`, `$this->locale` AS locale, `$this->translation` AS translation")
             ->where('locale = ?', $locale);
         $translations = $stmt->fetchAll();
-        Debugger::barDump($translations, 'translations');
         foreach($translations as $translation) {
 //            $catalogue->set($translation['key'], $translation['string'], $domain);
             if ($domain === NULL) {
@@ -86,7 +84,6 @@ class NetteDbLoader extends DatabaseLoader {
     {
         $stmt = $this->db->query("SELECT DISTINCT `$this->locale` as locale FROM $this->table");
         $locales = $stmt->fetchPairs('locale', 'locale');
-        Debugger::barDump($locales, 'locales ndb');
         return $locales;
     }
 

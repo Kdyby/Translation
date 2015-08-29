@@ -69,7 +69,6 @@ class DoctrineDumper implements IDatabaseDumper {
             ->setParameter('keys', $keys, Connection::PARAM_STR_ARRAY);
         $stmt = $qb->execute();
         $existingTranslations = array_column($stmt->fetchAll(), 'key'); //to get only one dimensional array of keys
-        Debugger::barDump($existingTranslations, 'existing translations');
         foreach ($messagesArray as $key => $translation) {
             $qb = $conn->createQueryBuilder();
             if (in_array($key, $existingTranslations)) {

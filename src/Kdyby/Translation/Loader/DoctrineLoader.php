@@ -48,7 +48,6 @@ class DoctrineLoader extends DatabaseLoader {
     }
 
     function load($resource, $locale, $domain = NULL) {
-        Debugger::barDump(func_get_args(), 'loading');
         $catalogue = new MessageCatalogue($locale);
 
         $conn = $this->em->getConnection();
@@ -61,7 +60,6 @@ class DoctrineLoader extends DatabaseLoader {
             ->setParameter('locale', $locale);
         $stmt = $qb->execute();
         $translations = $stmt->fetchAll();
-        Debugger::barDump($translations, 'translations');
         foreach($translations as $translation) {
             if ($domain === NULL) {
                 $key = $translation['key'];
@@ -93,7 +91,6 @@ class DoctrineLoader extends DatabaseLoader {
             ->from("`$this->table`");
         $stmt = $qb->execute();
         $locales = array_column($stmt->fetchAll(), 'locale');
-        Debugger::barDump($locales, 'locales');
         return $locales;
     }
 
