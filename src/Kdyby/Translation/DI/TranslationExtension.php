@@ -267,7 +267,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		}
 
 		foreach ($this->loadFromFile(__DIR__ . '/config/loaders.neon') as $format => $class) {
-			if (self::getClassReflection($class)->implementsInterface(Kdyby\Translation\Loader\IDatabaseLoader::class)) {
+			if ($class instanceof Kdyby\Translation\Loader\IDatabaseLoader) {
 				if (in_array($format, $loaders)) {
 					$builder->addDefinition($this->prefix('loader.' . $format))
 						->setClass($class, ['config' => $config['database']])
