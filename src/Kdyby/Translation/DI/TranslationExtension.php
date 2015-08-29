@@ -152,7 +152,6 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$this->loadConsole($config);
 		}
 
-		Tracy\Debugger::barDump($builder->findByTag(self::DATABASE_LOADER_TAG), 'idatabase loader classes');
 		foreach ($builder->findByTag(self::DATABASE_LOADER_TAG) as $dbLoader => $true) {
 			$translator->addSetup('?->addResources(?)', array('@'.$dbLoader, '@self'));
 		}
@@ -235,8 +234,6 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		}
 
 		foreach ($this->loadFromFile(__DIR__ . '/config/dumpers.neon') as $format => $class) {
-			Tracy\Debugger::barDump($class instanceof Kdyby\Translation\Dumper\IDatabaseDumper, $class);
-//			if ($class instanceof Kdyby\Translation\Dumper\IDatabaseDumper) {
 			if (self::getClassReflection($class)->implementsInterface('Kdyby\Translation\Dumper\IDatabaseDumper')) {
 				if (in_array($format, $loaders)) {
 					$builder->addDefinition($this->prefix('dumper.' . $format))
@@ -368,8 +365,6 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$builder->getDefinition($loaderId)->setAutowired(FALSE)->setInject(FALSE);
 			$this->loaders[$meta] = $loaderId;
 		}
-
-		Tracy\Debugger::barDump($this->loaders, 'loaders');
 
 		$builder->getDefinition($this->prefix('loader'))
 			->addSetup('injectServiceIds', array($this->loaders))
