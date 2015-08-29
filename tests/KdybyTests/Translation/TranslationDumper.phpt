@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test: Kdyby\Translation\TranslationLoader.
+ * Test: Kdyby\Translation\TranslationDumper.
  *
  * @testCase KdybyTests\Translation\TranslationLoaderTest
  * @author Filip Procházka <filip@prochazka.su>
@@ -17,7 +17,6 @@ use Symfony;
 use Tester;
 use Tester\Assert;
 use Doctrine;
-use Tracy\Debugger;
 
 require_once __DIR__ . '/../bootstrap.php';
 
@@ -26,7 +25,7 @@ require_once __DIR__ . '/../bootstrap.php';
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class TranslationLoaderTest extends TestCase
+class TranslationDumperTest extends TestCase
 {
 	/** @var Doctrine\DBAL\Connection $connection */
 	private $connection;
@@ -48,53 +47,58 @@ class TranslationLoaderTest extends TestCase
 	}
 
 
-	public function testAddLoaders()
-	{
-
-		$loader = new TranslationLoader();
-		Assert::same(array(), $loader->getLoaders());
-
-		$loader->addLoader('neon', $neonLoader = new Kdyby\Translation\Loader\NeonFileLoader());
-		$loader->addLoader('database', $dbLoader = new Kdyby\Translation\Loader\DoctrineLoader($this->connection));
-		Assert::same(array('neon' => $neonLoader, 'database' => $dbLoader), $loader->getLoaders());
-	}
-
-
-
-	public function testLoadResources()
+	public function testChangeTranslations()
 	{
 		$loader = new TranslationLoader();
-		$loader->addLoader('neon', new Kdyby\Translation\Loader\NeonFileLoader());
 		$loader->addLoader('database', $dbLoader = new Kdyby\Translation\Loader\DoctrineLoader($this->connection));
 
 		$catalogue = new Kdyby\Translation\MessageCatalogue('cs_CZ');
-		$loader->loadResource('neon', __DIR__ . '/lang/front.cs_CZ.neon', 'front', $catalogue);
 		$loader->loadResource('database', Kdyby\Translation\Resource\DatabaseResource::DOCTRINE, NULL, $catalogue);
 
-		Assert::true($catalogue->defines('homepage.hello', 'front'));
 		Assert::true($catalogue->defines('header', 'front'));
 		Assert::true($catalogue->defines('hello', 'messages'));
+		Assert::same('záhlaví', $catalogue->get('header', 'front'));
+		Assert::same('ahoj', $catalogue->get('hello', 'messages'));
 
-		$catalogue = new Kdyby\Translation\MessageCatalogue('en');
-		$loader->loadResource('database', Kdyby\Translation\Resource\DatabaseResource::DOCTRINE, NULL, $catalogue);
-//
-		Assert::true($catalogue->defines('header', 'front'));
-		Assert::true($catalogue->defines('hello', 'messages'));
+		$writer = $this->container->getByType('Symfony\Component\Translation\Writer\TranslationWriter');
+		$catalogue->set('header', 'úvodka', 'front');
+		$catalogue->set('hello', 'nazdar', 'messages');
+		$writer->writeTranslations($catalogue, 'database');
 
+		Assert::same('úvodka', $catalogue->get('header', 'front'));
+		Assert::same('nazdar', $catalogue->get('hello', 'messages'));
 	}
 
-	public function testLoadLocales()
+
+
+	public function testAddTranslations()
 	{
-		$dbLoader = new Kdyby\Translation\Loader\DoctrineLoader($this->connection);
-		Assert::same(array('cs_CZ', 'en'), $dbLoader->getLocales());
+		$loader = new TranslationLoader();
+		$loader->addLoader('database', $dbLoader = new Kdyby\Translation\Loader\DoctrineLoader($this->connection));
+
+		$catalogue = new Kdyby\Translation\MessageCatalogue('cs_CZ');
+		$loader->loadResource('database', Kdyby\Translation\Resource\DatabaseResource::DOCTRINE, NULL, $catalogue);
+
+		Assert::false($catalogue->defines('footer', 'messages'));
+		Assert::false($catalogue->defines('farewell', 'front'));
+
+
+		$writer = $this->container->getByType('Symfony\Component\Translation\Writer\TranslationWriter');
+		$catalogue->add(array('farewell' => 'Sbohem'), 'front');
+		$catalogue->add(array('footer' => 'Zápatí'), 'messages');
+		$writer->writeTranslations($catalogue, 'database');
+
+		Assert::true($catalogue->defines('footer', 'messages'));
+		Assert::true($catalogue->defines('farewell', 'front'));
 	}
 
 	public function tearDown()
 	{
 		parent::tearDown();
+
 		$this->connection->executeUpdate(file_get_contents(__DIR__ . '/../clear.sql'));
 	}
 
 }
 
-\run(new TranslationLoaderTest());
+\run(new TranslationDumperTest());
