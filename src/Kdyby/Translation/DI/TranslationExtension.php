@@ -35,7 +35,6 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	const DUMPER_TAG = 'translation.dumper';
 	const EXTRACTOR_TAG = 'translation.extractor';
 	const DATABASE_LOADER_TAG = 'translation.database.loader';
-	const DATABASE_DUMPER_TAG = 'translation.database.dumper';
 
 	const RESOLVER_REQUEST = 'request';
 	const RESOLVER_HEADER = 'header';
@@ -64,7 +63,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 				'translation' => 'translation'
 			],
 			'loaders' => NULL
-		)
+		),
 	);
 
 	/**
@@ -238,7 +237,6 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 				if (in_array($format, $loaders)) {
 					$builder->addDefinition($this->prefix('dumper.' . $format))
 						->setClass($class, ['config' => $config['database']])
-						->addTag(self::DATABASE_DUMPER_TAG)
 						->addTag(self::DUMPER_TAG, $format);
 				}
 			} else {
