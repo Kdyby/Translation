@@ -57,11 +57,10 @@ class NetteDbLoader extends DatabaseLoader {
             ->where('locale = ?', $locale);
         $translations = $stmt->fetchAll();
         foreach($translations as $translation) {
-//            $catalogue->set($translation['key'], $translation['string'], $domain);
             if ($domain === NULL) {
                 $key = $translation['key'];
                 if (Strings::contains($key, '.')) {
-                    $prefix = Strings::substring($key, 0, Strings::indexOf($key, '.'));
+                    $prefix = Strings::substring($key, 0, strpos($key, '.'));
                     $key = Strings::substring($key, Strings::length($prefix) + 1);  //plus one because of dot
                 } else {
                     $prefix = $domain;

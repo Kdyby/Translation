@@ -64,7 +64,7 @@ class NetteDbDumper implements IDatabaseDumper {
             ->select("`$this->key` AS `key`")
             ->where("locale  = ?", $locale)
             ->where("`key` IN (?)", $keys);
-        $existingTranslations = array_column($stmt->fetchAll(), 'key'); //to get only one dimensional array of keys
+        $existingTranslations = $stmt->fetchPairs('key', 'key'); //to get only one dimensional array of keys
         foreach ($messagesArray as $key => $translation) {
             if (in_array($key, $existingTranslations)) {
                 $this->db->table($this->table)
