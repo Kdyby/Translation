@@ -34,6 +34,8 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	const LOADER_TAG = 'translation.loader';
 	const DUMPER_TAG = 'translation.dumper';
 	const EXTRACTOR_TAG = 'translation.extractor';
+	const DATABASE_LOADER_TAG = 'translation.database.loader';
+	const DATABASE_DUMPER_TAG = 'translation.database.dumper';
 
 	const RESOLVER_REQUEST = 'request';
 	const RESOLVER_HEADER = 'header';
@@ -54,6 +56,15 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			self::RESOLVER_REQUEST => TRUE,
 			self::RESOLVER_HEADER => TRUE,
 		),
+		'database' => array(
+			'table' => 'translation',
+			'columns' => [
+				'key' => 'key',
+				'locale' => 'locale',
+				'translation' => 'translation'
+			],
+			'loaders' => NULL
+		)
 	);
 
 	/**
@@ -140,6 +151,12 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		if ($this->isRegisteredConsoleExtension()) {
 			$this->loadConsole($config);
 		}
+
+		Tracy\Debugger::barDump($builder->findByTag(self::DATABASE_LOADER_TAG), 'idatabase loader classes');
+		foreach ($builder->findByTag(self::DATABASE_LOADER_TAG) as $dbLoader => $true) {
+			$translator->addSetup('?->addResources(?)', array('@'.$dbLoader, '@self'));
+		}
+
 	}
 
 
@@ -207,11 +224,30 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	protected function loadDumpers()
 	{
 		$builder = $this->getContainerBuilder();
+		$config = $this->getConfig();
+
+		$loaders = $config['database']['loaders'];
+		if ($loaders === NULL) {
+			$loaders = [];
+		}
+		if (!is_array($loaders)) {
+			$loaders = [$loaders];
+		}
 
 		foreach ($this->loadFromFile(__DIR__ . '/config/dumpers.neon') as $format => $class) {
-			$builder->addDefinition($this->prefix('dumper.' . $format))
-				->setClass($class)
-				->addTag(self::DUMPER_TAG, $format);
+			if (self::getClassReflection($class)->implementsInterface(Kdyby\Translation\Dumper\IDatabaseDumper::class)) {
+				if (in_array($format, $loaders)) {
+					$builder->addDefinition($this->prefix('dumper.' . $format))
+						->setClass($class, ['config' => $config['database']])
+						->addTag(self::DATABASE_DUMPER_TAG)
+						->addTag(self::DUMPER_TAG, $format);
+				}
+			} else {
+				$builder->addDefinition($this->prefix('dumper.' . $format))
+					->setClass($class)
+					->addTag(self::DUMPER_TAG, $format);
+			}
+
 		}
 	}
 
@@ -220,14 +256,43 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	protected function loadLoaders()
 	{
 		$builder = $this->getContainerBuilder();
+		$config = $this->getConfig();
+
+		$loaders = $config['database']['loaders'];
+		if ($loaders === NULL) {
+			$loaders = [];
+		}
+		if (!is_array($loaders)) {
+			$loaders = [$loaders];
+		}
 
 		foreach ($this->loadFromFile(__DIR__ . '/config/loaders.neon') as $format => $class) {
-			$builder->addDefinition($this->prefix('loader.' . $format))
-				->setClass($class)
-				->addTag(self::LOADER_TAG, $format);
+			if (self::getClassReflection($class)->implementsInterface(Kdyby\Translation\Loader\IDatabaseLoader::class)) {
+				if (in_array($format, $loaders)) {
+					$builder->addDefinition($this->prefix('loader.' . $format))
+						->setClass($class, ['config' => $config['database']])
+						->addTag(self::DATABASE_LOADER_TAG)
+						->addTag(self::LOADER_TAG, $format);
+				}
+			} else {
+				$builder->addDefinition($this->prefix('loader.' . $format))
+					->setClass($class)
+					->addTag(self::LOADER_TAG, $format);
+			}
 		}
 	}
 
+
+	/**
+	 * Access to reflection.
+	 * @param $className
+	 * @return Reflection\ClassType|\ReflectionClass
+	 */
+	private static function getClassReflection($className)
+	{
+		$class = class_exists('Nette\Reflection\ClassType') ? 'Nette\Reflection\ClassType' : 'ReflectionClass';
+		return new $class($className);
+	}
 
 
 	protected function loadExtractors()
@@ -301,6 +366,8 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$builder->getDefinition($loaderId)->setAutowired(FALSE)->setInject(FALSE);
 			$this->loaders[$meta] = $loaderId;
 		}
+
+		Tracy\Debugger::barDump($this->loaders, 'loaders');
 
 		$builder->getDefinition($this->prefix('loader'))
 			->addSetup('injectServiceIds', array($this->loaders))
