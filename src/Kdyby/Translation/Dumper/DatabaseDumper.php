@@ -67,7 +67,7 @@ abstract class DatabaseDumper implements DumperInterface
                 $this->insert($key, $locale, $message);
             }
         }
-//        $this->commit();
+        $this->commit();
     }
 
     abstract public function getExistingKeys($keys, $locale);
@@ -79,4 +79,5 @@ abstract class DatabaseDumper implements DumperInterface
     abstract public function insert($key, $locale, $message);
 
     abstract public function update($key, $locale, $message);
+
 }
