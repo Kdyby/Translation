@@ -70,7 +70,6 @@ abstract class DatabaseLoader implements IDatabaseLoader {
             }
         }
 
-        Debugger::barDump($this->getLastUpdate($locale), 'last update');
         $catalogue->addResource(new DatabaseResource($resource, $this->getLastUpdate($locale)->getTimestamp()));
 
         return $catalogue;

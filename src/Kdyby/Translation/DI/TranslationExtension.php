@@ -246,7 +246,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$isDumper = true;
 		} else {
 			$loader = $config['database']['loader'];
-			if (in_array($loader, array_keys(self::$dbLoaders))) {	//if you register doctrine of nettedb loader, dumper is also registered
+			if (in_array($loader, array_keys(self::$dbLoaders))) { //if you register doctrine of nettedb loader, dumper is also registered
 				$isDumper = true;
 				$dumper = $loader;
 			}
