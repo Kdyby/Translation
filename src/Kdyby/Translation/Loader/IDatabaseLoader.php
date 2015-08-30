@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Azathoth
- * Date: 24. 8. 2015
- * Time: 13:01
- */
 
 namespace Kdyby\Translation\Loader;
 

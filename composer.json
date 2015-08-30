@@ -43,7 +43,7 @@
 		"nette/bootstrap": "~2.3@dev",
 		"nette/caching": "~2.3@dev",
 		"nette/component-model": "~2.2@dev",
-		"nette/database": "^2.3",
+		"nette/database": "~2.3@dev",
 		"nette/deprecated": "~2.2@dev",
 		"nette/di": "~2.3@dev",
 		"nette/finder": "~2.3@dev",
@@ -63,8 +63,7 @@
 		"symfony/console": "~2.3",
 		"nette/tester": "~1.4",
 		"mockery/mockery": "~0.9",
-		"kdyby/doctrine": "^2.3",
-		"nette/code-checker": "^2.5"
+		"kdyby/doctrine": "^2.3"
 	},
 	"autoload": {
 		"psr-0": {

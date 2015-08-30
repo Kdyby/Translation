@@ -60,7 +60,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			'columns' => [
 				'key' => 'key',
 				'locale' => 'locale',
-				'translation' => 'translation'
+				'message' => 'message'
 			],
 			'loaders' => NULL
 		),
@@ -233,11 +233,14 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		}
 
 		foreach ($this->loadFromFile(__DIR__ . '/config/dumpers.neon') as $format => $class) {
-			if (self::getClassReflection($class)->implementsInterface('Kdyby\Translation\Dumper\IDatabaseDumper')) {
+			if (in_array('Kdyby\Translation\Dumper\IDatabaseDumper', class_implements($class))) {
 				if (in_array($format, $loaders)) {
+					$columns = $config['database']['columns'];
 					$builder->addDefinition($this->prefix('dumper.' . $format))
-						->setClass($class, ['config' => $config['database']])
-						->addTag(self::DUMPER_TAG, $format);
+						->setClass($class)
+						->addTag(self::DUMPER_TAG, $format)
+						->addSetup('setTable', array($config['database']['table']))
+						->addSetup('setColumns', array($columns['key'], $columns['locale'], $columns['message']));
 				}
 			} else {
 				$builder->addDefinition($this->prefix('dumper.' . $format))
@@ -264,12 +267,15 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		}
 
 		foreach ($this->loadFromFile(__DIR__ . '/config/loaders.neon') as $format => $class) {
-			if (self::getClassReflection($class)->implementsInterface('Kdyby\Translation\Loader\IDatabaseLoader')) {
+			if (in_array('Kdyby\Translation\Loader\IDatabaseLoader', class_implements($class))) {
 				if (in_array($format, $loaders)) {
+					$columns = $config['database']['columns'];
 					$builder->addDefinition($this->prefix('loader.' . $format))
-						->setClass($class, ['config' => $config['database']])
+						->setClass($class)
 						->addTag(self::DATABASE_LOADER_TAG)
-						->addTag(self::LOADER_TAG, $format);
+						->addTag(self::LOADER_TAG, $format)
+						->addSetup('setTable', array($config['database']['table']))
+						->addSetup('setColumns', array($columns['key'], $columns['locale'], $columns['message']));
 				}
 			} else {
 				$builder->addDefinition($this->prefix('loader.' . $format))
@@ -277,18 +283,6 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 					->addTag(self::LOADER_TAG, $format);
 			}
 		}
-	}
-
-
-	/**
-	 * Access to reflection.
-	 * @param $className
-	 * @return Reflection\ClassType|\ReflectionClass
-	 */
-	private static function getClassReflection($className)
-	{
-		$class = class_exists('Nette\Reflection\ClassType') ? 'Nette\Reflection\ClassType' : 'ReflectionClass';
-		return new $class($className);
 	}
 
 
