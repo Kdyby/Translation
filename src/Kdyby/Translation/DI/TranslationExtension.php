@@ -56,7 +56,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			self::RESOLVER_HEADER => TRUE,
 		),
 		'database' => array(
-			'table' => 'translation',
+			'table' => 'translations',
 			'columns' => [
 				'key' => 'key',
 				'locale' => 'locale',
@@ -262,7 +262,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$builder->addDefinition($this->prefix('dumper.database'))
 				->setClass($class->entity)
 				->addTag(self::DUMPER_TAG, 'database')
-				->addSetup('setTable', array($config['database']['table']))
+				->addSetup('setTableName', array($config['database']['table']))
 				->addSetup('setColumns', array($columns['key'], $columns['locale'], $columns['message'], $columns['updatedAt']));
 		}
 	}
@@ -293,9 +293,19 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 				->setClass($class->entity)
 				->addTag(self::LOADER_TAG, 'database')
 				->addTag(self::DATABASE_LOADER_TAG, $loader)
-				->addSetup('setTable', array($config['database']['table']))
+				->addSetup('setTableName', array($config['database']['table']))
 				->addSetup('setColumns', array($columns['key'], $columns['locale'], $columns['message'], $columns['updatedAt']));
+
+//			for future use to modify mapping scheme
+//			if ($class->entity === 'Kdyby\Translation\Loader\DoctrineLoader') {
+//				$builder->addDefinition($this->prefix('listener'))
+//					->setClass('Kdyby\Translation\Listener\TranslationMetadataListener')
+//					->addTag(Kdyby\Events\DI\EventsExtension::TAG_SUBSCRIBER)
+//					->addSetup('setTableName', array($config['database']['table']))
+//					->addSetup('setColumns', array($columns['key'], $columns['locale'], $columns['message'], $columns['updatedAt']));
+//			}
 		}
+
 	}
 
 

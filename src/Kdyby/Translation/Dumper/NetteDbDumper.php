@@ -5,7 +5,7 @@ namespace Kdyby\Translation\Dumper;
 use Nette\Database\Context;
 use Nette\Utils\DateTime;
 
-class NetteDbDumper extends  DatabaseDumper {
+class NetteDbDumper extends DatabaseDumper {
 
     /** @var Context */
     private $db;
@@ -57,5 +57,16 @@ class NetteDbDumper extends  DatabaseDumper {
                 $this->message => $message,
                 $this->updatedAt => new \DateTime()
             ]);
+    }
+
+    public function createTable()
+    {
+        $this->db->query("CREATE TABLE `$this->table` (
+                          `$this->key` varchar(50) NOT NULL,
+                          `$this->locale` varchar(50) NOT NULL,
+                          `message` longtext,
+                          `updated_at` datetime NOT NULL,
+                          PRIMARY KEY (`$this->key`,`$this->locale`)
+                        );");
     }
 }

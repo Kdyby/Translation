@@ -9,7 +9,7 @@ abstract class DatabaseDumper implements DumperInterface
 {
 
     /** @var string */
-    protected $table = 'translation';
+    protected $table = 'translations';
 
     /** @var string */
     protected $key = 'key';
@@ -26,7 +26,7 @@ abstract class DatabaseDumper implements DumperInterface
     /**
      * @param string $table
      */
-    public function setTable($table)
+    public function setTableName($table)
     {
         $this->table = $table;
     }
@@ -80,4 +80,5 @@ abstract class DatabaseDumper implements DumperInterface
 
     abstract public function update($key, $locale, $message);
 
+    abstract public function createTable();
 }

@@ -15,7 +15,7 @@ use Tracy\Debugger;
 abstract class DatabaseLoader implements IDatabaseLoader {
 
     /** @var string */
-    protected $table = 'translation';
+    protected $table = 'translations';
 
     /** @var string */
     protected $key = 'key';
@@ -32,7 +32,7 @@ abstract class DatabaseLoader implements IDatabaseLoader {
     /**
      * @param string $table
      */
-    public function setTable($table)
+    public function setTableName($table)
     {
         $this->table = $table;
     }

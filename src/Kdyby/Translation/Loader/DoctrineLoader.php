@@ -3,26 +3,38 @@
 namespace Kdyby\Translation\Loader;
 
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
+use Doctrine\ORM\Tools\SchemaTool;
 use Kdyby\Doctrine\EntityManager;
-use Kdyby\Translation\ITranslator;
-use Kdyby\Translation\MessageCatalogue;
+use Kdyby\Doctrine\Mapping\ClassMetadata;
+use Kdyby\Translation\Listener\TranslationMetadataListener;
 use Kdyby\Translation\Resource\DatabaseResource;
-use Kdyby\Translation\Translator;
-use Nette\Utils\Strings;
-use Symfony\Component\Translation\Dumper\DumperInterface;
-use Symfony\Component\Translation\Loader\LoaderInterface;
 use Tracy\Debugger;
 
 class DoctrineLoader extends DatabaseLoader {
 
-    /** @var EntityManager */
-    private $em;
+    /** @var Connection */
+    private $conn;
+
+//    /** @var EntityManager */
+//    private $em;
+//
+//    /** @var AbstractSchemaManager */
+//    private $sm;
+//
+//    /** @var SchemaTool */
+//    private $schemaTool;
 
     /**
-     * @param EntityManager $em
+     * @param Connection $conn
      */
-    public function __construct(EntityManager $em) {
-        $this->em = $em;
+    public function __construct(Connection $conn) {
+        $this->conn = $conn;
+//        $this->setSchemaManager($schemaManager);
+//        $this->schemaTool = $schemaTool;
     }
 
     /**
@@ -30,8 +42,7 @@ class DoctrineLoader extends DatabaseLoader {
      */
     public function getLocales()
     {
-        $conn = $this->em->getConnection();
-        $qb = $conn->createQueryBuilder()
+        $qb = $this->conn->createQueryBuilder()
             ->addSelect("DISTINCT `$this->locale` AS locale")
             ->from("`$this->table`");
         $stmt = $qb->execute();
@@ -47,8 +58,7 @@ class DoctrineLoader extends DatabaseLoader {
 
     public function getTranslations($locale)
     {
-        $conn = $this->em->getConnection();
-        $qb = $conn->createQueryBuilder()
+        $qb = $this->conn->createQueryBuilder()
             ->addSelect("`$this->key` AS `key`")
             ->addSelect("`$this->locale` AS locale")
             ->addSelect("`$this->message` AS message")
@@ -64,8 +74,7 @@ class DoctrineLoader extends DatabaseLoader {
      */
     public function getLastUpdate($locale)
     {
-        $conn = $this->em->getConnection();
-        $qb = $conn->createQueryBuilder()
+        $qb = $this->conn->createQueryBuilder()
             ->addSelect("`$this->updatedAt` AS `updated_at`")
             ->from("`$this->table`")
             ->where("locale = :locale")
@@ -74,4 +83,51 @@ class DoctrineLoader extends DatabaseLoader {
             ->setParameter('locale', $locale);
         return new \DateTime($qb->execute()->fetchColumn());
     }
+
+//    /**
+//     * @param EntityManager $entityManager
+//     */
+//    public function setEntityManager(EntityManager $entityManager)
+//    {
+//        $this->em = $entityManager;
+//    }
+
+//    public function setSchemaManager(AbstractSchemaManager $schemaManager)
+//    {
+//        $this->sm = $schemaManager;
+//        Debugger::barDump($this->sm, 'schema added in schemaManager setter');
+////        if (!$this->sm->tablesExist($this->table)) {
+////            $table = $this->sm->createSchema()
+////                ->createTable($this->table);
+////            $table->addColumn($this->key, Type::STRING);
+////            $table->addColumn($this->locale, Type::STRING);
+////            $table->addColumn($this->message, Type::TEXT);
+////            $table->addColumn($this->updatedAt, Type::DATETIME);
+////            $this->sm->createTable($table);
+////        }
+//        Debugger::barDump($this->sm, 'schema added in schemaManager setter');
+//    }
+
+//    public function insertTable()
+//    {
+//        Debugger::barDump($this->sm, 'insert table');
+//        $metadata = new ClassMetadata(TranslationMetadataListener::FAKE_ENTITY_NAME);
+//        $builder = new ClassMetadataBuilder($metadata);
+//        $builder->addField("$this->key", 'string')
+//            ->addField("$this->locale", 'string')
+//            ->addField("$this->message", 'text')
+//            ->addField("$this->updatedAt", 'datetime');
+//        $metadata = $builder->getClassMetadata();
+//        $metadata->setIdentifier(array(
+//            $this->key => array('type' => 'string'),
+//            $this->locale => array('type' => 'string'),
+//        ));
+//        Debugger::barDump($metadata, 'metadata');
+//        $schema = $this->schemaTool->getSchemaFromMetadata([$metadata]);
+//        $queries = $schema->toSql($this->conn->getDatabasePlatform());
+////        $queries = $this->schemaTool->getCreateSchemaSql([$metadata]);
+////        $queries = $this->sm->createSchema()->toSql($this->conn->getDatabasePlatform());
+//        Debugger::barDump($queries, 'queries');
+//    }
+
 }
