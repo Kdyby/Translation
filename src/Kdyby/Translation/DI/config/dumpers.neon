@@ -8,5 +8,3 @@ qt: Symfony\Component\Translation\Dumper\QtFileDumper
 csv: Symfony\Component\Translation\Dumper\CsvFileDumper
 ini: Symfony\Component\Translation\Dumper\IniFileDumper
 res: Symfony\Component\Translation\Dumper\IcuResFileDumper
-doctrine: Kdyby\Translation\Dumper\DoctrineDumper
-nettedb: Kdyby\Translation\Dumper\NetteDbDumper

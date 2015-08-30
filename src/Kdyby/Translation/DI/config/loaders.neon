@@ -9,5 +9,3 @@ res: Symfony\Component\Translation\Loader\IcuResFileLoader
 dat: Symfony\Component\Translation\Loader\IcuDatFileLoader
 ini: Symfony\Component\Translation\Loader\IniFileLoader
 neon: Kdyby\Translation\Loader\NeonFileLoader
-doctrine: Kdyby\Translation\Loader\DoctrineLoader
-nettedb: Kdyby\Translation\Loader\NetteDbLoader

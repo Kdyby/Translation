@@ -3,6 +3,7 @@
 namespace Kdyby\Translation\Dumper;
 
 use Nette\Database\Context;
+use Nette\Utils\DateTime;
 
 class NetteDbDumper extends  DatabaseDumper {
 
@@ -42,7 +43,8 @@ class NetteDbDumper extends  DatabaseDumper {
             ->insert([
                 $this->key => $key,
                 $this->locale => $locale,
-                $this->message => $message
+                $this->message => $message,
+                $this->updatedAt => new \DateTime()
             ]);
     }
 
@@ -51,6 +53,9 @@ class NetteDbDumper extends  DatabaseDumper {
         $this->db->table($this->table)
             ->where("$this->key = ?", $key)
             ->where("$this->locale = ?", $locale)
-            ->update([$this->message => $message]);
+            ->update([
+                $this->message => $message,
+                $this->updatedAt => new \DateTime()
+            ]);
     }
 }

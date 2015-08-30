@@ -2,6 +2,7 @@
 
 namespace Kdyby\Translation\Loader;
 
+use Doctrine\Common\Collections\Criteria;
 use Kdyby\Doctrine\EntityManager;
 use Kdyby\Translation\ITranslator;
 use Kdyby\Translation\MessageCatalogue;
@@ -54,6 +55,23 @@ class DoctrineLoader extends DatabaseLoader {
             ->from("`$this->table`")
             ->where("locale = :locale")
             ->setParameter('locale', $locale);
-        return $qb->execute();
+        return $qb->execute()->fetchAll();
+    }
+
+    /**
+     * @param $locale
+     * @return \DateTime
+     */
+    public function getLastUpdate($locale)
+    {
+        $conn = $this->em->getConnection();
+        $qb = $conn->createQueryBuilder()
+            ->addSelect("`$this->updatedAt` AS `updated_at`")
+            ->from("`$this->table`")
+            ->where("locale = :locale")
+            ->orderBy('updated_at', Criteria::DESC)
+            ->setMaxResults(1)
+            ->setParameter('locale', $locale);
+        return new \DateTime($qb->execute()->fetchColumn());
     }
 }

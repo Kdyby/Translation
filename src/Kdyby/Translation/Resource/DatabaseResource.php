@@ -22,14 +22,18 @@ class DatabaseResource implements ResourceInterface
      */
     private $resource;
 
+    private $lastUpdated;
+
     /**
      * Constructor.
      *
      * @param string $resource The file path to the resource
+     * @param int $lastUpdated timestamp
      */
-    public function __construct($resource)
+    public function __construct($resource, $lastUpdated)
     {
         $this->resource = $resource;
+        $this->lastUpdated = $lastUpdated;
     }
 
     /**
@@ -53,7 +57,7 @@ class DatabaseResource implements ResourceInterface
      */
     public function isFresh($timestamp)
     {
-        return false;
+        return $this->lastUpdated <= $timestamp;
     }
 
 }

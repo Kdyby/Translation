@@ -47,4 +47,19 @@ class NetteDbLoader extends DatabaseLoader {
             ->where('locale = ?', $locale);
         return $stmt->fetchAll();
     }
+
+    /**
+     * @param $locale
+     * @return \DateTime
+     */
+    public function getLastUpdate($locale)
+    {
+        $stmt = $this->db->table($this->table)
+            ->select("`$this->updatedAt` AS `updated_at`")
+            ->where('locale = ?', $locale)
+            ->order('updated_at DESC')
+            ->limit(1);
+        return $stmt->fetchField('updated_at');
+    }
+
 }

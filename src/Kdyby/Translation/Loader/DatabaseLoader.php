@@ -26,6 +26,9 @@ abstract class DatabaseLoader implements IDatabaseLoader {
     /** @var string */
     protected $message = 'message';
 
+    /** @var string */
+    protected $updatedAt = 'updated_at';
+
     /**
      * @param string $table
      */
@@ -38,12 +41,14 @@ abstract class DatabaseLoader implements IDatabaseLoader {
      * @param string $key
      * @param string $locale
      * @param string $message
+     * @param string $updatedAt
      */
-    public function setColumns($key, $locale, $message)
+    public function setColumns($key, $locale, $message, $updatedAt)
     {
         $this->key = $key;
         $this->locale = $locale;
         $this->message = $message;
+        $this->updatedAt = $updatedAt;
     }
 
     function load($resource, $locale, $domain = NULL) {
@@ -65,7 +70,8 @@ abstract class DatabaseLoader implements IDatabaseLoader {
             }
         }
 
-        $catalogue->addResource(new DatabaseResource($resource));
+        Debugger::barDump($this->getLastUpdate($locale), 'last update');
+        $catalogue->addResource(new DatabaseResource($resource, $this->getLastUpdate($locale)->getTimestamp()));
 
         return $catalogue;
     }
@@ -75,10 +81,16 @@ abstract class DatabaseLoader implements IDatabaseLoader {
      */
     abstract public function getLocales();
 
+    /**
+     * @param $locale
+     * @return \DateTime
+     */
+    abstract public function getLastUpdate($locale);
+
     public function addResources(Translator $translator)
     {
         foreach ($this->getLocales() as $locale) {
-            $translator->addResource($this->getResourceName(), $this->getResourceName(), $locale);
+            $translator->addResource('database', $this->getResourceName(), $locale);
         }
     }
 

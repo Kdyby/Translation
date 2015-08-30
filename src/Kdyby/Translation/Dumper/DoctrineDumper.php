@@ -3,8 +3,8 @@
 namespace Kdyby\Translation\Dumper;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\PDOConnection;
 use Kdyby\Doctrine\EntityManager;
-use Kdyby\Translation\Helpers;
 
 class DoctrineDumper extends DatabaseDumper {
 
@@ -52,12 +52,19 @@ class DoctrineDumper extends DatabaseDumper {
             ->values([
                 "`$this->key`" => ":key",
                 "`$this->locale`" => ":locale",
-                "`$this->message`" => ":message"
+                "`$this->message`" => ":message",
+                "`$this->updatedAt`" => ":updatedAt"
             ])
             ->setParameters([
                 'key' => $key,
                 'locale' => $locale,
-                'message' => $message
+                'message' => $message,
+                'updatedAt' => new \DateTime()
+            ], [
+                'key' => PDOConnection::PARAM_STR,
+                'locale' => PDOConnection::PARAM_STR,
+                'message' => PDOConnection::PARAM_STR,
+                'updatedAt' => 'datetime'
             ]);
         $qb->execute();
     }
@@ -67,12 +74,19 @@ class DoctrineDumper extends DatabaseDumper {
         $qb = $this->em->getConnection()->createQueryBuilder();
         $qb->update($this->table, 't')
             ->set("t.$this->message", ':message')
+            ->set("t.$this->updatedAt", ':updatedAt')
             ->andWhere("t.$this->key = :key")
             ->andWhere("t.$this->locale = :locale")
             ->setParameters([
                 'key' => $key,
                 'locale' => $locale,
-                'message' => $message
+                'message' => $message,
+                'updatedAt' => new \DateTime()
+            ], [
+                'key' => PDOConnection::PARAM_STR,
+                'locale' => PDOConnection::PARAM_STR,
+                'message' => PDOConnection::PARAM_STR,
+                'updatedAt' => 'datetime'
             ]);
         $qb->execute();
     }

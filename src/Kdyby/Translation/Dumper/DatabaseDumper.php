@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Azathoth
- * Date: 30. 8. 2015
- * Time: 10:34
- */
 
 namespace Kdyby\Translation\Dumper;
 
@@ -27,6 +21,9 @@ abstract class DatabaseDumper implements DumperInterface
     /** @var string */
     protected $message = 'message';
 
+    /** @var string */
+    protected $updatedAt = 'updated_at';
+
     /**
      * @param string $table
      */
@@ -39,12 +36,14 @@ abstract class DatabaseDumper implements DumperInterface
      * @param string $key
      * @param string $locale
      * @param string $message
+     * @param string $updatedAt
      */
-    public function setColumns($key, $locale, $message)
+    public function setColumns($key, $locale, $message, $updatedAt)
     {
         $this->key = $key;
         $this->locale = $locale;
         $this->message = $message;
+        $this->updatedAt = $updatedAt;
     }
 
     /**
@@ -69,7 +68,7 @@ abstract class DatabaseDumper implements DumperInterface
                 $this->insert($key, $locale, $message);
             }
         }
-        $this->commit();
+//        $this->commit();
     }
 
     abstract public function getExistingKeys($keys, $locale);
