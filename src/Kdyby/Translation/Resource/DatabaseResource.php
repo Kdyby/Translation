@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Azathoth
- * Date: 28. 8. 2015
- * Time: 16:30
- */
 
 namespace Kdyby\Translation\Resource;
 
@@ -25,8 +19,6 @@ class DatabaseResource implements ResourceInterface
     private $lastUpdated;
 
     /**
-     * Constructor.
-     *
      * @param string $resource The file path to the resource
      * @param int $lastUpdated timestamp
      */

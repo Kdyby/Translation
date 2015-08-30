@@ -14,7 +14,8 @@ use Kdyby\Translation\Listener\TranslationMetadataListener;
 use Kdyby\Translation\Resource\DatabaseResource;
 use Tracy\Debugger;
 
-class DoctrineLoader extends DatabaseLoader {
+class DoctrineLoader extends DatabaseLoader
+{
 
     /** @var Connection */
     private $conn;
@@ -31,7 +32,8 @@ class DoctrineLoader extends DatabaseLoader {
     /**
      * @param Connection $conn
      */
-    public function __construct(Connection $conn) {
+    public function __construct(Connection $conn)
+    {
         $this->conn = $conn;
 //        $this->setSchemaManager($schemaManager);
 //        $this->schemaTool = $schemaTool;

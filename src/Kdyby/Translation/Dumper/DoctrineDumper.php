@@ -4,9 +4,9 @@ namespace Kdyby\Translation\Dumper;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\PDOConnection;
-use Kdyby\Doctrine\EntityManager;
 
-class DoctrineDumper extends DatabaseDumper {
+class DoctrineDumper extends DatabaseDumper
+{
 
     /** @var Connection */
     private $conn;
@@ -14,7 +14,8 @@ class DoctrineDumper extends DatabaseDumper {
     /**
      * @param Connection $conn
      */
-    public function __construct(Connection $conn) {
+    public function __construct(Connection $conn)
+    {
         $this->conn = $conn;
     }
 

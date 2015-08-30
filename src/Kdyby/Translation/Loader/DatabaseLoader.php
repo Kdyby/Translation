@@ -12,7 +12,8 @@ use Symfony\Component\Translation\Dumper\DumperInterface;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Tracy\Debugger;
 
-abstract class DatabaseLoader implements IDatabaseLoader {
+abstract class DatabaseLoader implements IDatabaseLoader
+{
 
     /** @var string */
     protected $table = 'translations';
@@ -51,7 +52,8 @@ abstract class DatabaseLoader implements IDatabaseLoader {
         $this->updatedAt = $updatedAt;
     }
 
-    function load($resource, $locale, $domain = NULL) {
+    public function load($resource, $locale, $domain = NULL)
+    {
         $catalogue = new MessageCatalogue($locale);
 
         $translations = $this->getTranslations($locale);

@@ -13,7 +13,8 @@ use Symfony\Component\Translation\Dumper\DumperInterface;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Tracy\Debugger;
 
-class NetteDbLoader extends DatabaseLoader {
+class NetteDbLoader extends DatabaseLoader
+{
 
     /** @var Context */
     private $db;
@@ -21,7 +22,8 @@ class NetteDbLoader extends DatabaseLoader {
     /**
      * @param Context $db
      */
-    public function __construct(Context $db) {
+    public function __construct(Context $db)
+    {
         $this->db = $db;
     }
 

@@ -10,7 +10,8 @@ use Kdyby\Events\Subscriber;
 use Nette\Object;
 use Tracy\Debugger;
 
-class TranslationMetadataListener extends Object implements Subscriber {
+class TranslationMetadataListener extends Object implements Subscriber
+{
 
     const FAKE_ENTITY_NAME = 'Translation';
 

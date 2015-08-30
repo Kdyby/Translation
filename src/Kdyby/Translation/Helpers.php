@@ -17,7 +17,7 @@ class Helpers
         foreach ($subnode as $key => $value) {
             if (is_array($value)) {
                 $nodePath = $path ? $path.'.'.$key : $key;
-                self::flatten($messages, $value, $nodePath);
+                static::flatten($messages, $value, $nodePath);
                 if (null === $path) {
                     unset($messages[$key]);
                 }

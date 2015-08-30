@@ -5,7 +5,8 @@ namespace Kdyby\Translation\Dumper;
 use Nette\Database\Context;
 use Nette\Utils\DateTime;
 
-class NetteDbDumper extends DatabaseDumper {
+class NetteDbDumper extends DatabaseDumper
+{
 
     /** @var Context */
     private $db;
@@ -13,7 +14,8 @@ class NetteDbDumper extends DatabaseDumper {
     /**
      * @param Context $db
      */
-    public function __construct(Context $db) {
+    public function __construct(Context $db)
+    {
         $this->db = $db;
     }
 
