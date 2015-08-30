@@ -2,7 +2,6 @@
 
 namespace Kdyby\Translation\Dumper;
 
-
 use Kdyby\Translation\Helpers;
 use Symfony\Component\Translation\Dumper\DumperInterface;
 

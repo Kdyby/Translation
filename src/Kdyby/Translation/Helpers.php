@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Azathoth
- * Date: 30. 8. 2015
- * Time: 10:30
- */
 
 namespace Kdyby\Translation;
 
