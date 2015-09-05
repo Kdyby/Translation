@@ -19,7 +19,7 @@ common:
 			session: on
 
 	doctrine:
-		driver: sqlite
+		driver: pdo_sqlite
 		memory: true
 
 v22 < common:
