@@ -64,7 +64,8 @@
 		"symfony/console": "~2.3",
 		"nette/tester": "~1.4",
 		"mockery/mockery": "~0.9",
-		"kdyby/doctrine": "~2.3.1"
+		"kdyby/doctrine": "~2.3",
+	  	"kdyby/events": "~2.3.1"
 	},
 	"autoload": {
 		"psr-0": {

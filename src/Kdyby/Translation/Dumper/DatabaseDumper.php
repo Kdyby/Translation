@@ -60,15 +60,19 @@ abstract class DatabaseDumper implements DumperInterface
         $keys = array_keys($messagesArray);
 
         $this->beginTransaction();
-        $existingKeys = $this->getExistingKeys($keys, $locale);
-        foreach ($messagesArray as $key => $message) {
-            if (in_array($key, $existingKeys)) {
-                $this->update($key, $locale, $message);
-            } else {
-                $this->insert($key, $locale, $message);
+        try {
+            $existingKeys = $this->getExistingKeys($keys, $locale);
+            foreach ($messagesArray as $key => $message) {
+                if (in_array($key, $existingKeys)) {
+                    $this->update($key, $locale, $message);
+                } else {
+                    $this->insert($key, $locale, $message);
+                }
             }
+            $this->commit();
+        } catch(\Exception $e) {
+            $this->rollBack();
         }
-        $this->commit();
     }
 
     abstract protected function getExistingKeys($keys, $locale);
