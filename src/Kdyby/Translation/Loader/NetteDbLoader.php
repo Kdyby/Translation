@@ -33,8 +33,8 @@ class NetteDbLoader extends DatabaseLoader
      */
     public function getLocales()
     {
-        $stmt = $this->db->query("SELECT DISTINCT `$this->locale` as locale FROM $this->table");
         try {
+            $stmt = $this->db->query("SELECT DISTINCT `$this->locale` as locale FROM $this->table");
             $locales = $stmt->fetchPairs('locale', 'locale');
         } catch(DriverException $e) {
             $locales = array();

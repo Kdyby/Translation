@@ -226,6 +226,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			->setInject(FALSE)
 			->addTag('kdyby.console.command', 'latte');
 
+
 		$database = $config['database'];
 		$builder->addDefinition($this->prefix('console.initDatabase'))
 			->setClass('Kdyby\Translation\Console\CreateTableCommand')
