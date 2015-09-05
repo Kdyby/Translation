@@ -97,7 +97,6 @@ class TranslationLoaderTest extends TestCase
 		$connection->executeUpdate(file_get_contents(__DIR__ . '/../clear.sql'));
 	}
 
-
 }
 
 \run(new TranslationLoaderTest());
