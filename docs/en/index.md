@@ -294,8 +294,11 @@ translation:
 
 If you want to have your translation table generated, you need to download the [Doctrine 2 DBAL](https://github.com/doctrine/dbal) library 
 and [Kdyby\Console](https://github.com/Kdyby/Console) library over Composer and then you can use kdyby:translation-create-table command to generate table
+
+```sh
 - kdyby:translation-create-table --dump-sql dumps SQL query, but does not execute it.
 - kdyby:translation-create-table --force executes SQL query.
+```
 
 
 ### Modifying translations

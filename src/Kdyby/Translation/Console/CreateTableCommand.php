@@ -79,6 +79,11 @@ class CreateTableCommand extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
+		if (!$input->getOption('dump-sql') && !$input->getOption('force')) {
+			$output->writeln('<error>You must run the command either with --dump-sql or --force.</error>');
+			return 0;
+		}
+
 		if (!$this->schemaManager->tablesExist($this->table)) {
 			$table = $this->schemaManager->createSchema()
 				->createTable($this->table);
@@ -91,11 +96,10 @@ class CreateTableCommand extends Command
 			if ($input->getOption('dump-sql')) {
 				$output->writeln('Create table SQL:');
 				$output->writeln($sql);
-			} else if ($input->getOption('force')) {
+			}
+			if ($input->getOption('force')) {
 				$this->schemaManager->createTable($table);
 				$output->writeln(sprintf('Database schema updated successfully! Translation table created.'));
-			} else {
-				$output->writeln('You have to choose one of two options: dump-sql or force');
 			}
 		} else {
 			$output->writeln('Table already exists.');
