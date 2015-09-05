@@ -22,11 +22,11 @@ class NetteDbDumper extends DatabaseDumper
 
     public function getExistingKeys($keys, $locale)
     {
-        $stmt = $this->db->table($this->table)
+        return $this->db->table($this->table)
             ->select("`$this->key` AS `key`")
             ->where("locale  = ?", $locale)
-            ->where("`key` IN (?)", $keys);
-        return $stmt->fetchPairs('key', 'key'); //to get only one dimensional array of keys
+            ->where("`key` IN (?)", $keys)
+            ->fetchPairs('key', 'key'); //to get only one dimensional array of keys
     }
 
     public function beginTransaction()
@@ -61,4 +61,8 @@ class NetteDbDumper extends DatabaseDumper
             ]);
     }
 
+    public function rollBack()
+    {
+        $this->db->rollBack();
+    }
 }

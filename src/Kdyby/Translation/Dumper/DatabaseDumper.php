@@ -77,6 +77,8 @@ abstract class DatabaseDumper implements DumperInterface
 
     abstract public function commit();
 
+    abstract public function rollBack();
+
     abstract public function insert($key, $locale, $message);
 
     abstract public function update($key, $locale, $message);

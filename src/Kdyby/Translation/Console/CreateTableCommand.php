@@ -81,31 +81,31 @@ class CreateTableCommand extends Command
 	{
 		if (!$input->getOption('dump-sql') && !$input->getOption('force')) {
 			$output->writeln('<error>You must run the command either with --dump-sql or --force.</error>');
-			return 0;
+			return;
 		}
 
-		if (!$this->schemaManager->tablesExist($this->table)) {
-			$table = $this->schemaManager->createSchema()
-				->createTable($this->table);
-			$table->addColumn($this->key, Type::STRING);
-			$table->addColumn($this->locale, Type::STRING);
-			$table->addColumn($this->message, Type::TEXT);
-			$table->addColumn($this->updatedAt, Type::DATETIME);
-			$table->setPrimaryKey(array($this->key, $this->locale));
-			list($sql) = $this->connection->getDatabasePlatform()->getCreateTableSQL($table);
-			if ($input->getOption('dump-sql')) {
-				$output->writeln('Create table SQL:');
-				$output->writeln($sql);
-			}
-			if ($input->getOption('force')) {
-				$this->schemaManager->createTable($table);
-				$output->writeln(sprintf('Database schema updated successfully! Translation table created.'));
-			}
-		} else {
+		if ($this->schemaManager->tablesExist($this->table)) {
 			$output->writeln('Table already exists.');
+			return;
 		}
 
-		return 0;
+		$table = $this->schemaManager->createSchema()
+			->createTable($this->table);
+		$table->addColumn($this->key, Type::STRING);
+		$table->addColumn($this->locale, Type::STRING);
+		$table->addColumn($this->message, Type::TEXT);
+		$table->addColumn($this->updatedAt, Type::DATETIME);
+		$table->setPrimaryKey(array($this->key, $this->locale));
+
+		if ($input->getOption('dump-sql')) {
+			list($sql) = $this->connection->getDatabasePlatform()->getCreateTableSQL($table);
+			$output->writeln('Create table SQL:');
+			$output->writeln($sql);
+		}
+		if ($input->getOption('force')) {
+			$this->schemaManager->createTable($table);
+			$output->writeln(sprintf('Database schema updated successfully! Translation table created.'));
+		}
 	}
 
 }

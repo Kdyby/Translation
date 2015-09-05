@@ -16,6 +16,7 @@ use Nette;
 use Symfony;
 use Tester;
 use Tester\Assert;
+use Doctrine;
 
 require_once __DIR__ . '/../bootstrap.php';
 
@@ -29,11 +30,17 @@ class TranslationLoaderTest extends TestCase
 
 	public function testAddLoaders()
 	{
+		$container = $this->createContainer();
+
+		/** @var Doctrine\DBAL\Connection $connection */
+		$connection = $container->getByType('Doctrine\DBAL\Connection');
+
 		$loader = new TranslationLoader();
 		Assert::same(array(), $loader->getLoaders());
 
 		$loader->addLoader('neon', $neonLoader = new Kdyby\Translation\Loader\NeonFileLoader());
-		Assert::same(array('neon' => $neonLoader), $loader->getLoaders());
+		$loader->addLoader('database', $dbLoader = new Kdyby\Translation\Loader\DoctrineLoader($connection));
+		Assert::same(array('neon' => $neonLoader, 'database' => $dbLoader), $loader->getLoaders());
 	}
 
 
@@ -44,7 +51,7 @@ class TranslationLoaderTest extends TestCase
 		$loader->addLoader('neon', new Kdyby\Translation\Loader\NeonFileLoader());
 
 		$catalogue = new Kdyby\Translation\MessageCatalogue('cs_CZ');
-		$loader->loadResource('neon', __DIR__ . '/lang/front.cs_CZ.neon', 'front', 'cs_CZ', $catalogue);
+		$loader->loadResource('neon', __DIR__ . '/lang/front.cs_CZ.neon', 'front', $catalogue);
 
 		Assert::true($catalogue->defines('front.homepage.hello'));
 	}

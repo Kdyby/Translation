@@ -98,4 +98,8 @@ class DoctrineDumper extends DatabaseDumper
         $qb->execute();
     }
 
+    public function rollBack()
+    {
+        $this->conn->rollBack();
+    }
 }
