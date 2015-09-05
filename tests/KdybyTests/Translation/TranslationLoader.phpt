@@ -85,7 +85,7 @@ class TranslationLoaderTest extends TestCase
 
 		Assert::same(array('cs', 'en'), $dbLoader->getLocales());
 	}
-	
+
 	protected function tearDown()
 	{
 		parent::tearDown();
@@ -96,6 +96,7 @@ class TranslationLoaderTest extends TestCase
 
 		$connection->executeUpdate(file_get_contents(__DIR__ . '/../clear.sql'));
 	}
+
 
 }
 
