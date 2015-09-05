@@ -290,10 +290,10 @@ translation:
 			updatedAt: updated_at
 ```
 
-### Generating table
+### Generating table via Symfony Commands
 
 If you want to have your translation table generated, you need to download the [Doctrine 2 DBAL](https://github.com/doctrine/dbal) library 
-and [Kdyby\Console](https://github.com/Kdyby/Console) library over composer and then you can use kdyby:translation-create-table command to generate table
+and [Kdyby\Console](https://github.com/Kdyby/Console) library over Composer and then you can use kdyby:translation-create-table command to generate table
 - kdyby:translation-create-table --dump-sql dumps SQL query, but does not execute it.
 - kdyby:translation-create-table --force executes SQL query.
 
