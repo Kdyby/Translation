@@ -13,24 +13,19 @@ class DoctrineDumper extends DatabaseDumper
 {
 
     /** @var Connection */
-    private $conn;
-
-    /** @var AbstractSchemaManager */
-    private $sm;
+    private $connection;
 
     /**
      * @param Connection $conn
-     * @param AbstractSchemaManager $sm
      */
-    public function __construct(Connection $conn, AbstractSchemaManager $sm)
+    public function __construct(Connection $conn)
     {
-        $this->conn = $conn;
-        $this->sm = $sm;
+        $this->connection = $conn;
     }
 
     public function getExistingKeys($keys, $locale)
     {
-        $qb = $this->conn->createQueryBuilder()
+        $qb = $this->connection->createQueryBuilder()
             ->addSelect("`$this->key` AS `key`")
             ->from("`$this->table`")
             ->andWhere("locale  = :locale")
@@ -44,17 +39,17 @@ class DoctrineDumper extends DatabaseDumper
 
     public function beginTransaction()
     {
-        $this->conn->beginTransaction();
+        $this->connection->beginTransaction();
     }
 
     public function commit()
     {
-        $this->conn->commit();
+        $this->connection->commit();
     }
 
     public function insert($key, $locale, $message)
     {
-        $qb = $this->conn->createQueryBuilder();
+        $qb = $this->connection->createQueryBuilder();
         $qb->insert($this->table)
             ->values([
                 "`$this->key`" => ":key",
@@ -78,7 +73,7 @@ class DoctrineDumper extends DatabaseDumper
 
     public function update($key, $locale, $message)
     {
-        $qb = $this->conn->createQueryBuilder();
+        $qb = $this->connection->createQueryBuilder();
         $qb->update($this->table, 't')
             ->set("t.$this->message", ':message')
             ->set("t.$this->updatedAt", ':updatedAt')
@@ -100,6 +95,6 @@ class DoctrineDumper extends DatabaseDumper
 
     public function rollBack()
     {
-        $this->conn->rollBack();
+        $this->connection->rollBack();
     }
 }

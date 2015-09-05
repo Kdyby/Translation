@@ -102,6 +102,7 @@ class CreateTableCommand extends Command
 			$output->writeln('Create table SQL:');
 			$output->writeln($sql);
 		}
+
 		if ($input->getOption('force')) {
 			$this->schemaManager->createTable($table);
 			$output->writeln(sprintf('Database schema updated successfully! Translation table created.'));
