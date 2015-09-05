@@ -27,6 +27,17 @@ require_once __DIR__ . '/../bootstrap.php';
  */
 class TranslationLoaderTest extends TestCase
 {
+	protected function setUp()
+	{
+		parent::setUp();
+		$container = $this->createContainer();
+
+		/** @var Doctrine\DBAL\Connection $connection */
+		$connection = $container->getByType('Doctrine\DBAL\Connection');
+
+		$connection->executeUpdate(file_get_contents(__DIR__ . '/,,/data.sql'));
+	}
+
 
 	public function testAddLoaders()
 	{
@@ -52,9 +63,18 @@ class TranslationLoaderTest extends TestCase
 
 		$catalogue = new Kdyby\Translation\MessageCatalogue('cs_CZ');
 		$loader->loadResource('neon', __DIR__ . '/lang/front.cs_CZ.neon', 'front', $catalogue);
+		$loader->loadResource('database', __DIR__ . '/lang/front.cs_CZ.neon', 'front', $catalogue);
 
 		Assert::true($catalogue->defines('front.homepage.hello'));
+		Assert::true($catalogue->defines('front.header'));
 	}
+
+	protected function tearDown()
+	{
+		parent::tearDown();
+
+	}
+
 
 }
 

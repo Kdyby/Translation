@@ -47,12 +47,12 @@ class DoctrineLoader extends DatabaseLoader
     }
 
 
-    public function getResourceName()
+    protected function getResourceName()
     {
         return DatabaseResource::DOCTRINE;
     }
 
-    public function getTranslations($locale)
+    protected function getTranslations($locale)
     {
         $qb = $this->conn->createQueryBuilder()
             ->addSelect("`$this->key` AS `key`")
@@ -68,7 +68,7 @@ class DoctrineLoader extends DatabaseLoader
      * @param $locale
      * @return \DateTime
      */
-    public function getLastUpdate($locale)
+    protected function getLastUpdate($locale)
     {
         $qb = $this->conn->createQueryBuilder()
             ->addSelect("`$this->updatedAt` AS `updated_at`")

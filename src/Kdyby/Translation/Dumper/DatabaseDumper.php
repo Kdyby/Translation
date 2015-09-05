@@ -71,16 +71,16 @@ abstract class DatabaseDumper implements DumperInterface
         $this->commit();
     }
 
-    abstract public function getExistingKeys($keys, $locale);
+    abstract protected function getExistingKeys($keys, $locale);
 
-    abstract public function beginTransaction();
+    abstract protected function beginTransaction();
 
-    abstract public function commit();
+    abstract protected function commit();
 
-    abstract public function rollBack();
+    abstract protected function rollBack();
 
-    abstract public function insert($key, $locale, $message);
+    abstract protected function insert($key, $locale, $message);
 
-    abstract public function update($key, $locale, $message);
+    abstract protected function update($key, $locale, $message);
 
 }

@@ -86,7 +86,7 @@ abstract class DatabaseLoader implements IDatabaseLoader
      * @param $locale
      * @return \DateTime
      */
-    abstract public function getLastUpdate($locale);
+    abstract protected function getLastUpdate($locale);
 
     public function addResources(Translator $translator)
     {
@@ -95,7 +95,7 @@ abstract class DatabaseLoader implements IDatabaseLoader
         }
     }
 
-    abstract public function getResourceName();
+    abstract protected function getResourceName();
 
-    abstract public function getTranslations($locale);
+    abstract protected function getTranslations($locale);
 }

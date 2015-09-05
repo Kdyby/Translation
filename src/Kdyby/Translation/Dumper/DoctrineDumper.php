@@ -19,7 +19,7 @@ class DoctrineDumper extends DatabaseDumper
         $this->connection = $conn;
     }
 
-    public function getExistingKeys($keys, $locale)
+    protected function getExistingKeys($keys, $locale)
     {
         $qb = $this->connection->createQueryBuilder()
             ->addSelect("`$this->key` AS `key`")
@@ -33,17 +33,17 @@ class DoctrineDumper extends DatabaseDumper
 
     }
 
-    public function beginTransaction()
+    protected function beginTransaction()
     {
         $this->connection->beginTransaction();
     }
 
-    public function commit()
+    protected function commit()
     {
         $this->connection->commit();
     }
 
-    public function insert($key, $locale, $message)
+    protected function insert($key, $locale, $message)
     {
         $qb = $this->connection->createQueryBuilder();
         $qb->insert($this->table)
@@ -67,7 +67,7 @@ class DoctrineDumper extends DatabaseDumper
         $qb->execute();
     }
 
-    public function update($key, $locale, $message)
+    protected function update($key, $locale, $message)
     {
         $qb = $this->connection->createQueryBuilder();
         $qb->update($this->table, 't')
@@ -89,7 +89,7 @@ class DoctrineDumper extends DatabaseDumper
         $qb->execute();
     }
 
-    public function rollBack()
+    protected function rollBack()
     {
         $this->connection->rollBack();
     }

@@ -42,12 +42,12 @@ class NetteDbLoader extends DatabaseLoader
         return $locales;
     }
 
-    public function getResourceName()
+    protected function getResourceName()
     {
         return DatabaseResource::NETTE_DB;
     }
 
-    public function getTranslations($locale)
+    protected function getTranslations($locale)
     {
         $stmt = $this->db->table($this->table)
             ->select("`$this->key` AS `key`, `$this->locale` AS locale, `$this->message` AS message")
@@ -59,7 +59,7 @@ class NetteDbLoader extends DatabaseLoader
      * @param $locale
      * @return \DateTime
      */
-    public function getLastUpdate($locale)
+    protected function getLastUpdate($locale)
     {
         $stmt = $this->db->table($this->table)
             ->select("`$this->updatedAt` AS `updated_at`")

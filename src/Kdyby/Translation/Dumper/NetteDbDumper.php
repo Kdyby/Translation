@@ -20,7 +20,7 @@ class NetteDbDumper extends DatabaseDumper
     }
 
 
-    public function getExistingKeys($keys, $locale)
+    protected function getExistingKeys($keys, $locale)
     {
         return $this->db->table($this->table)
             ->select("`$this->key` AS `key`")
@@ -29,17 +29,17 @@ class NetteDbDumper extends DatabaseDumper
             ->fetchPairs('key', 'key'); //to get only one dimensional array of keys
     }
 
-    public function beginTransaction()
+    protected function beginTransaction()
     {
         $this->db->beginTransaction();
     }
 
-    public function commit()
+    protected function commit()
     {
         $this->db->commit();
     }
 
-    public function insert($key, $locale, $message)
+    protected function insert($key, $locale, $message)
     {
         $this->db->table($this->table)
             ->insert([
@@ -50,7 +50,7 @@ class NetteDbDumper extends DatabaseDumper
             ]);
     }
 
-    public function update($key, $locale, $message)
+    protected function update($key, $locale, $message)
     {
         $this->db->table($this->table)
             ->where("$this->key = ?", $key)
@@ -61,7 +61,7 @@ class NetteDbDumper extends DatabaseDumper
             ]);
     }
 
-    public function rollBack()
+    protected function rollBack()
     {
         $this->db->rollBack();
     }
