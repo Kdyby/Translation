@@ -8,6 +8,7 @@ use Kdyby\Translation\MessageCatalogue;
 use Kdyby\Translation\Resource\DatabaseResource;
 use Kdyby\Translation\Translator;
 use Nette\Database\Context;
+use Nette\Database\DriverException;
 use Nette\Utils\Strings;
 use Symfony\Component\Translation\Dumper\DumperInterface;
 use Symfony\Component\Translation\Loader\LoaderInterface;
@@ -33,7 +34,11 @@ class NetteDbLoader extends DatabaseLoader
     public function getLocales()
     {
         $stmt = $this->db->query("SELECT DISTINCT `$this->locale` as locale FROM $this->table");
-        $locales = $stmt->fetchPairs('locale', 'locale');
+        try {
+            $locales = $stmt->fetchPairs('locale', 'locale');
+        } catch(DriverException $e) {
+            $locales = array();
+        }
         return $locales;
     }
 

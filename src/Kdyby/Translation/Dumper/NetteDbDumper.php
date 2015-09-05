@@ -61,14 +61,4 @@ class NetteDbDumper extends DatabaseDumper
             ]);
     }
 
-    public function createTable()
-    {
-        $this->db->query("CREATE TABLE `$this->table` (
-                          `$this->key` varchar(50) NOT NULL,
-                          `$this->locale` varchar(50) NOT NULL,
-                          `message` longtext,
-                          `updated_at` datetime NOT NULL,
-                          PRIMARY KEY (`$this->key`,`$this->locale`)
-                        );");
-    }
 }

@@ -44,7 +44,7 @@ abstract class DatabaseLoader implements IDatabaseLoader
      * @param string $message
      * @param string $updatedAt
      */
-    public function setColumns($key, $locale, $message, $updatedAt)
+    public function setColumnNames($key, $locale, $message, $updatedAt)
     {
         $this->key = $key;
         $this->locale = $locale;

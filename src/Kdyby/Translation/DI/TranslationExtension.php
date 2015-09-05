@@ -225,6 +225,18 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			->addSetup('$defaultOutputDir', array(reset($config['dirs'])))
 			->setInject(FALSE)
 			->addTag('kdyby.console.command', 'latte');
+
+		$database = $config['database'];
+		$builder->addDefinition($this->prefix('console.initDatabase'))
+			->setClass('Kdyby\Translation\Console\CreateTableCommand')
+			->addSetup('$table', array($database['table']))
+			->addSetup('$key', array($database['columns']['key']))
+			->addSetup('$locale', array($database['columns']['locale']))
+			->addSetup('$message', array($database['columns']['message']))
+			->addSetup('$updatedAt', array($database['columns']['updatedAt']))
+			->setInject(FALSE)
+			->addTag('kdyby.console.command', 'database');
+
 	}
 
 
@@ -263,7 +275,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 				->setClass($class->entity)
 				->addTag(self::DUMPER_TAG, 'database')
 				->addSetup('setTableName', array($config['database']['table']))
-				->addSetup('setColumns', array($columns['key'], $columns['locale'], $columns['message'], $columns['updatedAt']));
+				->addSetup('setColumnNames', array($columns['key'], $columns['locale'], $columns['message'], $columns['updatedAt']));
 		}
 	}
 
@@ -294,7 +306,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 				->addTag(self::LOADER_TAG, 'database')
 				->addTag(self::DATABASE_LOADER_TAG, $loader)
 				->addSetup('setTableName', array($config['database']['table']))
-				->addSetup('setColumns', array($columns['key'], $columns['locale'], $columns['message'], $columns['updatedAt']));
+				->addSetup('setColumnNames', array($columns['key'], $columns['locale'], $columns['message'], $columns['updatedAt']));
 /*
 			for future use to modify mapping scheme
 			if ($class->entity === 'Kdyby\Translation\Loader\DoctrineLoader') {
@@ -302,7 +314,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 					->setClass('Kdyby\Translation\Listener\TranslationMetadataListener')
 					->addTag(Kdyby\Events\DI\EventsExtension::TAG_SUBSCRIBER)
 					->addSetup('setTableName', array($config['database']['table']))
-					->addSetup('setColumns', array($columns['key'], $columns['locale'], $columns['message'], $columns['updatedAt']));
+					->addSetup('setColumnNames', array($columns['key'], $columns['locale'], $columns['message'], $columns['updatedAt']));
 			}*/
 		}
 

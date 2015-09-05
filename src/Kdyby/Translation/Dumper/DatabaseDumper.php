@@ -4,6 +4,7 @@ namespace Kdyby\Translation\Dumper;
 
 use Kdyby\Translation\Helpers;
 use Symfony\Component\Translation\Dumper\DumperInterface;
+use Symfony\Component\Translation\MessageCatalogue;
 
 abstract class DatabaseDumper implements DumperInterface
 {
@@ -37,7 +38,7 @@ abstract class DatabaseDumper implements DumperInterface
      * @param string $message
      * @param string $updatedAt
      */
-    public function setColumns($key, $locale, $message, $updatedAt)
+    public function setColumnNames($key, $locale, $message, $updatedAt)
     {
         $this->key = $key;
         $this->locale = $locale;
@@ -48,10 +49,10 @@ abstract class DatabaseDumper implements DumperInterface
     /**
      * Dumps the message catalogue.
      *
-     * @param \Symfony\Component\Translation\MessageCatalogue $messages The message catalogue
+     * @param MessageCatalogue $messages The message catalogue
      * @param array $options Options that are used by the dumper
      */
-    public function dump(\Symfony\Component\Translation\MessageCatalogue $messages, $options = array())
+    public function dump(MessageCatalogue $messages, $options = array())
     {
         $messagesArray = $messages->all();
         Helpers::flatten($messagesArray);
@@ -80,5 +81,4 @@ abstract class DatabaseDumper implements DumperInterface
 
     abstract public function update($key, $locale, $message);
 
-    abstract public function createTable();
 }

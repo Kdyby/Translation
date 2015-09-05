@@ -4,6 +4,10 @@ namespace Kdyby\Translation\Dumper;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\PDOConnection;
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
+use Tracy\Debugger;
 
 class DoctrineDumper extends DatabaseDumper
 {
@@ -11,12 +15,17 @@ class DoctrineDumper extends DatabaseDumper
     /** @var Connection */
     private $conn;
 
+    /** @var AbstractSchemaManager */
+    private $sm;
+
     /**
      * @param Connection $conn
+     * @param AbstractSchemaManager $sm
      */
-    public function __construct(Connection $conn)
+    public function __construct(Connection $conn, AbstractSchemaManager $sm)
     {
         $this->conn = $conn;
+        $this->sm = $sm;
     }
 
     public function getExistingKeys($keys, $locale)
@@ -87,17 +96,6 @@ class DoctrineDumper extends DatabaseDumper
                 'updatedAt' => 'datetime'
             ]);
         $qb->execute();
-    }
-
-    public function createTable()
-    {
-        $this->conn->exec("CREATE TABLE `$this->table` (
-                          `$this->key` varchar(50) NOT NULL,
-                          `$this->locale` varchar(50) NOT NULL,
-                          `message` longtext,
-                          `updated_at` datetime NOT NULL,
-                          PRIMARY KEY (`$this->key`,`$this->locale`)
-                        );");
     }
 
 }
