@@ -308,15 +308,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 				->addTag(self::DATABASE_LOADER_TAG, $loader)
 				->addSetup('setTableName', array($config['database']['table']))
 				->addSetup('setColumnNames', array($columns['key'], $columns['locale'], $columns['message'], $columns['updatedAt']));
-/*
-			for future use to modify mapping scheme
-			if ($class->entity === 'Kdyby\Translation\Loader\DoctrineLoader') {
-				$builder->addDefinition($this->prefix('listener'))
-					->setClass('Kdyby\Translation\Listener\TranslationMetadataListener')
-					->addTag(Kdyby\Events\DI\EventsExtension::TAG_SUBSCRIBER)
-					->addSetup('setTableName', array($config['database']['table']))
-					->addSetup('setColumnNames', array($columns['key'], $columns['locale'], $columns['message'], $columns['updatedAt']));
-			}*/
+
 		}
 
 	}
