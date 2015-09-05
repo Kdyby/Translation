@@ -75,6 +75,17 @@ class TranslationLoaderTest extends TestCase
 		Assert::true($catalogue->defines('front.header'));
 	}
 
+	public function testLoadLocales()
+	{
+		$container = $this->createContainer();
+
+		/** @var Doctrine\DBAL\Connection $connection */
+		$connection = $container->getByType('Doctrine\DBAL\Connection');
+		$dbLoader = new Kdyby\Translation\Loader\DoctrineLoader($connection);
+
+		Assert::same(array('cs', 'en'), $dbLoader->getLocales());
+	}
+	
 	protected function tearDown()
 	{
 		parent::tearDown();
