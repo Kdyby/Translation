@@ -35,7 +35,7 @@ class TranslationLoaderTest extends TestCase
 		/** @var Doctrine\DBAL\Connection $connection */
 		$connection = $container->getByType('Doctrine\DBAL\Connection');
 
-		$connection->executeUpdate(file_get_contents(__DIR__ . '/,,/data.sql'));
+		$connection->executeUpdate(file_get_contents(__DIR__ . '/../data.sql'));
 	}
 
 
