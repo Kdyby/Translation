@@ -18,6 +18,9 @@ common:
 		resolvers:
 			session: on
 
+	doctrine:
+		driver: sqlite
+		memory: true
 
 v22 < common:
 	nette:

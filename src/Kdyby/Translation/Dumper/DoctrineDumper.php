@@ -3,11 +3,7 @@
 namespace Kdyby\Translation\Dumper;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\PDOConnection;
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
-use Tracy\Debugger;
 
 class DoctrineDumper extends DatabaseDumper
 {
@@ -63,10 +59,10 @@ class DoctrineDumper extends DatabaseDumper
                 'message' => $message,
                 'updatedAt' => new \DateTime()
             ], [
-                'key' => PDOConnection::PARAM_STR,
-                'locale' => PDOConnection::PARAM_STR,
-                'message' => PDOConnection::PARAM_STR,
-                'updatedAt' => 'datetime'
+                'key' => Type::STRING,
+                'locale' => Type::STRING,
+                'message' => Type::STRING,
+                'updatedAt' => Type::DATETIME
             ]);
         $qb->execute();
     }
@@ -85,10 +81,10 @@ class DoctrineDumper extends DatabaseDumper
                 'message' => $message,
                 'updatedAt' => new \DateTime()
             ], [
-                'key' => PDOConnection::PARAM_STR,
-                'locale' => PDOConnection::PARAM_STR,
-                'message' => PDOConnection::PARAM_STR,
-                'updatedAt' => 'datetime'
+                'key' => Type::STRING,
+                'locale' => Type::STRING,
+                'message' => Type::STRING,
+                'updatedAt' => Type::DATETIME
             ]);
         $qb->execute();
     }
