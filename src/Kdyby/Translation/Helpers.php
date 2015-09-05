@@ -28,13 +28,4 @@ class Helpers
     }
 
 
-    /**
-     * @param string|\stdClass $statement
-     * @return Statement[]
-     */
-    public static function filterArgs($statement)
-    {
-        return Compiler::filterArguments(array(is_string($statement) ? new Statement($statement) : $statement));
-    }
-
 }
