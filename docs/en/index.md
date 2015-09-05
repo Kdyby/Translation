@@ -242,12 +242,6 @@ There is minimal configuration which needs to be added to your config.neon:
 translation:
 	database:
 		loader: doctrine
-		table: %translationTableName%
-		columns:
-			key: %keyColumnName%
-			locale: %localeColumnName%
-			message: %messageColumnName%
-			updatedAt: %lastUpdateColumnName%
 ```
 
 Loader can have values: doctrine or nettedb, it depends, which database library you use.
@@ -275,7 +269,6 @@ You can configure names of columns and name of translation table in your databas
 ```yml
 translation:
 	database:
-		loader: doctrine
 		table: translationTableName
 		columns:
 			key: keyColumnName
@@ -301,8 +294,8 @@ translation:
 
 If you want to have your translation table generated, you need to download the [Doctrine 2 DBAL](https://github.com/doctrine/dbal) library 
 and [Kdyby\Console](https://github.com/Kdyby/Console) library over composer and then you can use kdyby:translation-create-table command to generate table
-kdyby:translation-create-table --dump-sql dumps SQL query, but does not execute it.
-kdyby:translation-create-table --force executes SQL query.
+- kdyby:translation-create-table --dump-sql dumps SQL query, but does not execute it.
+- kdyby:translation-create-table --force executes SQL query.
 
 
 ### Modifying translations
