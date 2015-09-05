@@ -17,6 +17,8 @@ common:
 		whitelist: [cs, sk, en]
 		resolvers:
 			session: on
+		database:
+			loader: doctrine
 
 	doctrine:
 		driver: pdo_sqlite

@@ -1,1 +1,1 @@
-DROP TABLE translation;
+DROP TABLE translations;

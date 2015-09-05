@@ -80,8 +80,7 @@ class TranslationLoaderTest extends TestCase
 		$container = $this->createContainer();
 
 		/** @var Doctrine\DBAL\Connection $connection */
-		$connection = $container->getByType('Doctrine\DBAL\Connection');
-		$dbLoader = new Kdyby\Translation\Loader\DoctrineLoader($connection);
+		$dbLoader = $container->getByType('Kdyby\Translation\Loader\DatabaseLoader');
 
 		Assert::same(array('cs', 'en'), $dbLoader->getLocales());
 	}
