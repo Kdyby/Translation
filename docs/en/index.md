@@ -244,7 +244,7 @@ translation:
 		loader: doctrine
 ```
 
-Loader can have values: doctrine or nettedb, it depends, which database library you use.
+Loader can have values: `doctrine` or `nettedb`, it depends, which database library you use.
 You can also use your own Loader, then you put to your config.neon full name with namespace:
 
 ```yml
@@ -259,10 +259,10 @@ but it will be much more comfortable, when you extend abstract class Kdyby\Trans
 ### Table structure and configuration
 
 The table in database has 4 columns:
-- key (like key in your .neon translations, and key, which you write to translate method)
-- locale: language of message
-- message: actual text of message
-- updatedAt: column with datetime of last update. This one is used for cache invalidation because of Kdyby\Translation's sophisticated caching.
+- `key` (like key in your .neon translations, and key, which you write to translate method)
+- `locale`: language of message
+- `message`: actual text of message
+- `updatedAt`: column with datetime of last update. This one is used for cache invalidation because of Kdyby\Translation's sophisticated caching.
 
 You can configure names of columns and name of translation table in your database like this
 
@@ -296,8 +296,8 @@ If you want to have your translation table generated, you need to download the [
 and [Kdyby\Console](https://github.com/Kdyby/Console) library over Composer and then you can use kdyby:translation-create-table command to generate table
 
 ```sh
-- kdyby:translation-create-table --dump-sql dumps SQL query, but does not execute it.
-- kdyby:translation-create-table --force executes SQL query.
+$ kdyby:translation-create-table --dump-sql dumps SQL query, but does not execute it.
+$ kdyby:translation-create-table --force executes SQL query.
 ```
 
 
@@ -306,7 +306,7 @@ and [Kdyby\Console](https://github.com/Kdyby/Console) library over Composer and 
 You can modify your translations in database in any way you are used to, but you must update the value in updatedAt column.
 Or you can let Kdyby\Translation do that for you.
 
-Following snippet of code will show you how you can modify translations in Presenter and save them using Kdyby\Translations (only for illustration, please, keep this in your Model layer) 
+Following snippet of code will show you how you can modify translations in Presenter and save them using Kdyby\Translation (only for illustration, please, keep this in your Model layer)
 
 ```php
 <?php
