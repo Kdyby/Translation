@@ -40,6 +40,14 @@ class DoctrineLoader extends DatabaseLoader
         try {
             $stmt = $qb->execute();
             $locales = array_column($stmt->fetchAll(), 'locale');
+            if( !function_exists( 'array_column' ) ) {                  //just because of PHP 5.4, where function array_column is not present. Fuck you, PHP 5.4
+                function array_column( array $input, $column_key, $index_key = null ) {
+                    $result = array();
+                    foreach( $input as $k => $v )
+                        $result[ $index_key ? $v[ $index_key ] : $k ] = $v[ $column_key ];
+                    return $result;
+                }
+            }
         } catch(TableNotFoundException $e) {
             $locales = array();
         }
