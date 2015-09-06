@@ -63,7 +63,7 @@ class NetteDbLoader extends DatabaseLoader
     {
         $stmt = $this->db->table($this->table)
             ->select("`$this->updatedAt` AS `updated_at`")
-            ->where('locale = ?', $locale)
+            ->where("`$this->locale` = ?", $locale)
             ->order('updated_at DESC')
             ->limit(1);
         return $stmt->fetchField('updated_at');

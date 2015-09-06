@@ -3,7 +3,6 @@
 namespace Kdyby\Translation\Dumper;
 
 use Nette\Database\Context;
-use Nette\Utils\DateTime;
 
 class NetteDbDumper extends DatabaseDumper
 {
@@ -24,7 +23,7 @@ class NetteDbDumper extends DatabaseDumper
     {
         return $this->db->table($this->table)
             ->select("`$this->key` AS `key`")
-            ->where("locale  = ?", $locale)
+            ->where("`$this->locale` = ?", $locale)
             ->where("`key` IN (?)", $keys)
             ->fetchPairs('key', 'key'); //to get only one dimensional array of keys
     }

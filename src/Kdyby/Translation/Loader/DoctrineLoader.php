@@ -82,7 +82,7 @@ class DoctrineLoader extends DatabaseLoader
         $qb = $this->conn->createQueryBuilder()
             ->addSelect("`$this->updatedAt` AS `updated_at`")
             ->from("`$this->table`")
-            ->where("locale = :locale")
+            ->where("`$this->locale` = :locale")
             ->orderBy('updated_at', Criteria::DESC)
             ->setMaxResults(1)
             ->setParameter('locale', $locale);

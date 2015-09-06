@@ -24,7 +24,7 @@ class DoctrineDumper extends DatabaseDumper
         $qb = $this->connection->createQueryBuilder()
             ->addSelect("`$this->key` AS `key`")
             ->from("`$this->table`")
-            ->andWhere("locale  = :locale")
+            ->andWhere("`$this->locale`  = :locale")
             ->andWhere("`key` IN (:keys)")
             ->setParameter('locale', $locale)
             ->setParameter('keys', $keys, Connection::PARAM_STR_ARRAY);
