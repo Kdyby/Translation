@@ -330,7 +330,7 @@ class TranslationPresenter extends BasePresenter
 		$catalogue = $this->translator->getCatalogue('en');	//catalogue is object with all translations for given language
 
 		$catalogue->set('messages.homepage.hello', 'Hi');	//using this method, you can change translations. Or add tran
-		$catalogue->add(array('messages.homepage.farewell' => 'Farewell'));	//using this method, you can add new translations. You have to save them in associative array: key => message 
+		$catalogue->add(['messages.homepage.farewell' => 'Farewell']);	//using this method, you can add new translations. You have to save them in associative array: key => message 
 
 		$this->writer->writeTranslations($catalogue, 'database');	//with this, you save translations. If you use 'neon' or any other format instead of 'database', you can save all translation to neon files (or another supported format).
 

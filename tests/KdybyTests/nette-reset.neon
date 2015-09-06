@@ -24,6 +24,9 @@ common:
 		driver: pdo_sqlite
 		memory: true
 
+	database:
+		dsn: "sqlite::memory:"
+
 v22 < common:
 	nette:
 		security:

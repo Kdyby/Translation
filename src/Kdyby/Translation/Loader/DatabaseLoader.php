@@ -32,10 +32,12 @@ abstract class DatabaseLoader implements IDatabaseLoader
 
     /**
      * @param string $table
+     * @return $this
      */
     public function setTableName($table)
     {
         $this->table = $table;
+        return $this;
     }
 
     /**
@@ -43,6 +45,7 @@ abstract class DatabaseLoader implements IDatabaseLoader
      * @param string $locale
      * @param string $message
      * @param string $updatedAt
+     * @return $this
      */
     public function setColumnNames($key, $locale, $message, $updatedAt)
     {
@@ -50,6 +53,7 @@ abstract class DatabaseLoader implements IDatabaseLoader
         $this->locale = $locale;
         $this->message = $message;
         $this->updatedAt = $updatedAt;
+        return $this;
     }
 
     public function load($resource, $locale, $domain = NULL)
@@ -57,6 +61,8 @@ abstract class DatabaseLoader implements IDatabaseLoader
         $catalogue = new MessageCatalogue($locale);
 
         $translations = $this->getTranslations($locale);
+        Debugger::log('loading database translations');
+        Debugger::log($translations);
         foreach($translations as $translation) {
             if ($domain === NULL) {
                 $key = $translation['key'];

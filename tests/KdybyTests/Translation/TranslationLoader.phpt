@@ -17,6 +17,7 @@ use Symfony;
 use Tester;
 use Tester\Assert;
 use Doctrine;
+use Tracy\Debugger;
 
 require_once __DIR__ . '/../bootstrap.php';
 
@@ -27,75 +28,70 @@ require_once __DIR__ . '/../bootstrap.php';
  */
 class TranslationLoaderTest extends TestCase
 {
+	/** @var Doctrine\DBAL\Connection $connection */
+	private $connection;
 
 	protected function setUp()
 	{
+		Debugger::$logDirectory = __DIR__;
 		parent::setUp();
 		$container = $this->createContainer();
-
-		/** @var Doctrine\DBAL\Connection $connection */
-		$connection = $container->getByType('Doctrine\DBAL\Connection');
-
-		$connection->executeUpdate(file_get_contents(__DIR__ . '/../init.sql'));
+		$this->connection = $container->getByType('Doctrine\DBAL\Connection');
+		$this->connection->executeUpdate(file_get_contents(__DIR__ . '/../init.sql'));
 	}
 
 
 	public function testAddLoaders()
 	{
-		$container = $this->createContainer();
-
-		/** @var Doctrine\DBAL\Connection $connection */
-		$connection = $container->getByType('Doctrine\DBAL\Connection');
 
 		$loader = new TranslationLoader();
 		Assert::same(array(), $loader->getLoaders());
 
 		$loader->addLoader('neon', $neonLoader = new Kdyby\Translation\Loader\NeonFileLoader());
-		$loader->addLoader('database', $dbLoader = new Kdyby\Translation\Loader\DoctrineLoader($connection));
+		$loader->addLoader('database', $dbLoader = new Kdyby\Translation\Loader\DoctrineLoader($this->connection));
 		Assert::same(array('neon' => $neonLoader, 'database' => $dbLoader), $loader->getLoaders());
 	}
 
 
 
-	public function loadResource()
+	public function testLoadResources()
 	{
 		$loader = new TranslationLoader();
 		$loader->addLoader('neon', new Kdyby\Translation\Loader\NeonFileLoader());
+		$loader->addLoader('database', $dbLoader = new Kdyby\Translation\Loader\DoctrineLoader($this->connection));
 
 		$catalogue = new Kdyby\Translation\MessageCatalogue('cs_CZ');
 		$loader->loadResource('neon', __DIR__ . '/lang/front.cs_CZ.neon', 'front', $catalogue);
-		$loader->loadResource('database', 'database', NULL, $catalogue);
+		$loader->loadResource('database', Kdyby\Translation\Resource\DatabaseResource::DOCTRINE, NULL, $catalogue);
 
-		Assert::true($catalogue->defines('front.homepage.hello'));
-		Assert::true($catalogue->defines('front.header'));
+		Assert::true($catalogue->defines('homepage.hello', 'front'));
+		Assert::true($catalogue->defines('header', 'front'));
+		Assert::true($catalogue->defines('hello', 'messages'));
 
 		$catalogue = new Kdyby\Translation\MessageCatalogue('en');
-		$loader->loadResource('database', 'database', NULL, $catalogue);
+		$loader->loadResource('database', Kdyby\Translation\Resource\DatabaseResource::DOCTRINE, NULL, $catalogue);
+//
+		Assert::true($catalogue->defines('header', 'front'));
+		Assert::true($catalogue->defines('hello', 'messages'));
 
-		Assert::true($catalogue->defines('front.header'));
 	}
 
 	public function testLoadLocales()
 	{
-		$container = $this->createContainer();
+		$dbLoader = new Kdyby\Translation\Loader\DoctrineLoader($this->connection);
 
-		/** @var Doctrine\DBAL\Connection $connection */
-		$dbLoader = $container->getByType('Kdyby\Translation\Loader\DatabaseLoader');
+		$result = $this->connection->executeQuery($this->connection->getDatabasePlatform()->getListTablesSQL())->fetchAll();
+		Kdyby\Translation\Helpers::flatten($result);
+		Debugger::log($result);
 
-		Assert::same(array('cs', 'en'), $dbLoader->getLocales());
+		Assert::same(array('cs_CZ', 'en'), $dbLoader->getLocales());
 	}
 
-	protected function tearDown()
+	public function rearDown()
 	{
 		parent::tearDown();
-		$container = $this->createContainer();
-
-		/** @var Doctrine\DBAL\Connection $connection */
-		$connection = $container->getByType('Doctrine\DBAL\Connection');
-
-		$connection->executeUpdate(file_get_contents(__DIR__ . '/../clear.sql'));
+		$this->connection->executeUpdate(file_get_contents(__DIR__ . '/../clear.sql'));
 	}
-
 
 }
 
