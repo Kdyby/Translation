@@ -60,6 +60,29 @@ class PrefixedTranslatorTest extends TestCase
 		Assert::same('Use 5 credits', $prefixed->translate(new Kdyby\Translation\Phrase('useCredits', 5)));
 	}
 
+	public function testGlobalTranslate()
+	{
+		$translator = $this->createTranslator();
+		$prefixed = $translator->domain('front.homepage');
+
+		Assert::same('Hello world', $prefixed->translate("//front.homepage.hello"));
+	}
+
+	public function testGlobalPhraseTranslateWithParameters()
+	{
+		$translator = $this->createTranslator();
+		$prefixed = $translator->domain('front.homepage');
+
+		Assert::same('Hello John', $prefixed->translate(new Kdyby\Translation\Phrase('//front.homepage.namedHello', array('name' => 'John'))));
+	}
+
+	public function testGlobalPhraseTranslateWithCount()
+	{
+		$translator = $this->createTranslator();
+		$prefixed = $translator->domain('front.orderForm');
+
+		Assert::same('Use 5 credits', $prefixed->translate(new Kdyby\Translation\Phrase('//front.orderForm.useCredits', 5)));
+	}
 }
 
 \run(new PrefixedTranslatorTest());
