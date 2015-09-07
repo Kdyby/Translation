@@ -12,6 +12,7 @@ namespace Kdyby\Translation;
 
 use Kdyby;
 use Nette;
+use Nette\Utils;
 use Nette\Localization\ITranslator;
 use Nette\Utils\Callback;
 
@@ -49,6 +50,14 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 
 	public function translate($message, $count = NULL, $parameters = array(), $domain = NULL, $locale = NULL)
 	{
+		if (Utils\Strings::startsWith($message, '../')) {
+			$prefix = NULL;
+			$message = Utils\Strings::substring($message, 3);
+
+		} else {
+			$prefix = $this->prefix . '.';
+		}
+
 		if (is_array($count)) {
 			$locale = $domain ? : NULL;
 			$domain = $parameters ? : NULL;
@@ -56,7 +65,7 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 			$count = NULL;
 		}
 
-		return $this->translator->translate($this->prefix . '.' . $message, $count, (array) $parameters, $domain, $locale);
+		return $this->translator->translate($prefix . $message, $count, (array) $parameters, $domain, $locale);
 	}
 
 
