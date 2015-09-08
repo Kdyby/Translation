@@ -50,9 +50,9 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 
 	public function translate($message, $count = NULL, $parameters = array(), $domain = NULL, $locale = NULL)
 	{
-		if (Utils\Strings::startsWith($message, '../')) {
+		if (strpos($message, '//') !== FALSE) {
 			$prefix = NULL;
-			$message = Utils\Strings::substring($message, 3);
+			$message = Utils\Strings::substring($message, 2);
 
 		} else {
 			$prefix = $this->prefix . '.';
