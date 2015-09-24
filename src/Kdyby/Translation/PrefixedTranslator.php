@@ -11,10 +11,9 @@
 namespace Kdyby\Translation;
 
 use Kdyby;
+use Latte;
 use Nette;
-use Nette\Utils;
-use Nette\Localization\ITranslator;
-use Nette\Utils\Callback;
+use Tracy;
 
 
 
@@ -50,12 +49,22 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 
 	public function translate($message, $count = NULL, $parameters = array(), $domain = NULL, $locale = NULL)
 	{
-		if (strpos($message, '//') !== FALSE) {
+		if ($message instanceof Phrase) {
+			$translationString = $message->message;
+		} else {
+			$translationString = $message;
+		}
+
+		if (strpos($translationString, '//') !== FALSE) {
 			$prefix = NULL;
-			$message = Utils\Strings::substring($message, 2);
+			$message = Nette\Utils\Strings::substring($translationString, 2);
 
 		} else {
 			$prefix = $this->prefix . '.';
+		}
+
+		if ($message instanceof Phrase) {
+			return $this->translator->translate(new Phrase($prefix . '.' . $translationString, $message->count, $message->parameters, $message->domain, $message->locale));
 		}
 
 		if (is_array($count)) {
@@ -65,7 +74,7 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 			$count = NULL;
 		}
 
-		return $this->translator->translate($prefix . $message, $count, (array) $parameters, $domain, $locale);
+		return $this->translator->translate($prefix . $translationString, $count, (array) $parameters, $domain, $locale);
 	}
 
 
@@ -81,68 +90,55 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 
 
 	/**
-	 * @param Nette\Templating\Template $template
+	 * @param $template
 	 * @return ITranslator
 	 */
-	public function unregister(Nette\Templating\Template $template)
+	public function unregister($template)
 	{
-		$translator = $this->unwrap();
-		$template->registerHelper('translator', array(new TemplateHelpers($translator), 'translate'));
-		return $translator;
+		return self::overrideTemplateTranslator($template, $this->unwrap());
 	}
 
 
 
 	/**
-	 * @param Nette\Templating\Template $template
+	 * @param Latte\Template|\Nette\Bridges\ApplicationLatte\Template|\Nette\Templating\Template $template
 	 * @param string $prefix
 	 * @return ITranslator
 	 * @throws InvalidArgumentException
 	 */
-	public static function register(Nette\Templating\Template $template, $prefix)
+	public static function register($template, $prefix)
 	{
-		if (!$translator = self::findTranslator($template)) {
-			throw new InvalidArgumentException("You have to pass the Translator the the template using `\$template->setTranslator(\$translator);`, or register the helper loader.");
+		try {
+			$translator = $template->getTranslator();
+
+		} catch (\LogicException $e) {
+			throw new InvalidArgumentException('Please register helpers from \Kdyby\Translation\TemplateHelpers before using translator prefixes.', 0, $e);
 		}
 
 		/** @var ITranslator $translator */
 		$translator = new static($prefix, $translator);
-		$template->setTranslator($translator);
-
-		return $translator;
+		return self::overrideTemplateTranslator($template, $translator);
 	}
 
 
 
 	/**
-	 * @param Nette\Templating\Template $template
-	 * @return ITranslator
+	 * @param Latte\Template|\Nette\Bridges\ApplicationLatte\Template|\Nette\Templating\Template $template
+	 * @param ITranslator $translator
 	 */
-	private static function findTranslator(Nette\Templating\Template $template)
+	private static function overrideTemplateTranslator($template, ITranslator $translator)
 	{
-		$helpers = $template->getHelpers();
-		if (isset($helpers['translate'])) {
-			$helper = $helpers['translate'] instanceof Nette\Callback ? $helpers['translate']->getNative() : $helpers['translate'];
-			$obj = isset($helper[0]) ? $helper[0] : NULL;
-			if ($obj instanceof ITranslator) {
-				return $obj;
+		if ($template instanceof Latte\Template) {
+			$template->getEngine()->addFilter('translate', array(new TemplateHelpers($translator), 'translate'));
 
-			} elseif ($obj instanceof TemplateHelpers) {
-				return $obj->getTranslator();
-			}
+		} elseif ($template instanceof \Nette\Bridges\ApplicationLatte\Template) {
+			$template->getLatte()->addFilter('translate', array(new TemplateHelpers($translator), 'translate'));
+
+		} elseif ($template instanceof \Nette\Templating\Template) {
+			$template->registerHelper('translate', array(new TemplateHelpers($translator), 'translate'));
 		}
 
-		foreach ($template->getHelperLoaders() as $loader) {
-			$loader = $loader instanceof Nette\Callback ? $loader->getNative() : $loader;
-			$obj = is_array($loader) && isset($loader[0]) ? $loader[0] : NULL;
-			if ($obj instanceof TemplateHelpers) {
-				$template->setTranslator($translator = $obj->getTranslator());
-				return $translator;
-			}
-		}
-
-		return NULL;
+		return $translator;
 	}
 
 }
-
