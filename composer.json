@@ -70,7 +70,10 @@
 	"autoload": {
 		"psr-0": {
 			"Kdyby\\Translation": "src/"
-		}
+		},
+		"classmap": [
+			"src/Kdyby/Translation/exceptions.php"
+		]
 	},
 	"extra": {
 		"branch-alias": {
