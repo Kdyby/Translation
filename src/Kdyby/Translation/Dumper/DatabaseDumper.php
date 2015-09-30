@@ -55,6 +55,9 @@ abstract class DatabaseDumper implements DumperInterface
     public function dump(MessageCatalogue $messages, $options = array())
     {
         $messagesArray = $messages->all();
+        if (isset($messagesArray[null]) && is_array($messagesArray[null])) {    //bugfix for translations without domain
+            $messagesArray = $messagesArray[null];
+        }
         Helpers::flatten($messagesArray);
         $locale = $messages->getLocale();
         $keys = array_keys($messagesArray);
