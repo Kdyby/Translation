@@ -24,7 +24,7 @@ class NetteDbDumper extends DatabaseDumper
         return $this->db->table($this->table)
             ->select("`$this->key` AS `key`")
             ->where("`$this->locale` = ?", $locale)
-            ->where("`key` IN (?)", $keys)
+            ->where("`$this->key` IN (?)", $keys)
             ->fetchPairs('key', 'key'); //to get only one dimensional array of keys
     }
 
