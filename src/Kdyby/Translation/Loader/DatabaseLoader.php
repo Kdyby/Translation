@@ -2,15 +2,10 @@
 
 namespace Kdyby\Translation\Loader;
 
-use Kdyby\Doctrine\EntityManager;
-use Kdyby\Translation\ITranslator;
 use Kdyby\Translation\MessageCatalogue;
 use Kdyby\Translation\Resource\DatabaseResource;
 use Kdyby\Translation\Translator;
 use Nette\Utils\Strings;
-use Symfony\Component\Translation\Dumper\DumperInterface;
-use Symfony\Component\Translation\Loader\LoaderInterface;
-use Tracy\Debugger;
 
 abstract class DatabaseLoader implements IDatabaseLoader
 {
@@ -61,8 +56,6 @@ abstract class DatabaseLoader implements IDatabaseLoader
         $catalogue = new MessageCatalogue($locale);
 
         $translations = $this->getTranslations($locale);
-        Debugger::log('loading database translations');
-        Debugger::log($translations);
         foreach($translations as $translation) {
             if ($domain === NULL) {
                 $key = $translation['key'];
