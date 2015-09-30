@@ -51,7 +51,7 @@ class NetteDbLoader extends DatabaseLoader
     {
         $stmt = $this->db->table($this->table)
             ->select("`$this->key` AS `key`, `$this->locale` AS locale, `$this->message` AS message")
-            ->where('locale = ?', $locale);
+            ->where("$this->locale = ?", $locale);
         return $stmt->fetchAll();
     }
 
