@@ -5,15 +5,7 @@ namespace Kdyby\Translation\Loader;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\TableNotFoundException;
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Doctrine\DBAL\Types\Type;
-use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
-use Doctrine\ORM\Tools\SchemaTool;
-use Kdyby\Doctrine\EntityManager;
-use Kdyby\Doctrine\Mapping\ClassMetadata;
-use Kdyby\Translation\Listener\TranslationMetadataListener;
 use Kdyby\Translation\Resource\DatabaseResource;
-use Tracy\Debugger;
 
 class DoctrineLoader extends DatabaseLoader
 {
@@ -86,7 +78,12 @@ class DoctrineLoader extends DatabaseLoader
             ->orderBy('updated_at', Criteria::DESC)
             ->setMaxResults(1)
             ->setParameter('locale', $locale);
-        return new \DateTime($qb->execute()->fetchColumn());
+        $updatedAt = $qb->execute()->fetchColumn();
+        $dateTime = new \DateTime($updatedAt);
+        if ($updatedAt === null) {
+            $dateTime->setTimestamp(0);
+        }
+        return $dateTime;
     }
 
 }

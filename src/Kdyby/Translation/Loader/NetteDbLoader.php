@@ -2,17 +2,9 @@
 
 namespace Kdyby\Translation\Loader;
 
-use Kdyby\Doctrine\EntityManager;
-use Kdyby\Translation\ITranslator;
-use Kdyby\Translation\MessageCatalogue;
 use Kdyby\Translation\Resource\DatabaseResource;
-use Kdyby\Translation\Translator;
 use Nette\Database\Context;
 use Nette\Database\DriverException;
-use Nette\Utils\Strings;
-use Symfony\Component\Translation\Dumper\DumperInterface;
-use Symfony\Component\Translation\Loader\LoaderInterface;
-use Tracy\Debugger;
 
 class NetteDbLoader extends DatabaseLoader
 {
@@ -61,12 +53,17 @@ class NetteDbLoader extends DatabaseLoader
      */
     protected function getLastUpdate($locale)
     {
-        $stmt = $this->db->table($this->table)
+        $updatedAt = $this->db->table($this->table)
             ->select("`$this->updatedAt` AS `updated_at`")
             ->where("`$this->locale` = ?", $locale)
             ->order('updated_at DESC')
-            ->limit(1);
-        return $stmt->fetchField('updated_at');
+            ->limit(1)
+            ->fetchField('updated_at');
+        if ($updatedAt === null) {
+            $updatedAt = new \DateTime();
+            $updatedAt->setTimestamp(0);
+        }
+        return $updatedAt;
     }
 
 }

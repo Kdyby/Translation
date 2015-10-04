@@ -77,6 +77,7 @@ abstract class DatabaseDumper implements DumperInterface
             $this->commit();
         } catch(\Exception $e) {
             $this->rollBack();
+            throw $e;
         }
     }
 
