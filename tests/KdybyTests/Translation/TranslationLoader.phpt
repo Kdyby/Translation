@@ -91,7 +91,7 @@ class TranslationLoaderTest extends TestCase
 		Assert::same(array('cs_CZ', 'en'), $dbLoader->getLocales());
 	}
 
-	public function rearDown()
+	public function tearDown()
 	{
 		parent::tearDown();
 		$this->connection->executeUpdate(file_get_contents(__DIR__ . '/../clear.sql'));

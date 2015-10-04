@@ -94,7 +94,7 @@ class TranslationDumperTest extends TestCase
 		Assert::true($catalogue->defines('farewell', 'front'));
 	}
 
-	public function rearDown()
+	public function tearDown()
 	{
 		parent::tearDown();
 
