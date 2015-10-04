@@ -17,7 +17,7 @@ class DoctrineDumper extends DatabaseDumper
     public function __construct(Connection $conn)
     {
         $this->connection = $conn;
-    }
+	}
 
     protected function getExistingKeys($keys, $locale)
     {
@@ -79,11 +79,11 @@ class DoctrineDumper extends DatabaseDumper
     protected function update($key, $locale, $message)
     {
         $qb = $this->connection->createQueryBuilder();
-        $qb->update($this->table, 't')
-            ->set('t.'.$this->connection->quoteIdentifier($this->message), ':message')
-            ->set('t.'.$this->connection->quoteIdentifier($this->updatedAt), ':updatedAt')
-            ->andWhere('t.'.$this->connection->quoteIdentifier($this->key).' = :key')
-            ->andWhere('t.'.$this->connection->quoteIdentifier($this->locale).' = :locale')
+        $qb->update($this->connection->quoteIdentifier($this->table))
+            ->set($this->connection->quoteIdentifier($this->message), ':message')
+            ->set($this->connection->quoteIdentifier($this->updatedAt), ':updatedAt')
+            ->andWhere($this->connection->quoteIdentifier($this->key).' = :key')
+            ->andWhere($this->connection->quoteIdentifier($this->locale).' = :locale')
             ->setParameters([
                 'key' => $key,
                 'locale' => $locale,

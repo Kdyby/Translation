@@ -31,16 +31,19 @@ class TranslationLoaderTest extends TestCase
 	/** @var Doctrine\DBAL\Connection $connection */
 	private $connection;
 
+	/** @var \Nette\DI\Container */
+	private $container;
+
 	public function __construct()
 	{
 		Tester\Environment::lock('db', dirname(TEMP_DIR));
+		$this->container = $this->createContainer();
+		$this->connection = $this->container->getByType('Doctrine\DBAL\Connection');
 	}
 
 	protected function setUp()
 	{
 		parent::setUp();
-		$container = $this->createContainer();
-		$this->connection = $container->getByType('Doctrine\DBAL\Connection');
 		$this->connection->executeUpdate(file_get_contents(__DIR__ . '/../init.sql'));
 	}
 
@@ -83,11 +86,6 @@ class TranslationLoaderTest extends TestCase
 	public function testLoadLocales()
 	{
 		$dbLoader = new Kdyby\Translation\Loader\DoctrineLoader($this->connection);
-
-		$result = $this->connection->executeQuery($this->connection->getDatabasePlatform()->getListTablesSQL())->fetchAll();
-		Kdyby\Translation\Helpers::flatten($result);
-		Debugger::log($result);
-
 		Assert::same(array('cs_CZ', 'en'), $dbLoader->getLocales());
 	}
 

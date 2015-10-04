@@ -60,7 +60,11 @@ abstract class DatabaseLoader implements IDatabaseLoader
             if ($domain === NULL) {
                 $key = $translation['key'];
                 if (Strings::contains($key, '.')) {
-                    $prefix = Strings::substring($key, 0, mb_strpos($key, '.'));
+                    if (function_exists('mb_strpos')) {
+                        $prefix = Strings::substring($key, 0, mb_strpos($key, '.'));
+                    } else {
+                        $prefix = Strings::substring($key, 0, strpos($key, '.'));
+                    }
                     $key = Strings::substring($key, Strings::length($prefix) + 1);  //plus one because of dot
                 } else {
                     $prefix = $domain;
