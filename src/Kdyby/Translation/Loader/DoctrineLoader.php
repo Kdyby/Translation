@@ -37,7 +37,7 @@ class DoctrineLoader extends DatabaseLoader
 
         $qb = $this->conn->createQueryBuilder()
             ->addSelect('DISTINCT '.$this->conn->quoteIdentifier($this->locale).' AS locale')
-            ->from("`$this->table`");
+            ->from($this->conn->quoteIdentifier($this->table));
         try {
             $stmt = $qb->execute();
             $locales = array_column($stmt->fetchAll(), 'locale');
