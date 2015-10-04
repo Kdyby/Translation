@@ -26,7 +26,7 @@ class NetteDbLoader extends DatabaseLoader
     public function getLocales()
     {
         try {
-            $stmt = $this->db->query("SELECT DISTINCT `$this->locale` as locale FROM $this->table");
+            $stmt = $this->db->query('SELECT DISTINCT '.$this->delimite($this->locale).' as locale FROM '.$this->delimite($this->table));
             $locales = $stmt->fetchPairs('locale', 'locale');
         } catch(DriverException $e) {
             $locales = array();
@@ -42,7 +42,7 @@ class NetteDbLoader extends DatabaseLoader
     protected function getTranslations($locale)
     {
         $stmt = $this->db->table($this->table)
-            ->select("`$this->key` AS `key`, `$this->locale` AS locale, `$this->message` AS message")
+            ->select($this->delimite($this->key).' AS '.$this->delimite('key').', '.$this->delimite($this->locale).' AS locale, '.$this->delimite($this->message).' AS message')
             ->where("$this->locale = ?", $locale);
         return $stmt->fetchAll();
     }
@@ -54,8 +54,8 @@ class NetteDbLoader extends DatabaseLoader
     protected function getLastUpdate($locale)
     {
         $updatedAt = $this->db->table($this->table)
-            ->select("`$this->updatedAt` AS `updated_at`")
-            ->where("`$this->locale` = ?", $locale)
+            ->select($this->delimite($this->updatedAt).' AS '.$this->delimite('updated_at'))
+            ->where($this->delimite($this->locale).' = ?', $locale)
             ->order('updated_at DESC')
             ->limit(1)
             ->fetchField('updated_at');
@@ -66,4 +66,8 @@ class NetteDbLoader extends DatabaseLoader
         return $updatedAt;
     }
 
+    private function delimite($name)
+    {
+        return $this->db->getConnection()->getSupplementalDriver()->delimite($name);
+    }
 }

@@ -36,7 +36,7 @@ class DoctrineLoader extends DatabaseLoader
         }
 
         $qb = $this->conn->createQueryBuilder()
-            ->addSelect("DISTINCT `$this->locale` AS locale")
+            ->addSelect('DISTINCT '.$this->conn->quoteIdentifier($this->locale).' AS locale')
             ->from("`$this->table`");
         try {
             $stmt = $qb->execute();
@@ -56,10 +56,10 @@ class DoctrineLoader extends DatabaseLoader
     protected function getTranslations($locale)
     {
         $qb = $this->conn->createQueryBuilder()
-            ->addSelect("`$this->key` AS `key`")
-            ->addSelect("`$this->locale` AS locale")
-            ->addSelect("`$this->message` AS message")
-            ->from("`$this->table`")
+            ->addSelect($this->conn->quoteIdentifier($this->key).' AS '.$this->conn->quoteIdentifier('key'))
+            ->addSelect($this->conn->quoteIdentifier($this->locale).' AS locale')
+            ->addSelect($this->conn->quoteIdentifier($this->message).' AS message')
+            ->from($this->conn->quoteIdentifier($this->table))
             ->where("locale = :locale")
             ->setParameter('locale', $locale);
         return $qb->execute()->fetchAll();
@@ -72,9 +72,9 @@ class DoctrineLoader extends DatabaseLoader
     protected function getLastUpdate($locale)
     {
         $qb = $this->conn->createQueryBuilder()
-            ->addSelect("`$this->updatedAt` AS `updated_at`")
-            ->from("`$this->table`")
-            ->where("`$this->locale` = :locale")
+            ->addSelect($this->conn->quoteIdentifier($this->updatedAt).' AS '.$this->conn->quoteIdentifier('updated_at'))
+            ->from($this->conn->quoteIdentifier($this->table))
+            ->where($this->conn->quoteIdentifier($this->locale).' = :locale')
             ->orderBy('updated_at', Criteria::DESC)
             ->setMaxResults(1)
             ->setParameter('locale', $locale);
