@@ -22,7 +22,7 @@ class DoctrineDumper extends DatabaseDumper
     protected function getExistingKeys($keys, $locale)
     {
         $qb = $this->connection->createQueryBuilder()
-            ->addSelect("`$this->key` AS `key`")
+            ->addSelect($this->connection->quoteIdentifier($this->key).' AS '.$this->connection->quoteIdentifier('key'))
             ->from("`$this->table`")
             ->andWhere("`$this->locale`  = :locale")
             ->andWhere("`key` IN (:keys)")
@@ -48,10 +48,10 @@ class DoctrineDumper extends DatabaseDumper
         $qb = $this->connection->createQueryBuilder();
         $qb->insert($this->table)
             ->values([
-                "`$this->key`" => ":key",
-                "`$this->locale`" => ":locale",
-                "`$this->message`" => ":message",
-                "`$this->updatedAt`" => ":updatedAt"
+                $this->connection->quoteIdentifier($this->key) => ":key",
+                $this->connection->quoteIdentifier($this->locale) => ":locale",
+                $this->connection->quoteIdentifier($this->message) => ":message",
+                $this->connection->quoteIdentifier($this->updatedAt) => ":updatedAt"
             ])
             ->setParameters([
                 'key' => $key,
@@ -71,10 +71,10 @@ class DoctrineDumper extends DatabaseDumper
     {
         $qb = $this->connection->createQueryBuilder();
         $qb->update($this->table, 't')
-            ->set("t.$this->message", ':message')
-            ->set("t.$this->updatedAt", ':updatedAt')
-            ->andWhere("t.$this->key = :key")
-            ->andWhere("t.$this->locale = :locale")
+            ->set('t.'.$this->connection->quoteIdentifier($this->message), ':message')
+            ->set('t.'.$this->connection->quoteIdentifier($this->updatedAt), ':updatedAt')
+            ->andWhere('t.'.$this->connection->quoteIdentifier($this->key).' = :key')
+            ->andWhere('t.'.$this->connection->quoteIdentifier($this->locale).' = :locale')
             ->setParameters([
                 'key' => $key,
                 'locale' => $locale,

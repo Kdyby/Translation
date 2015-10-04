@@ -22,9 +22,9 @@ class NetteDbDumper extends DatabaseDumper
     protected function getExistingKeys($keys, $locale)
     {
         return $this->db->table($this->table)
-            ->select("`$this->key` AS `key`")
-            ->where("`$this->locale` = ?", $locale)
-            ->where("`$this->key` IN (?)", $keys)
+            ->select($this->delimite($this->key).' AS '.$this->delimite('key'))
+            ->where($this->delimite($this->locale).' = ?', $locale)
+            ->where($this->delimite($this->key).' IN (?)', $keys)
             ->fetchPairs('key', 'key'); //to get only one dimensional array of keys
     }
 
@@ -63,5 +63,10 @@ class NetteDbDumper extends DatabaseDumper
     protected function rollBack()
     {
         $this->db->rollBack();
+    }
+
+    private function delimite($name)
+    {
+        return $this->db->getConnection()->getSupplementalDriver()->delimite($name);
     }
 }
