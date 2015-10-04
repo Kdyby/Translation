@@ -31,6 +31,11 @@ class TranslationLoaderTest extends TestCase
 	/** @var Doctrine\DBAL\Connection $connection */
 	private $connection;
 
+	public function __construct()
+	{
+		Tester\Environment::lock('db', dirname(TEMP_DIR));
+	}
+
 	protected function setUp()
 	{
 		parent::setUp();
