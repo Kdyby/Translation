@@ -24,22 +24,22 @@ use Symfony\Component\Translation\MessageCatalogue;
 class NeonFileDumper extends FileDumper
 {
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function format(MessageCatalogue $messages, $domain)
-    {
-         return Neon::encode($messages->all($domain), Neon::BLOCK);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	protected function format(MessageCatalogue $messages, $domain)
+	{
+		return Neon::encode($messages->all($domain), Neon::BLOCK);
+	}
 
 
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function getExtension()
-    {
-        return 'neon';
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	protected function getExtension()
+	{
+		return 'neon';
+	}
 
 }

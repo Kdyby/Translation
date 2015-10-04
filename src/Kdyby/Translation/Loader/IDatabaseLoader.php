@@ -8,7 +8,7 @@ use Symfony\Component\Translation\Loader\LoaderInterface;
 interface IDatabaseLoader extends LoaderInterface
 {
 
-    public function getLocales();
+	public function getLocales();
 
-    public function addResources(Translator $translator);
+	public function addResources(Translator $translator);
 }

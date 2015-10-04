@@ -6,7 +6,6 @@
  * @testCase KdybyTests\Translation\TranslateMacrosTest
  * @author Filip Procházka <filip@prochazka.su>
  * @package Kdyby\Translation
- * @skip
  */
 
 namespace KdybyTests\Translation;
