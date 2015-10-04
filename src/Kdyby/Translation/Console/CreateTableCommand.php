@@ -58,11 +58,11 @@ class CreateTableCommand extends Command
 			->setDescription('Builds query for creating of database table.')
 			->setDefinition(array(
 				new InputOption(
-					'dump-sql', null, InputOption::VALUE_NONE,
+					'dump-sql', NULL, InputOption::VALUE_NONE,
 					'Dumps the generated SQL statement to the screen (does not execute it).'
 				),
 				new InputOption(
-					'force', null, InputOption::VALUE_NONE,
+					'force', NULL, InputOption::VALUE_NONE,
 					'Causes the generated SQL statement to be physically executed against your database.'
 				)
 			));

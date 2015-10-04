@@ -33,12 +33,9 @@ class TranslationDumperTest extends TestCase
 
 	protected function setUp()
 	{
-		Debugger::$logDirectory = __DIR__;
 		parent::setUp();
 		$container = $this->createContainer();
-
 		$this->connection = $container->getByType('Doctrine\DBAL\Connection');
-
 		$this->connection->executeUpdate(file_get_contents(__DIR__ . '/../init.sql'));
 	}
 

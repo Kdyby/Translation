@@ -59,7 +59,7 @@ class NetteDbLoader extends DatabaseLoader
             ->order('updated_at DESC')
             ->limit(1)
             ->fetchField('updated_at');
-        if ($updatedAt === null) {
+        if ($updatedAt === NULL) {
             $updatedAt = new \DateTime();
             $updatedAt->setTimestamp(0);
         }

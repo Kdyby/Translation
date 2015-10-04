@@ -33,7 +33,6 @@ class TranslationLoaderTest extends TestCase
 
 	protected function setUp()
 	{
-		Debugger::$logDirectory = __DIR__;
 		parent::setUp();
 		$container = $this->createContainer();
 		$this->connection = $container->getByType('Doctrine\DBAL\Connection');

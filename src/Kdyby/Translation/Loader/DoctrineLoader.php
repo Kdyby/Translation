@@ -27,7 +27,7 @@ class DoctrineLoader extends DatabaseLoader
     public function getLocales()
     {
         if( !function_exists( 'array_column' ) ) {                  //just because of PHP 5.4, where function array_column is not present. Fuck you, PHP 5.4
-            function array_column( array $input, $column_key, $index_key = null ) {
+            function array_column( array $input, $column_key, $index_key = NULL ) {
                 $result = array();
                 foreach( $input as $k => $v )
                     $result[ $index_key ? $v[ $index_key ] : $k ] = $v[ $column_key ];
@@ -80,7 +80,7 @@ class DoctrineLoader extends DatabaseLoader
             ->setParameter('locale', $locale);
         $updatedAt = $qb->execute()->fetchColumn();
         $dateTime = new \DateTime($updatedAt);
-        if ($updatedAt === null) {
+        if ($updatedAt === NULL) {
             $dateTime->setTimestamp(0);
         }
         return $dateTime;

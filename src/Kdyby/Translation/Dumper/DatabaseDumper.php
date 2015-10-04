@@ -55,8 +55,8 @@ abstract class DatabaseDumper implements DumperInterface
     public function dump(MessageCatalogue $messages, $options = array())
     {
         $messagesArray = $messages->all();
-        if (isset($messagesArray[null]) && is_array($messagesArray[null])) {    //bugfix for translations without domain
-            $messagesArray = $messagesArray[null];
+        if (isset($messagesArray[NULL]) && is_array($messagesArray[NULL])) {    //bugfix for translations without domain
+            $messagesArray = $messagesArray[NULL];
         }
         Helpers::flatten($messagesArray);
         $locale = $messages->getLocale();
@@ -66,7 +66,7 @@ abstract class DatabaseDumper implements DumperInterface
         try {
             $existingKeys = $this->getExistingKeys($keys, $locale);
             foreach ($messagesArray as $key => $message) {
-                if ($message !== null) {
+                if ($message !== NULL) {
                     if (in_array($key, $existingKeys)) {
                         $this->update($key, $locale, $message);
                     } else {
