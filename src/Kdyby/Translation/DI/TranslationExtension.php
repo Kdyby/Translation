@@ -272,7 +272,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			}
 			$columns = $config['database']['columns'];
 			$service = $builder->addDefinition($this->prefix('dumper.database'));
-			Nette\DI\Compiler::parseService($dumper, $class);
+			Nette\DI\Compiler::parseService($service, $class);
 			$service->addTag(self::DUMPER_TAG, 'database')
 				->addSetup('setTableName', array($config['database']['table']))
 				->addSetup('setColumnNames', array($columns['key'], $columns['locale'], $columns['message'], $columns['updatedAt']));
