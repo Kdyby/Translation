@@ -42,7 +42,7 @@ class TranslationDumperTest extends TestCase
 		$container = $this->createContainer();
 		$this->connection = $container->getByType('Doctrine\DBAL\Connection');
 		$this->connection->executeUpdate(file_get_contents(__DIR__ . '/../init.sql'));
-		$this->connection->createQueryBuilder()->select()->from('translations')->execute();	//just to check table creating
+		$this->connection->createQueryBuilder()->select()->from('translations')->execute(); //just to check table creating
 	}
 
 
