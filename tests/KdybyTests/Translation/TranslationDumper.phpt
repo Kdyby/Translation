@@ -44,7 +44,6 @@ class TranslationDumperTest extends TestCase
 	{
 		parent::setUp();
 		$this->connection->executeUpdate(file_get_contents(__DIR__ . '/../init.sql'));
-		$this->connection->createQueryBuilder()->select('*')->from('translations')->execute(); //just to check table creating
 	}
 
 
@@ -64,12 +63,7 @@ class TranslationDumperTest extends TestCase
 		$writer = $this->container->getByType('Symfony\Component\Translation\Writer\TranslationWriter');
 		$catalogue->set('header', 'úvodka', 'front');
 		$catalogue->set('hello', 'nazdar', 'messages');
-		$this->connection->createQueryBuilder()->select('*')->from('translations')->execute(); //just to check table creating
-//		try {
-			$writer->writeTranslations($catalogue, 'database');
-//		} catch(\Exception $e) {
-//			$this->connection->createQueryBuilder()->select('*')->from('translations')->execute(); //just to check table creating
-//		}
+		$writer->writeTranslations($catalogue, 'database');
 
 		Assert::same('úvodka', $catalogue->get('header', 'front'));
 		Assert::same('nazdar', $catalogue->get('hello', 'messages'));
@@ -92,12 +86,7 @@ class TranslationDumperTest extends TestCase
 		$writer = $this->container->getByType('Symfony\Component\Translation\Writer\TranslationWriter');
 		$catalogue->add(array('farewell' => 'Sbohem'), 'front');
 		$catalogue->add(array('footer' => 'Zápatí'), 'messages');
-		$this->connection->createQueryBuilder()->select('*')->from('translations')->execute(); //just to check table creating
-		try {
-			$writer->writeTranslations($catalogue, 'database');
-		} catch(\Exception $e) {
-			$this->connection->createQueryBuilder()->select('*')->from('translations')->execute(); //just to check table creating
-		}
+		$writer->writeTranslations($catalogue, 'database');
 
 		Assert::true($catalogue->defines('footer', 'messages'));
 		Assert::true($catalogue->defines('farewell', 'front'));
