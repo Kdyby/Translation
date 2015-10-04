@@ -96,6 +96,7 @@ class CreateTableCommand extends Command
 		$table->addColumn($this->message, Type::TEXT);
 		$table->addColumn($this->updatedAt, Type::DATETIME);
 		$table->setPrimaryKey(array($this->key, $this->locale));
+		$table->addIndex(array($this->updatedAt));
 
 		if ($input->getOption('dump-sql')) {
 			list($sql) = $this->connection->getDatabasePlatform()->getCreateTableSQL($table);

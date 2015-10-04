@@ -21,6 +21,15 @@ class DoctrineDumper extends DatabaseDumper
 
     protected function getExistingKeys($keys, $locale)
     {
+        if( !function_exists( 'array_column' ) ) {                  //just because of PHP 5.4, where function array_column is not present. Fuck you, PHP 5.4
+            function array_column( array $input, $column_key, $index_key = null ) {
+                $result = array();
+                foreach( $input as $k => $v )
+                    $result[ $index_key ? $v[ $index_key ] : $k ] = $v[ $column_key ];
+                return $result;
+            }
+        }
+
         $qb = $this->connection->createQueryBuilder()
             ->addSelect($this->connection->quoteIdentifier($this->key).' AS '.$this->connection->quoteIdentifier('key'))
             ->from($this->connection->quoteIdentifier($this->table))
