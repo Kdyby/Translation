@@ -270,11 +270,10 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			} else {
 				$class = $dumper;
 			}
-			list($class) = self::filterArgs($class);
 			$columns = $config['database']['columns'];
-			$builder->addDefinition($this->prefix('dumper.database'))
-				->setClass($class->entity)
-				->addTag(self::DUMPER_TAG, 'database')
+			$service = $builder->addDefinition($this->prefix('dumper.database'));
+			Nette\DI\Compiler::parseService($dumper, $class);
+			$service->addTag(self::DUMPER_TAG, 'database')
 				->addSetup('setTableName', array($config['database']['table']))
 				->addSetup('setColumnNames', array($columns['key'], $columns['locale'], $columns['message'], $columns['updatedAt']));
 		}
@@ -300,11 +299,10 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			} else {
 				$class = $loader;
 			}
-			list($class) = self::filterArgs($class);
 			$columns = $config['database']['columns'];
-			$builder->addDefinition($this->prefix('loader.database'))
-				->setClass($class->entity)
-				->addTag(self::LOADER_TAG, 'database')
+			$service = $builder->addDefinition($this->prefix('loader.database'));
+			Nette\DI\Compiler::parseService($service, $class);
+			$service->addTag(self::LOADER_TAG, 'database')
 				->addTag(self::DATABASE_LOADER_TAG, $loader)
 				->addSetup('setTableName', array($config['database']['table']))
 				->addSetup('setColumnNames', array($columns['key'], $columns['locale'], $columns['message'], $columns['updatedAt']));
