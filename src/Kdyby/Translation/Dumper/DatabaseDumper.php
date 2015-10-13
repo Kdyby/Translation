@@ -56,7 +56,8 @@ abstract class DatabaseDumper implements DumperInterface
 	{
 		$messagesArray = $messages->all();
 		if (isset($messagesArray[NULL]) && is_array($messagesArray[NULL])) {    //bugfix for translations without domain
-			$messagesArray = $messagesArray[NULL];
+			$messagesArray += $messagesArray[NULL];
+			unset($messagesArray[NULL]);
 		}
 		Helpers::flatten($messagesArray);
 		$locale = $messages->getLocale();
