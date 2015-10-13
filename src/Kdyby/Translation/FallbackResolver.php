@@ -49,7 +49,7 @@ class FallbackResolver extends Nette\Object
 			$locales[] = $fallback;
 		}
 
-		if (strrchr($locale, '_') !== false) {
+		if (strrchr($locale, '_') !== FALSE) {
 			array_unshift($locales, substr($locale, 0, -strlen(strrchr($locale, '_'))));
 		}
 
