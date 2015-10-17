@@ -1,0 +1,7 @@
+translation:
+	database:
+		loader: nettedb
+
+
+database:
+	dsn: "sqlite::memory:"

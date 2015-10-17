@@ -10,8 +10,6 @@
 
 namespace Kdyby\Translation;
 
-
-
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
@@ -32,6 +30,9 @@ class InvalidArgumentException extends \InvalidArgumentException implements Exce
 
 
 
+/**
+ * @author Filip Procházka <filip@prochazka.su>
+ */
 class InvalidStateException extends \RuntimeException implements Exception
 {
 
@@ -53,6 +54,26 @@ class InvalidResourceException extends \UnexpectedValueException implements Exce
  * @author Filip Procházka <filip@prochazka.su>
  */
 class LoaderNotFoundException extends \RuntimeException implements Exception
+{
+
+}
+
+
+
+/**
+ * The exception that is thrown when a requested method or operation is not implemented.
+ */
+class NotImplementedException extends \LogicException implements Exception
+{
+
+}
+
+
+
+/**
+ * @author Filip Procházka <filip@prochazka.su>
+ */
+class DatabaseException extends \RuntimeException implements Exception
 {
 
 }

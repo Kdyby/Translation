@@ -161,7 +161,7 @@ class Translator extends BaseTranslator implements ITranslator
 		}
 
 		if ($domain === NULL) {
-			list($domain, $id) = $this->extractMessageDomain($message);
+			list($domain, $id) = Helpers::extractMessageDomain($message);
 
 		} else {
 			$id = $message;
@@ -190,7 +190,7 @@ class Translator extends BaseTranslator implements ITranslator
 		}
 
 		if ($domain === NULL) {
-			list($domain, $id) = $this->extractMessageDomain($message);
+			list($domain, $id) = Helpers::extractMessageDomain($message);
 
 		} else {
 			$id = $message;
@@ -396,24 +396,6 @@ class Translator extends BaseTranslator implements ITranslator
 		if (preg_match('~^[a-z0-9@_\\.\\-]*\z~i', $locale) !== 1) {
 			throw new \InvalidArgumentException(sprintf('Invalid "%s" locale.', $locale));
 		}
-	}
-
-
-
-	/**
-	 * @param $message
-	 * @return array
-	 */
-	private function extractMessageDomain($message)
-	{
-		if (strpos($message, '.') !== FALSE && strpos($message, ' ') === FALSE) {
-			list($domain, $message) = explode('.', $message, 2);
-
-		} else {
-			$domain = 'messages';
-		}
-
-		return array($domain, $message);
 	}
 
 

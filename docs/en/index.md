@@ -228,3 +228,111 @@ translation:
 	resolvers:
 		header: off
 ```
+
+
+## Database integration
+
+### Loaders
+
+Kdyby\Translation can use two database libraries for handling database translations: [Nette Database](https://github.com/nette/database) and [Doctrine 2 DBAL](https://github.com/doctrine/dbal)
+
+There is minimal configuration which needs to be added to your config.neon:
+
+```yml
+translation:
+	database:
+		loader: doctrine
+```
+
+Loader can have values: `doctrine` or `nettedb`, it depends, which database library you use.
+You can also use your own Loader, then you put to your config.neon full name with namespace:
+
+```yml
+translation:
+	database:
+		loader: Namespace\CustomLoader
+```
+
+The loader needs to implement the [Symfony\Component\Translation\Loader\LoaderInterface](https://github.com/symfony/Translation/blob/3ba54181c8386b180999d942bf33681a726bb70f/Loader/LoaderInterface.php) 
+but it will be much more comfortable, when you extend abstract class Kdyby\Translation\Loader\DatabaseLoader, which handles all logic and all you have to do is to implement queries for retrieving translations.
+
+### Table structure and configuration
+
+The table in database has 4 columns:
+- `key` (like key in your .neon translations, and key, which you write to translate method)
+- `locale`: language of message
+- `message`: actual text of message
+- `updatedAt`: column with datetime of last update. This one is used for cache invalidation because of Kdyby\Translation's sophisticated caching.
+
+You can configure names of columns and name of translation table in your database like this
+
+```yml
+translation:
+	database:
+		table: translationTableName
+		columns:
+			key: keyColumnName
+			locale: localeColumnName
+			message: messageColumnName
+			updatedAt: lastUpdateColumnName
+```
+
+Default values are
+
+```yml
+translation:
+	database:
+		table: translations
+		columns:
+			key: key
+			locale: locale
+			message: message
+			updatedAt: updated_at
+```
+
+### Generating table via Symfony Commands
+
+If you want to have your translation table generated, you need to download the [Doctrine 2 DBAL](https://github.com/doctrine/dbal) library 
+and [Kdyby\Console](https://github.com/Kdyby/Console) library over Composer and then you can use kdyby:translation-create-table command to generate table
+
+```sh
+$ kdyby:translation-create-table --dump-sql dumps SQL query, but does not execute it.
+$ kdyby:translation-create-table --force executes SQL query.
+```
+
+
+### Modifying translations
+
+You can modify your translations in database in any way you are used to, but you must update the value in updatedAt column.
+Or you can let Kdyby\Translation do that for you.
+
+Following snippet of code will show you how you can modify translations in Presenter and save them using Kdyby\Translation (only for illustration, please, keep this in your Model layer)
+
+```php
+<?php
+ 
+namespace App\Presenters;
+
+use Kdyby\Translation\Translator;
+use Symfony\Component\Translation\Writer\TranslationWriter;
+use Nette;
+
+class TranslationPresenter extends BasePresenter
+{
+	/** @var Translator @inject */
+	public $translator;
+
+	/** @var TranslationWriter @inject */
+	public $writer;
+
+	public function renderDefault()
+	{
+		$catalogue = $this->translator->getCatalogue('en');	//catalogue is object with all translations for given language
+
+		$catalogue->set('messages.homepage.hello', 'Hi');	//using this method, you can change translations. Or add tran
+		$catalogue->add(['messages.homepage.farewell' => 'Farewell']);	//using this method, you can add new translations. You have to save them in associative array: key => message 
+
+		$this->writer->writeTranslations($catalogue, 'database');	//with this, you save translations. If you use 'neon' or any other format instead of 'database', you can save all translation to neon files (or another supported format).
+
+	}
+```

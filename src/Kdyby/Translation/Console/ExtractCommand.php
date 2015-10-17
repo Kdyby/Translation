@@ -11,8 +11,10 @@
 namespace Kdyby\Translation\Console;
 
 use Kdyby;
+use Kdyby\Console\ContainerHelper;
 use Nette;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,6 +24,7 @@ use Kdyby\Translation\MessageCatalogue;
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
+ * @method ContainerHelper|Helper getHelper(string $name)
  */
 class ExtractCommand extends Command
 {
@@ -70,7 +73,8 @@ class ExtractCommand extends Command
 
 	protected function configure()
 	{
-		$this->setName('kdyby:translation-extract')
+		$this->setName('kdyby:translation:extract')
+			->setAliases(['kdyby:translation-extract'])
 			->setDescription('Extracts strings from application to translation files')
 			->addOption('scan-dir', 'd', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, "The directory to parse the translations. Can contain %placeholders%.", array('%appDir%'))
 			->addOption('output-format', 'f', InputOption::VALUE_REQUIRED, "Format name of the messages.")
@@ -83,10 +87,10 @@ class ExtractCommand extends Command
 
 	protected function initialize(InputInterface $input, OutputInterface $output)
 	{
-		$this->translator = $this->getHelper('container')->getByType('Kdyby\Translation\Translator');
-		$this->writer = $this->getHelper('container')->getByType('Symfony\Component\Translation\Writer\TranslationWriter');
-		$this->extractor = $this->getHelper('container')->getByType('Symfony\Component\Translation\Extractor\ChainExtractor');
 		$this->serviceLocator = $this->getHelper('container')->getContainer();
+		$this->translator = $this->serviceLocator->getByType('Kdyby\Translation\Translator');
+		$this->writer = $this->serviceLocator->getByType('Symfony\Component\Translation\Writer\TranslationWriter');
+		$this->extractor = $this->serviceLocator->getByType('Symfony\Component\Translation\Extractor\ChainExtractor');
 	}
 
 

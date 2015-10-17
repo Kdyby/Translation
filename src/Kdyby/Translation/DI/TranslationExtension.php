@@ -12,6 +12,7 @@ namespace Kdyby\Translation\DI;
 
 use Kdyby;
 use Kdyby\Translation\InvalidResourceException;
+use Kdyby\Translation\Resource\DatabaseResource;
 use Nette;
 use Nette\DI\Statement;
 use Nette\PhpGenerator as Code;
@@ -34,6 +35,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	const LOADER_TAG = 'translation.loader';
 	const DUMPER_TAG = 'translation.dumper';
 	const EXTRACTOR_TAG = 'translation.extractor';
+	const DATABASE_LOADER_TAG = 'translation.database.loader';
 
 	const RESOLVER_REQUEST = 'request';
 	const RESOLVER_HEADER = 'header';
@@ -54,12 +56,39 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			self::RESOLVER_REQUEST => TRUE,
 			self::RESOLVER_HEADER => TRUE,
 		),
+		'database' => array(
+			'table' => 'translations',
+			'columns' => [
+				'key' => 'key',
+				'locale' => 'locale',
+				'message' => 'message',
+				'updatedAt' => 'updated_at',
+			],
+			'loader' => NULL,
+			'dumper' => NULL,
+		),
 	);
 
 	/**
 	 * @var array
 	 */
 	private $loaders;
+
+	/**
+	 * @var array
+	 */
+	public static $dbLoaders = array(
+		DatabaseResource::NETTE_DB => 'Kdyby\Translation\Loader\NetteDbLoader',
+		DatabaseResource::DOCTRINE => 'Kdyby\Translation\Loader\DoctrineLoader',
+	);
+
+	/**
+	 * @var array
+	 */
+	public static $dbDumpers = array(
+		DatabaseResource::NETTE_DB => 'Kdyby\Translation\Dumper\NetteDbDumper',
+		DatabaseResource::DOCTRINE => 'Kdyby\Translation\Dumper\DoctrineDumper',
+	);
 
 
 
@@ -76,6 +105,9 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
+		if (empty($config['database']['dumper'])) {
+			$config['database']['dumper'] = $config['database']['loader'];
+		}
 
 		$translator = $builder->addDefinition($this->prefix('default'))
 			->setClass('Kdyby\Translation\Translator', array($this->prefix('@userLocaleResolver')))
@@ -129,17 +161,19 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			->setClass('Symfony\Component\Translation\Writer\TranslationWriter')
 			->setInject(FALSE);
 
-		$this->loadDumpers();
+		$this->loadDumpers($config);
 
 		$builder->addDefinition($this->prefix('loader'))
 			->setClass('Kdyby\Translation\TranslationLoader')
 			->setInject(FALSE);
 
-		$this->loadLoaders();
+		$this->loadLoaders($config);
 
 		if ($this->isRegisteredConsoleExtension()) {
 			$this->loadConsole($config);
 		}
+
+		$this->loadConfigService($config['database']);
 	}
 
 
@@ -190,6 +224,19 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 
 
+	protected function loadConfigService(array $config)
+	{
+		$builder = $this->getContainerBuilder();
+
+		$columns = $config['columns'];
+		$builder->addDefinition($this->prefix('configuration'))
+			->setClass('Kdyby\Translation\DI\Configuration')
+			->addSetup('setTableName', array($config['table']))
+			->addSetup('setColumnNames', array($columns['key'], $columns['locale'], $columns['message'], $columns['updatedAt']));
+	}
+
+
+
 	protected function loadConsole(array $config)
 	{
 		$builder = $this->getContainerBuilder();
@@ -200,11 +247,16 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			->addSetup('$defaultOutputDir', array(reset($config['dirs'])))
 			->setInject(FALSE)
 			->addTag('kdyby.console.command', 'latte');
+
+		$builder->addDefinition($this->prefix('console.initDatabase'))
+			->setClass('Kdyby\Translation\Console\CreateTableCommand')
+			->setInject(FALSE)
+			->addTag('kdyby.console.command', 'database');
 	}
 
 
 
-	protected function loadDumpers()
+	protected function loadDumpers(array $config)
 	{
 		$builder = $this->getContainerBuilder();
 
@@ -213,11 +265,18 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 				->setClass($class)
 				->addTag(self::DUMPER_TAG, $format);
 		}
+
+		if (($driver = $config['database']['dumper']) !== NULL) {
+			$service = $builder->addDefinition($this->prefix('dumper.database'));
+			$definition = (is_string($driver) && isset(self::$dbDumpers[$driver])) ? self::$dbDumpers[$driver] : $driver;
+			Nette\DI\Compiler::parseService($service, $definition);
+			$service->addTag(self::DUMPER_TAG, 'database');
+		}
 	}
 
 
 
-	protected function loadLoaders()
+	protected function loadLoaders(array $config)
 	{
 		$builder = $this->getContainerBuilder();
 
@@ -225,6 +284,16 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$builder->addDefinition($this->prefix('loader.' . $format))
 				->setClass($class)
 				->addTag(self::LOADER_TAG, $format);
+		}
+
+		if (($driver = $config['database']['loader']) !== NULL) {
+			$service = $builder->addDefinition($this->prefix('loader.database'));
+			$definition = (is_string($driver) && isset(self::$dbLoaders[$driver])) ? self::$dbLoaders[$driver] : $driver;
+			Nette\DI\Compiler::parseService($service, $definition);
+			$service
+				->setClass('Kdyby\Translation\Loader\IDatabaseLoader')
+				->addTag(self::LOADER_TAG, 'database')
+				->addTag(self::DATABASE_LOADER_TAG, $driver);
 		}
 	}
 
@@ -275,6 +344,11 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 				->addSetup('$service->onRequest[] = ?', array(array($this->prefix('@panel'), 'onRequest')));
 		}
 
+		$translator = $builder->getDefinition($this->prefix('default'));
+		foreach ($builder->findByTag(self::DATABASE_LOADER_TAG) as $dbLoader => $true) {
+			$translator->addSetup('?->addResources(?)', array('@' . $dbLoader, '@self'));
+		}
+
 		Kdyby\Translation\Diagnostics\Panel::registerBluescreen();
 
 		$extractor = $builder->getDefinition($this->prefix('extractor'));
@@ -319,16 +393,15 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 				$builder->addDependency($dir);
 			}
 
-			$this->loadResourcesFromDirs($dirs);
+			$this->loadResourcesFromDirs($dirs, $config);
 		}
 	}
 
 
 
-	protected function loadResourcesFromDirs($dirs)
+	protected function loadResourcesFromDirs($dirs, array $config)
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->getConfig();
 
 		$whitelistRegexp = Kdyby\Translation\Translator::buildWhitelistRegexp($config['whitelist']);
 		$translator = $builder->getDefinition($this->prefix('default'));
@@ -343,7 +416,6 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 				if ($whitelistRegexp && !preg_match($whitelistRegexp, $m['locale']) && $builder->parameters['productionMode']) {
 					continue; // ignore in production mode, there is no need to pass the ignored resources
 				}
-
 				$this->validateResource($format, $file->getPathname(), $m['locale'], $m['domain']);
 				$translator->addSetup('addResource', array($format, $file->getPathname(), $m['locale'], $m['domain']));
 				$builder->addDependency($file->getPathname());

@@ -8,6 +8,10 @@ common:
 			class: Nette\Caching\Storages\MemoryStorage
 
 
+	extensions:
+		console: Kdyby\Console\DI\ConsoleExtension
+
+
 	translation:
 		whitelist: [cs, sk, en]
 		resolvers:

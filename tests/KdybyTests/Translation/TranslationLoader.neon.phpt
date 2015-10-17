@@ -3,7 +3,7 @@
 /**
  * Test: Kdyby\Translation\TranslationLoader.
  *
- * @testCase KdybyTests\Translation\TranslationLoaderTest
+ * @testCase KdybyTests\Translation\TranslationLoaderNeonTest
  * @author Filip Procházka <filip@prochazka.su>
  * @package Kdyby\Translation
  */
@@ -16,6 +16,7 @@ use Nette;
 use Symfony;
 use Tester;
 use Tester\Assert;
+use Doctrine;
 
 require_once __DIR__ . '/../bootstrap.php';
 
@@ -24,7 +25,7 @@ require_once __DIR__ . '/../bootstrap.php';
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class TranslationLoaderTest extends TestCase
+class TranslationLoaderNeonTest extends TestCase
 {
 
 	public function testAddLoaders()
@@ -44,11 +45,13 @@ class TranslationLoaderTest extends TestCase
 		$loader->addLoader('neon', new Kdyby\Translation\Loader\NeonFileLoader());
 
 		$catalogue = new Kdyby\Translation\MessageCatalogue('cs_CZ');
-		$loader->loadResource('neon', __DIR__ . '/lang/front.cs_CZ.neon', 'front', 'cs_CZ', $catalogue);
+		$loader->loadResource('neon', __DIR__ . '/lang/front.cs_CZ.neon', 'front', $catalogue);
 
 		Assert::true($catalogue->defines('front.homepage.hello'));
 	}
 
 }
 
-\run(new TranslationLoaderTest());
+
+
+\run(new TranslationLoaderNeonTest());
