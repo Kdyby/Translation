@@ -11,6 +11,7 @@
 namespace KdybyTests\Translation;
 
 use Kdyby;
+use Kdyby\Translation\DI\Configuration;
 use Kdyby\Translation\TranslationLoader;
 use Nette;
 use Symfony;
@@ -25,32 +26,44 @@ require_once __DIR__ . '/../bootstrap.php';
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class TranslationDumperTest extends TestCase
+class TranslationDumperDoctrineTest extends TestCase
 {
-	/** @var Doctrine\DBAL\Connection $connection */
-	private $connection;
 
-	/** @var \Nette\DI\Container */
+	/**
+	 * @var Doctrine\DBAL\Connection
+	 */
+	private $db;
+
+	/**
+	 * @var \Nette\DI\Container
+	 */
 	private $container;
 
-	public function __construct()
-	{
-		Tester\Environment::lock('db', dirname(TEMP_DIR));
-		$this->container = $this->createContainer();
-		$this->connection = $this->container->getByType('Doctrine\DBAL\Connection');
-	}
+
 
 	protected function setUp()
 	{
 		parent::setUp();
-		$this->connection->executeUpdate(file_get_contents(__DIR__ . '/../init.sql'));
+		Tester\Environment::lock('db', dirname(TEMP_DIR));
+		$this->container = $this->createContainer('doctrine');
+		$this->db = $this->container->getByType('Doctrine\DBAL\Connection');
+		$this->db->executeUpdate(file_get_contents(__DIR__ . '/../init.sql'));
 	}
+
+
+
+	public function tearDown()
+	{
+		parent::tearDown();
+		$this->db->executeUpdate(file_get_contents(__DIR__ . '/../clear.sql'));
+	}
+
 
 
 	public function testChangeTranslations()
 	{
 		$loader = new TranslationLoader();
-		$loader->addLoader('database', $dbLoader = new Kdyby\Translation\Loader\DoctrineLoader($this->connection));
+		$loader->addLoader('database', $dbLoader = new Kdyby\Translation\Loader\DoctrineLoader($this->db, new Configuration()));
 
 		$catalogue = new Kdyby\Translation\MessageCatalogue('cs_CZ');
 		$loader->loadResource('database', Kdyby\Translation\Resource\DatabaseResource::DOCTRINE, NULL, $catalogue);
@@ -74,14 +87,13 @@ class TranslationDumperTest extends TestCase
 	public function testAddTranslations()
 	{
 		$loader = new TranslationLoader();
-		$loader->addLoader('database', $dbLoader = new Kdyby\Translation\Loader\DoctrineLoader($this->connection));
+		$loader->addLoader('database', $dbLoader = new Kdyby\Translation\Loader\DoctrineLoader($this->db, new Configuration()));
 
 		$catalogue = new Kdyby\Translation\MessageCatalogue('cs_CZ');
 		$loader->loadResource('database', Kdyby\Translation\Resource\DatabaseResource::DOCTRINE, NULL, $catalogue);
 
 		Assert::false($catalogue->defines('footer', 'messages'));
 		Assert::false($catalogue->defines('farewell', 'front'));
-
 
 		$writer = $this->container->getByType('Symfony\Component\Translation\Writer\TranslationWriter');
 		$catalogue->add(array('farewell' => 'Sbohem'), 'front');
@@ -92,13 +104,8 @@ class TranslationDumperTest extends TestCase
 		Assert::true($catalogue->defines('farewell', 'front'));
 	}
 
-	public function tearDown()
-	{
-		parent::tearDown();
-
-		$this->connection->executeUpdate(file_get_contents(__DIR__ . '/../clear.sql'));
-	}
-
 }
 
-\run(new TranslationDumperTest());
+
+
+\run(new TranslationDumperDoctrineTest());

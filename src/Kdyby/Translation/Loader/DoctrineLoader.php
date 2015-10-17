@@ -1,89 +1,154 @@
 <?php
 
+/**
+ * This file is part of the Kdyby (http://www.kdyby.org)
+ *
+ * Copyright (c) 2008 Filip Procházka (filip@prochazka.su)
+ *
+ * For the full copyright and license information, please view the file license.txt that was distributed with this source code.
+ */
+
 namespace Kdyby\Translation\Loader;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\DBAL\Exception\TableNotFoundException;
+use Doctrine\DBAL\Types\Type;
+use Kdyby\Translation\DatabaseException;
+use Kdyby\Translation\DI\Configuration;
+use Kdyby\Translation\Helpers;
 use Kdyby\Translation\Resource\DatabaseResource;
 
+
+
+/**
+ * @author Azathoth <memnarch@seznam.cz>
+ */
 class DoctrineLoader extends DatabaseLoader
 {
 
-	/** @var Connection */
-	private $conn;
-
 	/**
-	 * @param Connection $conn
+	 * @var Connection
 	 */
-	public function __construct(Connection $conn)
+	private $db;
+
+
+
+	public function __construct(Connection $conn, Configuration $config)
 	{
-		$this->conn = $conn;
+		parent::__construct($config);
+		$this->db = $conn;
 	}
+
+
 
 	/**
 	 * @return array
 	 */
 	public function getLocales()
 	{
-		if( !function_exists( 'array_column' ) ) {                  //just because of PHP 5.4, where function array_column is not present. Fuck you, PHP 5.4
-			function array_column( array $input, $column_key, $index_key = NULL ) {
-				$result = array();
-				foreach( $input as $k => $v )
-					$result[ $index_key ? $v[ $index_key ] : $k ] = $v[ $column_key ];
-				return $result;
+		try {
+			$qb = $this->db->createQueryBuilder()
+				->addSelect('DISTINCT ' . $this->db->quoteIdentifier($this->config->getLocaleColumn()) . ' AS locale')
+				->from($this->db->quoteIdentifier($this->config->getTableName()));
+			return Helpers::arrayColumn($qb->execute()->fetchAll(), 'locale', 'locale');
+
+		} catch (TableNotFoundException $e) {
+			throw new DatabaseException($e->getMessage(), 0, $e);
+		}
+	}
+
+
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setupDatabase($createSchema = FALSE)
+	{
+		$schemaManager = $this->db->getSchemaManager();
+		$platform = $this->db->getDatabasePlatform();
+
+		if (!$schemaManager->tablesExist($this->config->getTableName())) {
+			$table = $schemaManager->createSchema()->createTable($this->config->getTableName());
+			$table->addColumn($this->config->getKeyColumn(), Type::STRING);
+			$table->addColumn($this->config->getLocaleColumn(), Type::STRING);
+			$table->addColumn($this->config->getMessageColumn(), Type::TEXT);
+			$table->addColumn($this->config->getUpdatedAtColumn(), Type::DATETIME);
+			$table->setPrimaryKey(array($this->config->getKeyColumn(), $this->config->getLocaleColumn()));
+			$table->addIndex(array($this->config->getUpdatedAtColumn()));
+
+		} else {
+			$table = $schemaManager->createSchema()->getTable($this->config->getTableName());
+		}
+
+		if ($createSchema === TRUE) {
+			try {
+				$schemaManager->createTable($table);
+
+			} catch (DriverException $e) {
+				throw new DatabaseException($e->getMessage(), 0, $e);
 			}
 		}
 
-		$qb = $this->conn->createQueryBuilder()
-			->addSelect('DISTINCT '.$this->conn->quoteIdentifier($this->locale).' AS locale')
-			->from($this->conn->quoteIdentifier($this->table));
-		try {
-			$stmt = $qb->execute();
-			$locales = array_column($stmt->fetchAll(), 'locale');
-		} catch(TableNotFoundException $e) {
-			$locales = array();
-		}
-		return $locales;
+		return $platform->getCreateTableSQL($table);
 	}
+
+
+
+	protected function getTranslations($locale)
+	{
+		try {
+			$qb = $this->db->createQueryBuilder()
+				->addSelect($this->db->quoteIdentifier($this->config->getKeyColumn()) . ' AS ' . $this->db->quoteIdentifier('key'))
+				->addSelect($this->db->quoteIdentifier($this->config->getLocaleColumn()) . ' AS locale')
+				->addSelect($this->db->quoteIdentifier($this->config->getMessageColumn()) . ' AS message')
+				->from($this->db->quoteIdentifier($this->config->getTableName()))
+				->where($this->db->quoteIdentifier($this->config->getLocaleColumn()) . " = :locale")
+				->setParameter('locale', $locale);
+
+			return $qb->execute()->fetchAll();
+
+		} catch (DriverException $e) {
+			throw new DatabaseException($e->getMessage(), 0, $e);
+		}
+	}
+
+
+
+	/**
+	 * @param string $locale
+	 * @return \DateTime
+	 */
+	protected function getLastUpdate($locale)
+	{
+		try {
+			$updatedAt = $this->db->createQueryBuilder()
+				->addSelect($this->db->quoteIdentifier($this->config->getUpdatedAtColumn()) . ' AS ' . $this->db->quoteIdentifier('updated_at'))
+				->from($this->db->quoteIdentifier($this->config->getTableName()))
+				->where($this->db->quoteIdentifier($this->config->getLocaleColumn()) . ' = :locale')
+				->orderBy('updated_at', Criteria::DESC)
+				->setMaxResults(1)
+				->setParameter('locale', $locale)
+				->execute()->fetchColumn();
+
+			$dateTime = new \DateTime($updatedAt);
+			if ($updatedAt === NULL) {
+				$dateTime->setTimestamp(0);
+			}
+
+			return $dateTime;
+
+		} catch (DriverException $e) {
+			throw new DatabaseException($e->getMessage(), 0, $e);
+		}
+	}
+
 
 
 	protected function getResourceName()
 	{
 		return DatabaseResource::DOCTRINE;
-	}
-
-	protected function getTranslations($locale)
-	{
-		$qb = $this->conn->createQueryBuilder()
-			->addSelect($this->conn->quoteIdentifier($this->key).' AS '.$this->conn->quoteIdentifier('key'))
-			->addSelect($this->conn->quoteIdentifier($this->locale).' AS locale')
-			->addSelect($this->conn->quoteIdentifier($this->message).' AS message')
-			->from($this->conn->quoteIdentifier($this->table))
-			->where("locale = :locale")
-			->setParameter('locale', $locale);
-		return $qb->execute()->fetchAll();
-	}
-
-	/**
-	 * @param $locale
-	 * @return \DateTime
-	 */
-	protected function getLastUpdate($locale)
-	{
-		$qb = $this->conn->createQueryBuilder()
-			->addSelect($this->conn->quoteIdentifier($this->updatedAt).' AS '.$this->conn->quoteIdentifier('updated_at'))
-			->from($this->conn->quoteIdentifier($this->table))
-			->where($this->conn->quoteIdentifier($this->locale).' = :locale')
-			->orderBy('updated_at', Criteria::DESC)
-			->setMaxResults(1)
-			->setParameter('locale', $locale);
-		$updatedAt = $qb->execute()->fetchColumn();
-		$dateTime = new \DateTime($updatedAt);
-		if ($updatedAt === NULL) {
-			$dateTime->setTimestamp(0);
-		}
-		return $dateTime;
 	}
 
 }

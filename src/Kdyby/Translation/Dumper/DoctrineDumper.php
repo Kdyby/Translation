@@ -1,105 +1,139 @@
 <?php
 
+/**
+ * This file is part of the Kdyby (http://www.kdyby.org)
+ *
+ * Copyright (c) 2008 Filip Procházka (filip@prochazka.su)
+ *
+ * For the full copyright and license information, please view the file license.txt that was distributed with this source code.
+ */
+
 namespace Kdyby\Translation\Dumper;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\DBAL\Types\Type;
+use Kdyby\Translation\DatabaseException;
+use Kdyby\Translation\DI\Configuration;
+use Kdyby\Translation\Helpers;
 
+
+
+/**
+ * @author Azathoth <memnarch@seznam.cz>
+ */
 class DoctrineDumper extends DatabaseDumper
 {
 
-	/** @var Connection */
-	private $connection;
-
 	/**
-	 * @param Connection $conn
+	 * @var Connection
 	 */
-	public function __construct(Connection $conn)
+	private $db;
+
+
+
+	public function __construct(Connection $db, Configuration $config)
 	{
-		$this->connection = $conn;
+		parent::__construct($config);
+		$this->db = $db;
 	}
+
+
 
 	protected function getExistingKeys($keys, $locale)
 	{
-		if( !function_exists( 'array_column' ) ) {                  //just because of PHP 5.4, where function array_column is not present. Fuck you, PHP 5.4
-			function array_column( array $input, $column_key, $index_key = NULL ) {
-				$result = array();
-				foreach( $input as $k => $v )
-					$result[ $index_key ? $v[ $index_key ] : $k ] = $v[ $column_key ];
-				return $result;
-			}
+		try {
+			$qb = $this->db->createQueryBuilder()
+				->addSelect($this->db->quoteIdentifier($this->config->getKeyColumn()) . ' AS ' . $this->db->quoteIdentifier('key'))
+				->from($this->db->quoteIdentifier($this->config->getTableName()))
+				->andWhere($this->db->quoteIdentifier($this->config->getLocaleColumn()) . ' = :locale')
+				->andWhere($this->db->quoteIdentifier($this->config->getKeyColumn()) . ' IN (:keys)')
+				->setParameter('locale', $locale)
+				->setParameter('keys', $keys, Connection::PARAM_STR_ARRAY);
+
+			return Helpers::arrayColumn($qb->execute()->fetchAll(), 'key'); //to get only one dimensional array of keys
+
+		} catch (DriverException $e) {
+			throw new DatabaseException($e->getMessage(), 0, $e);
 		}
-
-		$qb = $this->connection->createQueryBuilder()
-			->addSelect($this->connection->quoteIdentifier($this->key).' AS '.$this->connection->quoteIdentifier('key'))
-			->from($this->connection->quoteIdentifier($this->table))
-			->andWhere($this->connection->quoteIdentifier($this->locale).' = :locale')
-			->andWhere($this->connection->quoteIdentifier($this->key).' IN (:keys)')
-			->setParameter('locale', $locale)
-			->setParameter('keys', $keys, Connection::PARAM_STR_ARRAY);
-		$stmt = $qb->execute();
-		return array_column($stmt->fetchAll(), 'key'); //to get only one dimensional array of keys
-
 	}
 
-	protected function beginTransaction()
-	{
-		$this->connection->beginTransaction();
-	}
 
-	protected function commit()
-	{
-		$this->connection->commit();
-	}
 
 	protected function insert($key, $locale, $message)
 	{
-		$qb = $this->connection->createQueryBuilder();
-		$qb->insert($this->table)
-			->values([
-				$this->connection->quoteIdentifier($this->key) => ":key",
-				$this->connection->quoteIdentifier($this->locale) => ":locale",
-				$this->connection->quoteIdentifier($this->message) => ":message",
-				$this->connection->quoteIdentifier($this->updatedAt) => ":updatedAt"
-			])
-			->setParameters([
+		try {
+			$qb = $this->db->createQueryBuilder();
+			$qb->insert($this->db->quoteIdentifier($this->config->getTableName()))
+				->values([
+					$this->db->quoteIdentifier($this->config->getKeyColumn()) => ":key",
+					$this->db->quoteIdentifier($this->config->getLocaleColumn()) => ":locale",
+					$this->db->quoteIdentifier($this->config->getMessageColumn()) => ":message",
+					$this->db->quoteIdentifier($this->config->getUpdatedAtColumn()) => ":updatedAt",
+				]);
+
+			$qb->setParameters([
 				'key' => $key,
 				'locale' => $locale,
 				'message' => $message,
-				'updatedAt' => new \DateTime()
+				'updatedAt' => new \DateTime(),
 			], [
-				'key' => Type::STRING,
-				'locale' => Type::STRING,
-				'message' => Type::STRING,
-				'updatedAt' => Type::DATETIME
+				'updatedAt' => Type::DATETIME,
 			]);
-		$qb->execute();
+
+			$qb->execute();
+
+		} catch (DriverException $e) {
+			throw new DatabaseException($e->getMessage(), 0, $e);
+		}
 	}
+
+
 
 	protected function update($key, $locale, $message)
 	{
-		$qb = $this->connection->createQueryBuilder();
-		$qb->update($this->connection->quoteIdentifier($this->table))
-			->set($this->connection->quoteIdentifier($this->message), ':message')
-			->set($this->connection->quoteIdentifier($this->updatedAt), ':updatedAt')
-			->andWhere($this->connection->quoteIdentifier($this->key).' = :key')
-			->andWhere($this->connection->quoteIdentifier($this->locale).' = :locale')
-			->setParameters([
+		try {
+			$qb = $this->db->createQueryBuilder();
+			$qb->update($this->db->quoteIdentifier($this->config->getTableName()))
+				->set($this->db->quoteIdentifier($this->config->getMessageColumn()), ':message')
+				->set($this->db->quoteIdentifier($this->config->getUpdatedAtColumn()), ':updatedAt')
+				->andWhere($this->db->quoteIdentifier($this->config->getKeyColumn()) . ' = :key')
+				->andWhere($this->db->quoteIdentifier($this->config->getLocaleColumn()) . ' = :locale');
+
+			$qb->setParameters([
 				'key' => $key,
 				'locale' => $locale,
 				'message' => $message,
-				'updatedAt' => new \DateTime()
+				'updatedAt' => new \DateTime(),
 			], [
-				'key' => Type::STRING,
-				'locale' => Type::STRING,
-				'message' => Type::STRING,
-				'updatedAt' => Type::DATETIME
+				'updatedAt' => Type::DATETIME,
 			]);
-		$qb->execute();
+
+			$qb->execute();
+
+		} catch (DriverException $e) {
+			throw new DatabaseException($e->getMessage(), 0, $e);
+		}
 	}
+
+
+
+	protected function beginTransaction()
+	{
+		$this->db->beginTransaction();
+	}
+
+
+
+	protected function commit()
+	{
+		$this->db->commit();
+	}
+
+
 
 	protected function rollBack()
 	{
-		$this->connection->rollBack();
+		$this->db->rollBack();
 	}
 }

@@ -1,50 +1,41 @@
 <?php
 
+/**
+ * This file is part of the Kdyby (http://www.kdyby.org)
+ *
+ * Copyright (c) 2008 Filip Procházka (filip@prochazka.su)
+ *
+ * For the full copyright and license information, please view the file license.txt that was distributed with this source code.
+ */
+
 namespace Kdyby\Translation\Dumper;
 
+use Kdyby\Translation\DI\Configuration;
 use Kdyby\Translation\Helpers;
 use Symfony\Component\Translation\Dumper\DumperInterface;
 use Symfony\Component\Translation\MessageCatalogue;
 
+
+
+/**
+ * @author Azathoth <memnarch@seznam.cz>
+ */
 abstract class DatabaseDumper implements DumperInterface
 {
 
-	/** @var string */
-	protected $table = 'translations';
-
-	/** @var string */
-	protected $key = 'key';
-
-	/** @var string */
-	protected $locale = 'locale';
-
-	/** @var string */
-	protected $message = 'message';
-
-	/** @var string */
-	protected $updatedAt = 'updated_at';
-
 	/**
-	 * @param string $table
+	 * @var Configuration
 	 */
-	public function setTableName($table)
+	protected $config;
+
+
+
+	public function __construct(Configuration $config)
 	{
-		$this->table = $table;
+		$this->config = $config;
 	}
 
-	/**
-	 * @param string $key
-	 * @param string $locale
-	 * @param string $message
-	 * @param string $updatedAt
-	 */
-	public function setColumnNames($key, $locale, $message, $updatedAt)
-	{
-		$this->key = $key;
-		$this->locale = $locale;
-		$this->message = $message;
-		$this->updatedAt = $updatedAt;
-	}
+
 
 	/**
 	 * Dumps the message catalogue.
@@ -55,7 +46,7 @@ abstract class DatabaseDumper implements DumperInterface
 	public function dump(MessageCatalogue $messages, $options = array())
 	{
 		$messagesArray = $messages->all();
-		if (isset($messagesArray[NULL]) && is_array($messagesArray[NULL])) {    //bugfix for translations without domain
+		if (isset($messagesArray[NULL]) && is_array($messagesArray[NULL])) { //hack for translations without domain
 			$messagesArray += $messagesArray[NULL];
 			unset($messagesArray[NULL]);
 		}
@@ -76,21 +67,34 @@ abstract class DatabaseDumper implements DumperInterface
 				}
 			}
 			$this->commit();
-		} catch(\Exception $e) {
+
+		} catch (\Exception $e) {
 			$this->rollBack();
 			throw $e;
 		}
 	}
 
+
+
 	abstract protected function getExistingKeys($keys, $locale);
+
+
 
 	abstract protected function beginTransaction();
 
+
+
 	abstract protected function commit();
+
+
 
 	abstract protected function rollBack();
 
+
+
 	abstract protected function insert($key, $locale, $message);
+
+
 
 	abstract protected function update($key, $locale, $message);
 

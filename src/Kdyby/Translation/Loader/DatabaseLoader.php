@@ -1,77 +1,58 @@
 <?php
 
+/**
+ * This file is part of the Kdyby (http://www.kdyby.org)
+ *
+ * Copyright (c) 2008 Filip Procházka (filip@prochazka.su)
+ *
+ * For the full copyright and license information, please view the file license.txt that was distributed with this source code.
+ */
+
 namespace Kdyby\Translation\Loader;
 
+use Kdyby\Translation\DI\Configuration;
+use Kdyby\Translation\Helpers;
 use Kdyby\Translation\MessageCatalogue;
 use Kdyby\Translation\Resource\DatabaseResource;
 use Kdyby\Translation\Translator;
-use Nette\Utils\Strings;
 
+
+
+/**
+ * @author Azathoth <memnarch@seznam.cz>
+ */
 abstract class DatabaseLoader implements IDatabaseLoader
 {
 
-	/** @var string */
-	protected $table = 'translations';
-
-	/** @var string */
-	protected $key = 'key';
-
-	/** @var string */
-	protected $locale = 'locale';
-
-	/** @var string */
-	protected $message = 'message';
-
-	/** @var string */
-	protected $updatedAt = 'updated_at';
-
 	/**
-	 * @param string $table
-	 * @return $this
+	 * @var Configuration
 	 */
-	public function setTableName($table)
+	protected $config;
+
+
+
+	public function __construct(Configuration $config)
 	{
-		$this->table = $table;
-		return $this;
+		$this->config = $config;
 	}
 
-	/**
-	 * @param string $key
-	 * @param string $locale
-	 * @param string $message
-	 * @param string $updatedAt
-	 * @return $this
-	 */
-	public function setColumnNames($key, $locale, $message, $updatedAt)
-	{
-		$this->key = $key;
-		$this->locale = $locale;
-		$this->message = $message;
-		$this->updatedAt = $updatedAt;
-		return $this;
-	}
 
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function load($resource, $locale, $domain = NULL)
 	{
 		$catalogue = new MessageCatalogue($locale);
 
 		$translations = $this->getTranslations($locale);
-		foreach($translations as $translation) {
-			if ($domain === NULL) {
-				$key = $translation['key'];
-				if (Strings::contains($key, '.')) {
-					if (function_exists('mb_strpos')) {
-						$prefix = Strings::substring($key, 0, mb_strpos($key, '.'));
-					} else {
-						$prefix = Strings::substring($key, 0, strpos($key, '.'));
-					}
-					$key = Strings::substring($key, Strings::length($prefix) + 1);  //plus one because of dot
-				} else {
-					$prefix = $domain;
-				}
-				$catalogue->set($key, $translation['message'], $prefix);
-			} else {
+		foreach ($translations as $translation) {
+			if ($domain !== NULL) {
 				$catalogue->set($translation['key'], $translation['message'], $domain);
+
+			} else {
+				list($prefix, $key) = Helpers::extractMessageDomain($translation['key']);
+				$catalogue->set($key, $translation['message'], $prefix);
 			}
 		}
 
@@ -80,17 +61,11 @@ abstract class DatabaseLoader implements IDatabaseLoader
 		return $catalogue;
 	}
 
-	/**
-	 * @return array
-	 */
-	abstract public function getLocales();
+
 
 	/**
-	 * @param $locale
-	 * @return \DateTime
+	 * @inheritdoc
 	 */
-	abstract protected function getLastUpdate($locale);
-
 	public function addResources(Translator $translator)
 	{
 		foreach ($this->getLocales() as $locale) {
@@ -98,7 +73,27 @@ abstract class DatabaseLoader implements IDatabaseLoader
 		}
 	}
 
+
+
+	/**
+	 * @param $locale
+	 * @return \DateTime
+	 */
+	abstract protected function getLastUpdate($locale);
+
+
+
+	/**
+	 * @return string
+	 */
 	abstract protected function getResourceName();
 
+
+
+	/**
+	 * @param string $locale
+	 * @return array
+	 */
 	abstract protected function getTranslations($locale);
+
 }

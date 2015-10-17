@@ -250,7 +250,7 @@ You can also use your own Loader, then you put to your config.neon full name wit
 ```yml
 translation:
 	database:
-		loader: \Namespace\CustomLoader
+		loader: Namespace\CustomLoader
 ```
 
 The loader needs to implement the [Symfony\Component\Translation\Loader\LoaderInterface](https://github.com/symfony/Translation/blob/3ba54181c8386b180999d942bf33681a726bb70f/Loader/LoaderInterface.php) 

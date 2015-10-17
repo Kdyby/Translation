@@ -7,25 +7,16 @@ common:
 		cacheStorage:
 			class: Nette\Caching\Storages\MemoryStorage
 
+
 	extensions:
 		console: Kdyby\Console\DI\ConsoleExtension
-		events: Kdyby\Events\DI\EventsExtension
-		annotations: Kdyby\Annotations\DI\AnnotationsExtension
-		doctrine: Kdyby\Doctrine\DI\OrmExtension
+
 
 	translation:
 		whitelist: [cs, sk, en]
 		resolvers:
 			session: on
-		database:
-			loader: doctrine
 
-	doctrine:
-		driver: pdo_sqlite
-		memory: true
-
-	database:
-		dsn: "sqlite::memory:"
 
 v22 < common:
 	nette:

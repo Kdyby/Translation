@@ -19,10 +19,13 @@ use Tester\Assert;
 require_once __DIR__ . '/../bootstrap.php';
 
 
+
 class ControlMock extends Nette\Application\UI\Control
 {
 
 }
+
+
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
@@ -156,5 +159,7 @@ front.missingKey.namedHelloCounting' . "\n", (string) $template->setFile(__DIR__
 	}
 
 }
+
+
 
 \run(new TranslateMacrosTest());
