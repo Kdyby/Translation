@@ -31,9 +31,16 @@ use Tracy;
 class TranslationExtension extends Nette\DI\CompilerExtension
 {
 
-	const LOADER_TAG = 'translation.loader';
-	const DUMPER_TAG = 'translation.dumper';
-	const EXTRACTOR_TAG = 'translation.extractor';
+	/** @deprecated */
+	const LOADER_TAG = self::TAG_LOADER;
+	/** @deprecated */
+	const DUMPER_TAG = self::TAG_DUMPER;
+	/** @deprecated */
+	const EXTRACTOR_TAG = self::TAG_EXTRACTOR;
+
+	const TAG_LOADER = 'translation.loader';
+	const TAG_DUMPER = 'translation.dumper';
+	const TAG_EXTRACTOR = 'translation.extractor';
 
 	const RESOLVER_REQUEST = 'request';
 	const RESOLVER_HEADER = 'header';
@@ -211,7 +218,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		foreach ($this->loadFromFile(__DIR__ . '/config/dumpers.neon') as $format => $class) {
 			$builder->addDefinition($this->prefix('dumper.' . $format))
 				->setClass($class)
-				->addTag(self::DUMPER_TAG, $format);
+				->addTag(self::TAG_DUMPER, $format);
 		}
 	}
 
@@ -224,7 +231,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		foreach ($this->loadFromFile(__DIR__ . '/config/loaders.neon') as $format => $class) {
 			$builder->addDefinition($this->prefix('loader.' . $format))
 				->setClass($class)
-				->addTag(self::LOADER_TAG, $format);
+				->addTag(self::TAG_LOADER, $format);
 		}
 	}
 
@@ -237,7 +244,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		foreach ($this->loadFromFile(__DIR__ . '/config/extractors.neon') as $format => $class) {
 			$builder->addDefinition($this->prefix('extractor.' . $format))
 				->setClass($class)
-				->addTag(self::EXTRACTOR_TAG, $format);
+				->addTag(self::TAG_EXTRACTOR, $format);
 		}
 	}
 
@@ -278,7 +285,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		Kdyby\Translation\Diagnostics\Panel::registerBluescreen();
 
 		$extractor = $builder->getDefinition($this->prefix('extractor'));
-		foreach ($builder->findByTag(self::EXTRACTOR_TAG) as $extractorId => $meta) {
+		foreach ($builder->findByTag(self::TAG_EXTRACTOR) as $extractorId => $meta) {
 			Validators::assert($meta, 'string:2..');
 
 			$extractor->addSetup('addExtractor', array($meta, '@' . $extractorId));
@@ -287,7 +294,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		}
 
 		$writer = $builder->getDefinition($this->prefix('writer'));
-		foreach ($builder->findByTag(self::DUMPER_TAG) as $dumperId => $meta) {
+		foreach ($builder->findByTag(self::TAG_DUMPER) as $dumperId => $meta) {
 			Validators::assert($meta, 'string:2..');
 
 			$writer->addSetup('addDumper', array($meta, '@' . $dumperId));
@@ -296,7 +303,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		}
 
 		$this->loaders = array();
-		foreach ($builder->findByTag(self::LOADER_TAG) as $loaderId => $meta) {
+		foreach ($builder->findByTag(self::TAG_LOADER) as $loaderId => $meta) {
 			Validators::assert($meta, 'string:2..');
 			$builder->getDefinition($loaderId)->setAutowired(FALSE)->setInject(FALSE);
 			$this->loaders[$meta] = $loaderId;
