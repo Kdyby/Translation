@@ -8,4 +8,5 @@ csv: Symfony\Component\Translation\Loader\CsvFileLoader
 res: Symfony\Component\Translation\Loader\IcuResFileLoader
 dat: Symfony\Component\Translation\Loader\IcuDatFileLoader
 ini: Symfony\Component\Translation\Loader\IniFileLoader
+json: Symfony\Component\Translation\Loader\JsonFileLoader
 neon: Kdyby\Translation\Loader\NeonFileLoader
