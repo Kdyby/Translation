@@ -14,6 +14,7 @@ use Kdyby;
 use Latte;
 use Nette;
 use Tracy;
+use Nette\Utils\Strings;
 
 
 
@@ -49,8 +50,16 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 
 	public function translate($message, $count = NULL, $parameters = array(), $domain = NULL, $locale = NULL)
 	{
+		$translationString = ($message instanceof Phrase ? $message->message : $message);
+		$prefix = $this->prefix . '.';
+
+		if (Strings::startsWith($message, '//')) {
+			$prefix = NULL;
+			$translationString = Strings::substring($translationString, 2);
+		}
+
 		if ($message instanceof Phrase) {
-			return $this->translator->translate(new Phrase($this->prefix . '.' . $message->message, $message->count, $message->parameters, $message->domain, $message->locale));
+			return $this->translator->translate(new Phrase($prefix . $translationString, $message->count, $message->parameters, $message->domain, $message->locale));
 		}
 
 		if (is_array($count)) {
@@ -60,7 +69,7 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 			$count = NULL;
 		}
 
-		return $this->translator->translate($this->prefix . '.' . $message, $count, (array) $parameters, $domain, $locale);
+		return $this->translator->translate($prefix . $translationString, $count, (array) $parameters, $domain, $locale);
 	}
 
 
