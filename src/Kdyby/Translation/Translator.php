@@ -17,7 +17,7 @@ use Nette\Utils\ObjectMixin;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\Translator as BaseTranslator;
-
+use Tracy\ILogger;
 
 
 /**
@@ -50,6 +50,11 @@ class Translator extends BaseTranslator implements ITranslator
 	private $translationsLoader;
 
 	/**
+	 * @var ILogger
+	 */
+	private $logger;
+
+	/**
 	 * @var Panel
 	 */
 	private $panel;
@@ -79,12 +84,13 @@ class Translator extends BaseTranslator implements ITranslator
 	 * @param IResourceLoader $loader
 	 */
 	public function __construct(IUserLocaleResolver $localeResolver, MessageSelector $selector,
-		CatalogueCompiler $catalogueCompiler, FallbackResolver $fallbackResolver, IResourceLoader $loader)
+		CatalogueCompiler $catalogueCompiler, FallbackResolver $fallbackResolver, IResourceLoader $loader, ILogger $logger)
 	{
 		$this->localeResolver = $localeResolver;
 		$this->catalogueCompiler = $catalogueCompiler;
 		$this->fallbackResolver = $fallbackResolver;
 		$this->translationsLoader = $loader;
+		$this->logger = $logger;
 
 		parent::__construct(NULL, $selector);
 	}
@@ -130,6 +136,7 @@ class Translator extends BaseTranslator implements ITranslator
 			return $message;
 
 		} elseif ($message instanceof Nette\Utils\Html) {
+			$this->logger->log($message, 'translator');
 			if ($this->panel) {
 				$this->panel->markUntranslated($message);
 			}
@@ -169,6 +176,7 @@ class Translator extends BaseTranslator implements ITranslator
 
 		$result = parent::trans($id, $parameters, $domain, $locale);
 		if ($result === "\x01") {
+			$this->logger->log($message, 'translator');
 			if ($this->panel !== NULL) {
 				$this->panel->markUntranslated($message);
 			}
@@ -207,6 +215,7 @@ class Translator extends BaseTranslator implements ITranslator
 		}
 
 		if ($result === "\x01") {
+			$this->logger->log($message, 'translator');
 			if ($this->panel !== NULL) {
 				$this->panel->markUntranslated($message);
 			}
