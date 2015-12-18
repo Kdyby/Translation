@@ -28,6 +28,7 @@ use Tracy\ILogger;
  */
 class Translator extends BaseTranslator implements ITranslator
 {
+	const LOGGER_NAMESPACE = 'translator';
 
 	/**
 	 * @var IUserLocaleResolver
@@ -136,7 +137,7 @@ class Translator extends BaseTranslator implements ITranslator
 			return $message;
 
 		} elseif ($message instanceof Nette\Utils\Html) {
-			$this->logger->log($message, 'translator');
+			$this->logger->log($message, static::LOGGER_NAMESPACE);
 			if ($this->panel) {
 				$this->panel->markUntranslated($message);
 			}
@@ -176,7 +177,7 @@ class Translator extends BaseTranslator implements ITranslator
 
 		$result = parent::trans($id, $parameters, $domain, $locale);
 		if ($result === "\x01") {
-			$this->logger->log($message, 'translator');
+			$this->logger->log($message, static::LOGGER_NAMESPACE);
 			if ($this->panel !== NULL) {
 				$this->panel->markUntranslated($message);
 			}
@@ -215,7 +216,7 @@ class Translator extends BaseTranslator implements ITranslator
 		}
 
 		if ($result === "\x01") {
-			$this->logger->log($message, 'translator');
+			$this->logger->log($message, static::LOGGER_NAMESPACE);
 			if ($this->panel !== NULL) {
 				$this->panel->markUntranslated($message);
 			}
