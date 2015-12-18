@@ -28,6 +28,7 @@ abstract class TestCase extends Tester\TestCase
 		$config->setTempDirectory(TEMP_DIR);
 		$config->addParameters(array('appDir' => __DIR__));
 		Kdyby\Translation\DI\TranslationExtension::register($config);
+		Kdyby\Monolog\DI\MonologExtension::register($config);
 		$config->addConfig(__DIR__ . '/../nette-reset.neon', !isset($config->defaultExtensions['nette']) ? 'v23' : 'v22');
 
 		if ($configName) {

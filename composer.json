@@ -27,13 +27,15 @@
 		"nette/reflection": "~2.3@dev",
 		"nette/utils": "~2.3@dev",
 
+		"psr/log": "^1.0",
 		"symfony/translation": "~2.5",
 		"symfony/config": "~2.5"
 	},
 	"suggest": {
+		"kdyby/console": "If you wanna use extract command and much others, install also console.",
+		"kdyby/monolog": "Integration of Monolog into Nette Framework.",
 		"tracy/tracy": "Diagnostics tool from Nette",
 		"symfony/locale": "Locale component provides fallback code to handle cases when the intl extension is missing.",
-		"kdyby/console": "If you wanna use extract command and much others, install also console.",
 		"symfony/yaml": "If you wanna store translations in YAML format - supports multiline strings."
 	},
 	"require-dev": {
@@ -59,6 +61,7 @@
 		"latte/latte": "~2.3@dev",
 		"tracy/tracy": "~2.3@dev",
 
+		"kdyby/monolog": "^1.2@dev",
 		"symfony/console": "~2.3",
 		"nette/tester": "~1.4",
 		"mockery/mockery": "~0.9"

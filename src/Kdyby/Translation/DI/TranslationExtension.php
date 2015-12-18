@@ -52,6 +52,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	public $defaults = array(
 		'whitelist' => NULL, // array('cs', 'en'),
 		'default' => 'en',
+		'logging' => NULL, //  TRUE for psr/log, or string for kdyby/monolog channel
 		// 'fallback' => array('en_US', 'en'), // using custom merge strategy becase Nette's config merger appends lists of values
 		'dirs' => array('%appDir%/lang', '%appDir%/locale'),
 		'cache' => 'Kdyby\Translation\Caching\PhpFileStorage',
@@ -255,12 +256,13 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
 
-		$self = $this;
-		$registerToLatte = function (Nette\DI\ServiceDefinition $def) use ($self) {
+		$this->beforeCompileLogging($config);
+
+		$registerToLatte = function (Nette\DI\ServiceDefinition $def) {
 			$def
 				->addSetup('?->onCompile[] = function($engine) { Kdyby\Translation\Latte\TranslateMacros::install($engine->getCompiler()); }', array('@self'))
-				->addSetup('addFilter', array('translate', array($self->prefix('@helpers'), 'translate')))
-				->addSetup('addFilter', array('getTranslator', array($self->prefix('@helpers'), 'getTranslator')));
+				->addSetup('addFilter', array('translate', array($this->prefix('@helpers'), 'translate')))
+				->addSetup('addFilter', array('getTranslator', array($this->prefix('@helpers'), 'getTranslator')));
 		};
 
 		$latteFactoryService = $builder->getByType('Nette\Bridges\ApplicationLatte\ILatteFactory') ?: 'nette.latteFactory';
@@ -336,6 +338,29 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 
 
+	protected function beforeCompileLogging(array $config)
+	{
+		$builder = $this->getContainerBuilder();
+		$translator = $builder->getDefinition($this->prefix('default'));
+
+		if ($config['logging'] === TRUE) {
+			$translator->addSetup('injectPsrLogger');
+
+		} elseif (is_string($config['logging'])) { // channel for kdyby/monolog
+			$translator->addSetup('injectPsrLogger', [
+				new Statement('@Kdyby\Monolog\Logger::channel', [$config['logging']]),
+			]);
+
+		} elseif ($config['logging'] !== NULL) {
+			throw new Kdyby\Translation\InvalidArgumentException(sprintf(
+				"Invalid config option for logger. Valid are TRUE for general psr/log or string for kdyby/monolog channel, but %s was given",
+				$config['logging']
+			));
+		}
+	}
+
+
+
 	protected function loadResourcesFromDirs($dirs)
 	{
 		$builder = $this->getContainerBuilder();
@@ -344,7 +369,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$whitelistRegexp = Kdyby\Translation\Translator::buildWhitelistRegexp($config['whitelist']);
 		$translator = $builder->getDefinition($this->prefix('default'));
 
-		foreach (array_keys($this->loaders) as $format) {
+		foreach ($this->loaders as $format => $_) {
 			foreach (Finder::findFiles('*.*.' . $format)->from($dirs) as $file) {
 				/** @var \SplFileInfo $file */
 				if (!$m = Strings::match($file->getFilename(), '~^(?P<domain>.*?)\.(?P<locale>[^\.]+)\.' . preg_quote($format) . '$~')) {

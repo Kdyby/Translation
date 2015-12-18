@@ -14,6 +14,7 @@ use Kdyby;
 use Kdyby\Translation\Diagnostics\Panel;
 use Nette;
 use Nette\Utils\ObjectMixin;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\Translator as BaseTranslator;
@@ -48,6 +49,11 @@ class Translator extends BaseTranslator implements ITranslator
 	 * @var IResourceLoader
 	 */
 	private $translationsLoader;
+
+	/**
+	 * @var LoggerInterface
+	 */
+	private $psrLogger;
 
 	/**
 	 * @var Panel
@@ -98,6 +104,16 @@ class Translator extends BaseTranslator implements ITranslator
 	public function injectPanel(Panel $panel)
 	{
 		$this->panel = $panel;
+	}
+
+
+
+	/**
+	 * @param LoggerInterface|NULL $logger
+	 */
+	public function injectPsrLogger(LoggerInterface $logger = NULL)
+	{
+		$this->psrLogger = $logger;
 	}
 
 
@@ -169,6 +185,7 @@ class Translator extends BaseTranslator implements ITranslator
 
 		$result = parent::trans($id, $parameters, $domain, $locale);
 		if ($result === "\x01") {
+			$this->logMissingTranslation($message, $domain, $locale);
 			if ($this->panel !== NULL) {
 				$this->panel->markUntranslated($message);
 			}
@@ -207,6 +224,7 @@ class Translator extends BaseTranslator implements ITranslator
 		}
 
 		if ($result === "\x01") {
+			$this->logMissingTranslation($message, $domain, $locale);
 			if ($this->panel !== NULL) {
 				$this->panel->markUntranslated($message);
 			}
@@ -414,6 +432,24 @@ class Translator extends BaseTranslator implements ITranslator
 		}
 
 		return array($domain, $message);
+	}
+
+
+
+	/**
+	 * @param string $message
+	 * @param string $domain
+	 * @param string $locale
+	 */
+	protected function logMissingTranslation($message, $domain, $locale)
+	{
+		if ($this->psrLogger) {
+			$this->psrLogger->notice('Missing translation', [
+				'message' => $message,
+				'domain' => $domain,
+				'locale' => $locale ?: $this->getLocale(),
+			]);
+		}
 	}
 
 
