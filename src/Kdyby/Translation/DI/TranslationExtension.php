@@ -284,7 +284,9 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			}
 		}
 
-		Kdyby\Translation\Diagnostics\Panel::registerBluescreen();
+		if (class_exists('Tracy\Debugger')) {
+			Kdyby\Translation\Diagnostics\Panel::registerBluescreen();
+		}
 
 		$extractor = $builder->getDefinition($this->prefix('extractor'));
 		foreach ($builder->findByTag(self::TAG_EXTRACTOR) as $extractorId => $meta) {
@@ -399,7 +401,9 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	public function afterCompile(Code\ClassType $class)
 	{
 		$initialize = $class->methods['initialize'];
-		$initialize->addBody('Kdyby\Translation\Diagnostics\Panel::registerBluescreen();');
+		if (class_exists('Tracy\Debugger')) {
+			$initialize->addBody('Kdyby\Translation\Diagnostics\Panel::registerBluescreen();');
+		}
 	}
 
 
