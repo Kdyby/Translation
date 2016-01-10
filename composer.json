@@ -26,6 +26,7 @@
 		"nette/php-generator": "~2.3@dev",
 		"nette/reflection": "~2.3@dev",
 		"nette/utils": "~2.3@dev",
+		"nette/tracy": "~2.3@dev",
 
 		"symfony/translation": "~2.5",
 		"symfony/config": "~2.5"

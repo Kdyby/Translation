@@ -14,6 +14,8 @@ use Kdyby;
 use Kdyby\Translation\Diagnostics\Panel;
 use Nette;
 use Nette\Utils\ObjectMixin;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\Translator as BaseTranslator;
@@ -85,13 +87,14 @@ class Translator extends BaseTranslator implements ITranslator
 	 * @param IResourceLoader $loader
 	 */
 	public function __construct(IUserLocaleResolver $localeResolver, MessageSelector $selector,
-		CatalogueCompiler $catalogueCompiler, FallbackResolver $fallbackResolver, IResourceLoader $loader, ILogger $logger)
+		CatalogueCompiler $catalogueCompiler, FallbackResolver $fallbackResolver, IResourceLoader $loader,
+		ILogger $tracyLogger = null, LoggerInterface $psrLogger = null)
 	{
 		$this->localeResolver = $localeResolver;
 		$this->catalogueCompiler = $catalogueCompiler;
 		$this->fallbackResolver = $fallbackResolver;
 		$this->translationsLoader = $loader;
-		$this->logger = $logger;
+		$this->logger = $psrLogger ?: $tracyLogger;
 
 		parent::__construct(NULL, $selector);
 	}
@@ -137,7 +140,7 @@ class Translator extends BaseTranslator implements ITranslator
 			return $message;
 
 		} elseif ($message instanceof Nette\Utils\Html) {
-			$this->logger->log($message, static::LOGGER_NAMESPACE);
+			$this->logMissingTranslation($message);
 			if ($this->panel) {
 				$this->panel->markUntranslated($message);
 			}
@@ -177,7 +180,7 @@ class Translator extends BaseTranslator implements ITranslator
 
 		$result = parent::trans($id, $parameters, $domain, $locale);
 		if ($result === "\x01") {
-			$this->logger->log($message, static::LOGGER_NAMESPACE);
+			$this->logMissingTranslation($message);
 			if ($this->panel !== NULL) {
 				$this->panel->markUntranslated($message);
 			}
@@ -216,7 +219,7 @@ class Translator extends BaseTranslator implements ITranslator
 		}
 
 		if ($result === "\x01") {
-			$this->logger->log($message, static::LOGGER_NAMESPACE);
+			$this->logMissingTranslation($message);
 			if ($this->panel !== NULL) {
 				$this->panel->markUntranslated($message);
 			}
@@ -426,7 +429,17 @@ class Translator extends BaseTranslator implements ITranslator
 		return array($domain, $message);
 	}
 
-
+	/**
+	 * @param string $message
+	 * @param string $errorLevel
+	 */
+	public function logMissingTranslation($message) {
+		if($this->logger instanceof ILogger) {
+			$this->logger->log($message, static::LOGGER_NAMESPACE);
+		} elseif ($this->logger instanceof LoggerInterface) {
+			$this->logger->log(LogLevel::WARNING, sprintf('Missing translation "%s"',$message));
+		}
+	}
 
 	/**
 	 * @param null|string $whitelist
