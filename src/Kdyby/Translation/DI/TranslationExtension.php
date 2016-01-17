@@ -52,6 +52,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	public $defaults = array(
 		'whitelist' => NULL, // array('cs', 'en'),
 		'default' => 'en',
+		//'logging' => true, todo: enable/disable logging
 		// 'fallback' => array('en_US', 'en'), // using custom merge strategy becase Nette's config merger appends lists of values
 		'dirs' => array('%appDir%/lang', '%appDir%/locale'),
 		'cache' => 'Kdyby\Translation\Caching\PhpFileStorage',
