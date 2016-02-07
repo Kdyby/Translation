@@ -147,7 +147,7 @@ class Translator extends BaseTranslator implements ITranslator
 
 		} elseif ($message instanceof Nette\Utils\Html) {
 			if ($this->panel) {
-				$this->panel->markUntranslated($message);
+				$this->panel->markUntranslated($message, $domain);
 			}
 			return $message; // todo: what now?
 		}
@@ -187,7 +187,7 @@ class Translator extends BaseTranslator implements ITranslator
 		if ($result === "\x01") {
 			$this->logMissingTranslation($message, $domain, $locale);
 			if ($this->panel !== NULL) {
-				$this->panel->markUntranslated($message);
+				$this->panel->markUntranslated($message, $domain);
 			}
 			$result = strtr($message, $parameters);
 		}
@@ -219,14 +219,14 @@ class Translator extends BaseTranslator implements ITranslator
 		} catch (\Exception $e) {
 			$result = $id;
 			if ($this->panel !== NULL) {
-				$this->panel->choiceError($e);
+				$this->panel->choiceError($e, $domain);
 			}
 		}
 
 		if ($result === "\x01") {
 			$this->logMissingTranslation($message, $domain, $locale);
 			if ($this->panel !== NULL) {
-				$this->panel->markUntranslated($message);
+				$this->panel->markUntranslated($message, $domain);
 			}
 			$result = strtr($message, $parameters);
 		}
