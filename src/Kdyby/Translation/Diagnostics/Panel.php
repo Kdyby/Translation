@@ -227,6 +227,10 @@ class Panel extends Nette\Object implements IBarPanel
 
 
 
+	/**
+	 * @param string $id
+	 * @param string $domain
+	 */
 	public function markUntranslated($id, $domain)
 	{
 		$this->untranslated[] = array(
@@ -250,6 +254,12 @@ class Panel extends Nette\Object implements IBarPanel
 
 
 
+	/**
+	 * @param string $format
+	 * @param string $resource
+	 * @param string $locale
+	 * @param string $domain
+	 */
 	public function addResource($format, $resource, $locale, $domain)
 	{
 		$this->resources[$locale][$resource] = $domain;
@@ -264,6 +274,12 @@ class Panel extends Nette\Object implements IBarPanel
 
 
 
+	/**
+	 * @param string $format
+	 * @param string $resource
+	 * @param string $locale
+	 * @param string $domain
+	 */
 	public function addIgnoredResource($format, $resource, $locale, $domain)
 	{
 		$this->ignoredResources[$locale][$resource] = $domain;

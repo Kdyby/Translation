@@ -25,6 +25,6 @@ interface IUserLocaleResolver
 	 * @param Translator $translator
 	 * @return string|NULL
 	 */
-	function resolve(Translator $translator);
+	public function resolve(Translator $translator);
 
 }

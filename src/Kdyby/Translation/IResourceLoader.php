@@ -11,7 +11,6 @@
 namespace Kdyby\Translation;
 
 use Kdyby;
-use Nette;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Translation\MessageCatalogue;
 
@@ -29,14 +28,14 @@ interface IResourceLoader
 	 * @param string $format The format of the loader
 	 * @param LoaderInterface $loader
 	 */
-	function addLoader($format, LoaderInterface $loader);
+	public function addLoader($format, LoaderInterface $loader);
 
 
 
 	/**
 	 * @return LoaderInterface[]
 	 */
-	function getLoaders();
+	public function getLoaders();
 
 
 
@@ -47,6 +46,6 @@ interface IResourceLoader
 	 * @param MessageCatalogue $catalogue
 	 * @throws LoaderNotFoundException
 	 */
-	function loadResource($format, $resource, $domain, MessageCatalogue $catalogue);
+	public function loadResource($format, $resource, $domain, MessageCatalogue $catalogue);
 
 }

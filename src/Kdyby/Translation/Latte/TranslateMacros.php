@@ -11,7 +11,6 @@
 namespace Kdyby\Translation\Latte;
 
 use Kdyby;
-use Nette;
 use Latte;
 use Latte\Compiler;
 use Latte\MacroNode;

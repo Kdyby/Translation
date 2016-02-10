@@ -35,6 +35,10 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 
 
 
+	/**
+	 * @param string $prefix
+	 * @param ITranslator $translator
+	 */
 	public function __construct($prefix, ITranslator $translator)
 	{
 		if ($translator instanceof PrefixedTranslator) { // todo: this is just an experiment
@@ -47,6 +51,14 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 
 
 
+	/**
+	 * @param string $message
+	 * @param int|array|NULL $count
+	 * @param array|string|NULL $parameters
+	 * @param string|NULL $domain
+	 * @param string|NULL $locale
+	 * @return string
+	 */
 	public function translate($message, $count = NULL, $parameters = array(), $domain = NULL, $locale = NULL)
 	{
 		$translationString = ($message instanceof Phrase ? $message->message : $message);
@@ -62,9 +74,9 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 		}
 
 		if (is_array($count)) {
-			$locale = $domain ? : NULL;
-			$domain = $parameters ? : NULL;
-			$parameters = $count ? : array();
+			$locale = $domain ?: NULL;
+			$domain = $parameters ?: NULL;
+			$parameters = $count ?: array();
 			$count = NULL;
 		}
 

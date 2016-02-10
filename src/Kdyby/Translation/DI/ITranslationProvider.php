@@ -26,6 +26,6 @@ interface ITranslationProvider
 	 *
 	 * @return string[]
 	 */
-	function getTranslationResources();
+	public function getTranslationResources();
 
 }

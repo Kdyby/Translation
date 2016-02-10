@@ -419,7 +419,7 @@ class Translator extends BaseTranslator implements ITranslator
 
 
 	/**
-	 * @param $message
+	 * @param string $message
 	 * @return array
 	 */
 	private function extractMessageDomain($message)
