@@ -177,7 +177,7 @@ class Panel extends Nette\Object implements IBarPanel
 
 			$s .= '<tr><td>';
 
-			if ($message instanceof \Exception) {
+			if ($message instanceof \Exception || $message instanceof \Throwable) {
 				$s .= '<span style="color:red">' . $h($message->getMessage()) . '</span>';
 
 			} elseif ($message instanceof Nette\Utils\Html) {
