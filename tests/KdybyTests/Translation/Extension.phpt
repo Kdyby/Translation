@@ -57,6 +57,24 @@ class ExtensionTest extends TestCase
 
 
 
+	public function testLoaders()
+	{
+		$sl = $this->createContainer('loaders.custom');
+
+		/** @var Kdyby\Translation\TranslationLoader $loader */
+		$loader = $sl->getService('translation.loader');
+
+		$loaders = $loader->getLoaders();
+		Assert::count(2, $loaders);
+		Assert::true(array_key_exists('php', $loaders));
+		Assert::true(array_key_exists('neon', $loaders));
+		Assert::false(array_key_exists('po', $loaders));
+		Assert::false(array_key_exists('dat', $loaders));
+		Assert::false(array_key_exists('csv', $loaders));
+	}
+
+
+
 	public function testLogging()
 	{
 		$sl = $this->createContainer('logging');
