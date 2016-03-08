@@ -62,6 +62,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			self::RESOLVER_REQUEST => TRUE,
 			self::RESOLVER_HEADER => TRUE,
 		),
+		'loaders' => array()
 	);
 
 	/**
@@ -143,7 +144,8 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			->setClass('Kdyby\Translation\TranslationLoader')
 			->setInject(FALSE);
 
-		$this->loadLoaders();
+		$loaders = $this->loadFromFile(__DIR__ . '/config/loaders.neon');
+		$this->loadLoaders($loaders, $config['loaders'] ? : array_keys($loaders));
 
 		if ($this->isRegisteredConsoleExtension()) {
 			$this->loadConsole($config);
@@ -225,11 +227,14 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 
 
-	protected function loadLoaders()
+	protected function loadLoaders(array $loaders, array $allowed)
 	{
 		$builder = $this->getContainerBuilder();
 
-		foreach ($this->loadFromFile(__DIR__ . '/config/loaders.neon') as $format => $class) {
+		foreach ($loaders as $format => $class) {
+			if (array_search($format, $allowed) === FALSE) {
+				continue;
+			}
 			$builder->addDefinition($this->prefix('loader.' . $format))
 				->setClass($class)
 				->addTag(self::TAG_LOADER, $format);
