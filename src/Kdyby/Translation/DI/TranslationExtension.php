@@ -374,21 +374,23 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$whitelistRegexp = Kdyby\Translation\Translator::buildWhitelistRegexp($config['whitelist']);
 		$translator = $builder->getDefinition($this->prefix('default'));
 
-		foreach ($this->loaders as $format => $_) {
-			foreach (Finder::findFiles('*.*.' . $format)->from($dirs) as $file) {
-				/** @var \SplFileInfo $file */
-				if (!$m = Strings::match($file->getFilename(), '~^(?P<domain>.*?)\.(?P<locale>[^\.]+)\.' . preg_quote($format) . '$~')) {
-					continue;
-				}
+		$mask = array_map(function ($value) {
+			return '*.*.' . $value;
+		}, array_keys($this->loaders));
 
-				if ($whitelistRegexp && !preg_match($whitelistRegexp, $m['locale']) && $builder->parameters['productionMode']) {
-					continue; // ignore in production mode, there is no need to pass the ignored resources
-				}
-
-				$this->validateResource($format, $file->getPathname(), $m['locale'], $m['domain']);
-				$translator->addSetup('addResource', array($format, $file->getPathname(), $m['locale'], $m['domain']));
-				$builder->addDependency($file->getPathname());
+		foreach (Finder::findFiles($mask)->from($dirs) as $file) {
+			/** @var \SplFileInfo $file */
+			if (!$m = Strings::match($file->getFilename(), '~^(?P<domain>.*?)\.(?P<locale>[^\.]+)\.(?P<format>[^\.]+)$~')) {
+				continue;
 			}
+
+			if ($whitelistRegexp && !preg_match($whitelistRegexp, $m['locale']) && $builder->parameters['productionMode']) {
+				continue; // ignore in production mode, there is no need to pass the ignored resources
+			}
+
+			$this->validateResource($m['format'], $file->getPathname(), $m['locale'], $m['domain']);
+			$translator->addSetup('addResource', array($m['format'], $file->getPathname(), $m['locale'], $m['domain']));
+			$builder->addDependency($file->getPathname());
 		}
 	}
 
