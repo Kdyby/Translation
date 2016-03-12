@@ -24,6 +24,8 @@ use Symfony\Component\Translation\MessageCatalogueInterface;
 class CatalogueCompiler extends Nette\Object
 {
 
+	const TAG_TRANSLATION = 'Kdyby\\Translation\\Translator';
+
 	/**
 	 * @var \Nette\Caching\Cache
 	 */
@@ -39,11 +41,16 @@ class CatalogueCompiler extends Nette\Object
 	 */
 	private $catalogueFactory;
 
+	/**
+	 * @var Nette\Caching\IStorage
+	 */
+	private $cacheStorage;
 
 
 	public function __construct(Nette\Caching\IStorage $cacheStorage, FallbackResolver $fallbackResolver,
 		CatalogueFactory $catalogueFactory)
 	{
+		$this->cacheStorage = $cacheStorage;
 		$this->cache = new Cache($cacheStorage, 'Kdyby\\Translation\\Translator');
 		$this->fallbackResolver = $fallbackResolver;
 		$this->catalogueFactory = $catalogueFactory;
@@ -60,10 +67,22 @@ class CatalogueCompiler extends Nette\Object
 	}
 
 
-
-	public function invalidateCache()
+	/**
+	 * Replaces cache storage with simple memory storage (per-request).
+	 */
+	public function disableDebugMode()
 	{
-		$this->cache->clean(array(Cache::ALL => TRUE));
+		$this->cache = new Cache($this->cacheStorage, 'Kdyby\\Translation\\Translator');
+	}
+
+
+	public function invalidateCache($onlyTranslation = FALSE)
+	{
+		if ($onlyTranslation) {
+			$this->cache->clean(array(Cache::TAGS => static::TAG_TRANSLATION));
+		} else {
+			$this->cache->clean(array(Cache::ALL => TRUE));
+		}
 	}
 
 
@@ -106,7 +125,7 @@ class CatalogueCompiler extends Nette\Object
 			}
 
 			$this->catalogueFactory->createCatalogue($translator, $availableCatalogues, $locale);
-			$this->cache->save($cacheKey, $availableCatalogues[$locale]->all());
+			$this->cache->save($cacheKey, $availableCatalogues[$locale]->all(), array(Cache::TAGS => array(static::TAG_TRANSLATION)));
 			return $availableCatalogues;
 		}
 
@@ -115,7 +134,8 @@ class CatalogueCompiler extends Nette\Object
 		$cached = $compiled = $this->cache->load($cacheKey);
 		if ($compiled === NULL) {
 			$this->catalogueFactory->createCatalogue($translator, $availableCatalogues, $locale);
-			$this->cache->save($cacheKey, $compiled = $this->compilePhpCache($translator, $availableCatalogues, $locale));
+			$this->cache->save($cacheKey, $compiled = $this->compilePhpCache($translator, $availableCatalogues, $locale),
+				array(Cache::TAGS => array(static::TAG_TRANSLATION)));
 			$cached = $this->cache->load($cacheKey);
 		}
 
