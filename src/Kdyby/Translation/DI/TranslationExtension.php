@@ -430,7 +430,14 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$loader->load($file, $locale, $domain);
 
 		} catch (\Exception $e) {
-			throw new InvalidResourceException("Resource $file is not valid and cannot be loaded.", 0, $e);
+			$previous = $e->getPrevious() ? get_class($e->getPrevious()) : NULL;
+			switch ($previous) {
+				case 'Nette\Neon\Exception':
+					throw new InvalidResourceException("Invalid resource $file. {$e->getMessage()}", 0, $e);
+					break;
+				default:
+					throw new InvalidResourceException("Resource $file is not valid and cannot be loaded.", 0, $e);
+			}
 		}
 	}
 
