@@ -232,6 +232,10 @@ class Translator extends BaseTranslator implements ITranslator
 			if ($this->panel !== NULL) {
 				$this->panel->markUntranslated($message, $domain);
 			}
+			
+			if ($locale === NULL) {
+                		$locale = $this->getLocale();
+            		}
 			$result = strtr($this->selector->choose($message, (int) $number, $locale), $parameters);
 		}
 
