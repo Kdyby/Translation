@@ -76,7 +76,10 @@ class Translator extends BaseTranslator implements ITranslator
 	 */
 	private $localeWhitelist;
 
-
+	/**
+	 * @var MessageSelector
+	 */
+	private $selector;
 
 	/**
 	 * @param IUserLocaleResolver $localeResolver
@@ -89,6 +92,7 @@ class Translator extends BaseTranslator implements ITranslator
 		CatalogueCompiler $catalogueCompiler, FallbackResolver $fallbackResolver, IResourceLoader $loader)
 	{
 		$this->localeResolver = $localeResolver;
+		$this->selector = $selector;
 		$this->catalogueCompiler = $catalogueCompiler;
 		$this->fallbackResolver = $fallbackResolver;
 		$this->translationsLoader = $loader;
@@ -233,7 +237,11 @@ class Translator extends BaseTranslator implements ITranslator
 			if ($this->panel !== NULL) {
 				$this->panel->markUntranslated($message, $domain);
 			}
-			$result = strtr($message, $parameters);
+
+			if ($locale === NULL) {
+				$locale = $this->getLocale();
+			}
+			$result = strtr($this->selector->choose($message, (int) $number, $locale), $parameters);
 		}
 
 		return $result;
