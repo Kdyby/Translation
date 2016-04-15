@@ -76,7 +76,7 @@ class Translator extends BaseTranslator implements ITranslator
 	private $localeWhitelist;
 
 	/**
-	 * @var MessageSelector 
+	 * @var MessageSelector
 	 */
 	private $selector;
 
