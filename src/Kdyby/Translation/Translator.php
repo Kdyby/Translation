@@ -234,8 +234,8 @@ class Translator extends BaseTranslator implements ITranslator
 			}
 			
 			if ($locale === NULL) {
-                		$locale = $this->getLocale();
-            		}
+				$locale = $this->getLocale();
+			}
 			$result = strtr($this->selector->choose($message, (int) $number, $locale), $parameters);
 		}
 
