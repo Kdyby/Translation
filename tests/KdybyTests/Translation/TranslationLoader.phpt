@@ -30,10 +30,10 @@ class TranslationLoaderTest extends TestCase
 	public function testAddLoaders()
 	{
 		$loader = new TranslationLoader();
-		Assert::same(array(), $loader->getLoaders());
+		Assert::same([], $loader->getLoaders());
 
 		$loader->addLoader('neon', $neonLoader = new Kdyby\Translation\Loader\NeonFileLoader());
-		Assert::same(array('neon' => $neonLoader), $loader->getLoaders());
+		Assert::same(['neon' => $neonLoader], $loader->getLoaders());
 	}
 
 

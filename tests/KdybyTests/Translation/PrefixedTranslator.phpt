@@ -49,7 +49,7 @@ class PrefixedTranslatorTest extends TestCase
 		$translator = $this->createTranslator();
 		$prefixed = $translator->domain('front.homepage');
 
-		Assert::same('Hello John', $prefixed->translate(new Kdyby\Translation\Phrase('namedHello', array('name' => 'John'))));
+		Assert::same('Hello John', $prefixed->translate(new Kdyby\Translation\Phrase('namedHello', ['name' => 'John'])));
 	}
 
 	public function testPhraseTranslateWithCount()
@@ -73,7 +73,7 @@ class PrefixedTranslatorTest extends TestCase
 		$translator = $this->createTranslator();
 		$prefixed = $translator->domain('front.homepage');
 
-		Assert::same('Hello John', $prefixed->translate(new Kdyby\Translation\Phrase('//front.homepage.namedHello', array('name' => 'John'))));
+		Assert::same('Hello John', $prefixed->translate(new Kdyby\Translation\Phrase('//front.homepage.namedHello', ['name' => 'John'])));
 	}
 
 	public function testGlobalPhraseTranslateWithCount()

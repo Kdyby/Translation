@@ -32,21 +32,21 @@ class CatalogueFactoryTest extends TestCase
 	public function testCircularFallback()
 	{
 		$fallbacks = new FallbackResolver();
-		$fallbacks->setFallbackLocales(array('cs_CZ', 'cs'));
+		$fallbacks->setFallbackLocales(['cs_CZ', 'cs']);
 
 		$loader = new TranslationLoader();
 		$loader->addLoader('neon', new Kdyby\Translation\Loader\NeonFileLoader());
 
 		/** @var \Kdyby\Translation\Translator|\Mockery\MockInterface $translator */
 		$translator = \Mockery::mock('Kdyby\Translation\Translator');
-		$translator->shouldReceive('getAvailableLocales')->andReturn(array('cs_CZ', 'en_US'));
+		$translator->shouldReceive('getAvailableLocales')->andReturn(['cs_CZ', 'en_US']);
 
 		$factory = new CatalogueFactory($fallbacks, $loader);
 		$factory->addResource('neon', __DIR__ . '/lang/front.cs_CZ.neon', 'cs_CZ', 'front');
 		$factory->addResource('neon', __DIR__ . '/lang/front.en_US.neon', 'en_US', 'front');
 
 		/** @var Symfony\Component\Translation\MessageCatalogueInterface[] $catalogues */
-		$catalogues = array();
+		$catalogues = [];
 		$factory->createCatalogue($translator, $catalogues, 'cs');
 		Assert::truthy(isset($catalogues['cs']));
 		Assert::truthy(isset($catalogues['cs_CZ']));

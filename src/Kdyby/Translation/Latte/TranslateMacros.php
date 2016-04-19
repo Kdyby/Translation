@@ -30,8 +30,8 @@ class TranslateMacros extends MacroSet
 		$me = new static($compiler);
 		/** @var TranslateMacros $me */
 
-		$me->addMacro('_', array($me, 'macroTranslate'), array($me, 'macroTranslate'));
-		$me->addMacro('translator', array($me, 'macroDomain'), array($me, 'macroDomainEnd'));
+		$me->addMacro('_', [$me, 'macroTranslate'], [$me, 'macroTranslate']);
+		$me->addMacro('translator', [$me, 'macroDomain'], [$me, 'macroDomainEnd']);
 
 		return $me;
 	}

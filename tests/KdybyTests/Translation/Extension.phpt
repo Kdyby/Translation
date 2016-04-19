@@ -37,8 +37,8 @@ class ExtensionTest extends TestCase
 		Assert::true($translator instanceof Kdyby\Translation\Translator);
 		Assert::true($translator instanceof Symfony\Component\Translation\Translator);
 
-		Assert::same("Ahoj světe", $translator->translate('homepage.hello', NULL, array(), 'front', 'cs'));
-		Assert::same("Hello world", $translator->translate('homepage.hello', NULL, array(), 'front', 'en'));
+		Assert::same("Ahoj světe", $translator->translate('homepage.hello', NULL, [], 'front', 'cs'));
+		Assert::same("Hello world", $translator->translate('homepage.hello', NULL, [], 'front', 'en'));
 
 		Assert::same("front.not.found", $translator->translate('front.not.found'));
 	}

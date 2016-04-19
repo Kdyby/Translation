@@ -25,7 +25,7 @@ class ChainResolver extends Nette\Object implements IUserLocaleResolver
 	/**
 	 * @var array|IUserLocaleResolver[]
 	 */
-	private $resolvers = array();
+	private $resolvers = [];
 
 
 

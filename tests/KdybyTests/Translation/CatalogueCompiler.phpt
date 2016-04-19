@@ -31,15 +31,15 @@ class CatalogueCompilerTest extends TestCase
 
 		/** @var Kdyby\Translation\Translator $translator */
 		$translator = $container->getByType('Nette\Localization\ITranslator');
-		$translator->setFallbackLocales(array('cs_CZ', 'cs'));
+		$translator->setFallbackLocales(['cs_CZ', 'cs']);
 
-		Assert::same("Ahoj světe", $translator->translate('homepage.hello', NULL, array(), 'front', 'fr'));
+		Assert::same("Ahoj světe", $translator->translate('homepage.hello', NULL, [], 'front', 'fr'));
 
-		$translator->setFallbackLocales(array());
-		Assert::same("homepage.hello", $translator->translate('homepage.hello', NULL, array(), 'front', 'fr'));
+		$translator->setFallbackLocales([]);
+		Assert::same("homepage.hello", $translator->translate('homepage.hello', NULL, [], 'front', 'fr'));
 
-		$translator->setFallbackLocales(array('en_US', 'en'));
-		Assert::same("Hello world", $translator->translate('homepage.hello', NULL, array(), 'front', 'fr'));
+		$translator->setFallbackLocales(['en_US', 'en']);
+		Assert::same("Hello world", $translator->translate('homepage.hello', NULL, [], 'front', 'fr'));
 	}
 
 
@@ -50,12 +50,12 @@ class CatalogueCompilerTest extends TestCase
 
 		/** @var Kdyby\Translation\Translator $translator */
 		$translator = $container->getByType('Nette\Localization\ITranslator');
-		$translator->setFallbackLocales(array('fr_FR', 'fr.UTF8', 'cs_CZ', 'cs'));
+		$translator->setFallbackLocales(['fr_FR', 'fr.UTF8', 'cs_CZ', 'cs']);
 
 		/** @var \Kdyby\Translation\CatalogueCompiler $compiler */
 		$compiler = $container->getByType('Kdyby\Translation\CatalogueCompiler');
 
-		$catalogues = array();
+		$catalogues = [];
 		$compiler->compile($translator, $catalogues, 'fr-FR.UTF8');
 
 		$tempFiles = array_filter(get_included_files(), function ($path) {
@@ -65,7 +65,7 @@ class CatalogueCompilerTest extends TestCase
 		Assert::count(1, $tempFiles);
 
 		$compiledCatalogue = call_user_func(function ($__file) use (&$__definedVariables) {
-			$__definedVariables = get_defined_vars() + array('__compiled' => NULL);
+			$__definedVariables = get_defined_vars() + ['__compiled' => NULL];
 			$__compiled = include $__file;
 			$__definedVariables = array_diff_key(get_defined_vars(), $__definedVariables);
 
@@ -73,13 +73,13 @@ class CatalogueCompilerTest extends TestCase
 		}, reset($tempFiles));
 
 		Assert::type('Symfony\Component\Translation\MessageCatalogue', $compiledCatalogue);
-		Assert::same(array(
+		Assert::same([
 			'catalogue',
 			'catalogueFr_FR',
 			'catalogueFr_UTF8',
 			'catalogueCs_CZ',
 			'catalogueCs'
-		), array_keys($__definedVariables));
+		], array_keys($__definedVariables));
 	}
 
 }

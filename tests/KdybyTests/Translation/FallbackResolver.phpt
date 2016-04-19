@@ -31,16 +31,16 @@ class FallbackResolverTest extends TestCase
 
 		/** @var Kdyby\Translation\Translator $translator */
 		$translator = $container->getByType('Nette\Localization\ITranslator');
-		$translator->setFallbackLocales(array('cs_CZ', 'cs'));
+		$translator->setFallbackLocales(['cs_CZ', 'cs']);
 
 		/** @var Kdyby\Translation\FallbackResolver $fallbackResolver */
 		$fallbackResolver = $container->getByType('Kdyby\Translation\FallbackResolver');
 
-		Assert::same(array('cs_CZ'), $fallbackResolver->compute($translator, 'cs'));
-		Assert::same(array('sk_SK', 'cs_CZ', 'cs'), $fallbackResolver->compute($translator, 'sk'));
-		Assert::same(array('sk', 'cs_CZ', 'cs'), $fallbackResolver->compute($translator, 'sk_SK'));
-		Assert::same(array('en_US', 'cs_CZ', 'cs'), $fallbackResolver->compute($translator, 'en'));
-		Assert::same(array('en', 'cs_CZ', 'cs'), $fallbackResolver->compute($translator, 'en_US'));
+		Assert::same(['cs_CZ'], $fallbackResolver->compute($translator, 'cs'));
+		Assert::same(['sk_SK', 'cs_CZ', 'cs'], $fallbackResolver->compute($translator, 'sk'));
+		Assert::same(['sk', 'cs_CZ', 'cs'], $fallbackResolver->compute($translator, 'sk_SK'));
+		Assert::same(['en_US', 'cs_CZ', 'cs'], $fallbackResolver->compute($translator, 'en'));
+		Assert::same(['en', 'cs_CZ', 'cs'], $fallbackResolver->compute($translator, 'en_US'));
 	}
 
 }

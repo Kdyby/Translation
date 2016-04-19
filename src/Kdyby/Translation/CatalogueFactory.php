@@ -36,7 +36,7 @@ class CatalogueFactory extends Nette\Object
 	/**
 	 * @var array
 	 */
-	private $resources = array();
+	private $resources = [];
 
 
 
@@ -53,7 +53,7 @@ class CatalogueFactory extends Nette\Object
 	 */
 	public function addResource($format, $resource, $locale, $domain = 'messages')
 	{
-		$this->resources[$locale][] = array($format, $resource, $domain);
+		$this->resources[$locale][] = [$format, $resource, $domain];
 	}
 
 
@@ -63,7 +63,7 @@ class CatalogueFactory extends Nette\Object
 	 */
 	public function getResources()
 	{
-		$list = array();
+		$list = [];
 		foreach ($this->resources as $locale => $resources) {
 			foreach ($resources as $meta) {
 				$list[] = $meta[1]; // resource file
@@ -95,7 +95,7 @@ class CatalogueFactory extends Nette\Object
 
 		$current = $availableCatalogues[$locale];
 
-		$chain = array($locale => TRUE);
+		$chain = [$locale => TRUE];
 		foreach ($this->fallbackResolver->compute($translator, $locale) as $fallback) {
 			if (!isset($availableCatalogues[$fallback])) {
 				$this->doLoadCatalogue($availableCatalogues, $fallback);

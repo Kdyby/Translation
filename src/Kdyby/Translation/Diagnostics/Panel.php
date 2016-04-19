@@ -39,32 +39,32 @@ class Panel extends Nette\Object implements IBarPanel
 	/**
 	 * @var array
 	 */
-	private $untranslated = array();
+	private $untranslated = [];
 
 	/**
 	 * @var array
 	 */
-	private $resources = array();
+	private $resources = [];
 
 	/**
 	 * @var array
 	 */
-	private $ignoredResources = array();
+	private $ignoredResources = [];
 
 	/**
 	 * @var array
 	 */
-	private $localeWhitelist = array();
+	private $localeWhitelist = [];
 
 	/**
 	 * @var array|Kdyby\Translation\IUserLocaleResolver[]
 	 */
-	private $localeResolvers = array();
+	private $localeResolvers = [];
 
 	/**
 	 * @var array
 	 */
-	private $onRequestLocaleSnapshot = array();
+	private $onRequestLocaleSnapshot = [];
 
 	/**
 	 * @var string
@@ -106,7 +106,7 @@ class Panel extends Nette\Object implements IBarPanel
 	{
 		$h = 'htmlSpecialChars';
 
-		$panel = array();
+		$panel = [];
 		if (!empty($this->untranslated)) {
 			$panel[] = $this->renderUntranslated();
 		}
@@ -233,10 +233,10 @@ class Panel extends Nette\Object implements IBarPanel
 	 */
 	public function markUntranslated($id, $domain)
 	{
-		$this->untranslated[] = array(
+		$this->untranslated[] = [
 			'message' => $id,
 			'domain' => $domain,
-		);
+		];
 	}
 
 
@@ -246,10 +246,10 @@ class Panel extends Nette\Object implements IBarPanel
 	 */
 	public function choiceError($e, $domain)
 	{
-		$this->untranslated[] = array(
+		$this->untranslated[] = [
 			'message' => $e,
 			'domain' => $domain,
-		);
+		];
 	}
 
 
@@ -289,7 +289,7 @@ class Panel extends Nette\Object implements IBarPanel
 
 	public function setLocaleResolvers(array $resolvers)
 	{
-		$this->localeResolvers = array();
+		$this->localeResolvers = [];
 		foreach ($resolvers as $resolver) {
 			$this->localeResolvers[ClassType::from($resolver)->getShortName()] = $resolver;
 		}
@@ -303,7 +303,7 @@ class Panel extends Nette\Object implements IBarPanel
 			return;
 		}
 
-		$snapshot = array('request' => $request, 'locale' => $this->translator->getLocale(), 'resolvers' => array());
+		$snapshot = ['request' => $request, 'locale' => $this->translator->getLocale(), 'resolvers' => []];
 		foreach ($this->localeResolvers as $name => $resolver) {
 			$snapshot['resolvers'][$name] = $resolver->resolve($this->translator);
 		}
@@ -327,7 +327,7 @@ class Panel extends Nette\Object implements IBarPanel
 
 	public static function registerBluescreen()
 	{
-		Debugger::getBlueScreen()->addPanel(array(get_called_class(), 'renderException'));
+		Debugger::getBlueScreen()->addPanel([get_called_class(), 'renderException']);
 	}
 
 
@@ -345,12 +345,12 @@ class Panel extends Nette\Object implements IBarPanel
 
 		$method = 'Symfony\Component\Translation\Loader\YamlFileLoader::load';
 		if ($call = Helpers::findTrace($e->getPrevious()->getTrace(), $method)) {
-			return array(
+			return [
 				'tab' => 'YAML dictionary',
 				'panel' => '<p><b>File:</b> ' . self::editorLink($call['args'][0], $previous->getParsedLine()) . '</p>'
 					. ($previous->getParsedLine() ? BlueScreen::highlightFile($call['args'][0], $previous->getParsedLine()) : '')
 					. '<p>' . $previous->getMessage() . ' </p>'
-			);
+			];
 		}
 	}
 
@@ -365,7 +365,7 @@ class Panel extends Nette\Object implements IBarPanel
 	{
 		if (Debugger::$editor && is_file($file) && $text !== NULL) {
 			return Nette\Utils\Html::el('a')
-				->href(strtr(Debugger::$editor, array('%file' => rawurlencode($file), '%line' => $line)))
+				->href(strtr(Debugger::$editor, ['%file' => rawurlencode($file), '%line' => $line]))
 				->title("$file:$line")
 				->setHtml($text);
 

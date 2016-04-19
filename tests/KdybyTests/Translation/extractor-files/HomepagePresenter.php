@@ -60,7 +60,7 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 	public function saveSucceeded(Form $form)
 	{
 		$this->flashMessage("Entry with id %id% was saved", 'warning')
-			->parameters = array('id' => $this->getParameter('id'));
+			->parameters = ['id' => $this->getParameter('id')];
 
 		$this->redirect('list');
 	}

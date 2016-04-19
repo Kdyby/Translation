@@ -34,11 +34,11 @@ class MessageCatalogueTest extends Tester\TestCase
 
 	protected function setUp()
 	{
-		$this->catalogue = new Kdyby\Translation\MessageCatalogue('cs_CZ', array(
-			'front' => array(
+		$this->catalogue = new Kdyby\Translation\MessageCatalogue('cs_CZ', [
+			'front' => [
 				'homepage.hello' => 'Ahoj světe!'
-			)
-		));
+			]
+		]);
 	}
 
 

@@ -37,10 +37,10 @@ class PhpFileStorage extends Nette\Caching\Storages\FileStorage implements Nette
 	 */
 	protected function readData($meta)
 	{
-		return array(
+		return [
 			'file' => $meta[self::FILE],
 			'handle' => $meta[self::HANDLE],
-		);
+		];
 	}
 
 

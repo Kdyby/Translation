@@ -63,7 +63,7 @@ class CatalogueCompiler extends Nette\Object
 
 	public function invalidateCache()
 	{
-		$this->cache->clean(array(Cache::ALL => TRUE));
+		$this->cache->clean([Cache::ALL => TRUE]);
 	}
 
 
@@ -96,7 +96,7 @@ class CatalogueCompiler extends Nette\Object
 		if (isset($availableCatalogues[$locale])) {
 			return $availableCatalogues;
 		}
-		$cacheKey = array($locale, $translator->getFallbackLocales());
+		$cacheKey = [$locale, $translator->getFallbackLocales()];
 
 		$storage = $this->cache->getStorage();
 		if (!$storage instanceof Kdyby\Translation\Caching\PhpFileStorage) {

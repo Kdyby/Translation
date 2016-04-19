@@ -32,12 +32,12 @@ class TranslationLoader extends Nette\Object implements IResourceLoader
 	 *
 	 * @var array|LoaderInterface[]
 	 */
-	private $loaders = array();
+	private $loaders = [];
 
 	/**
 	 * @var array
 	 */
-	private $serviceIds = array();
+	private $serviceIds = [];
 
 	/**
 	 * @var Nette\DI\Container
@@ -78,7 +78,7 @@ class TranslationLoader extends Nette\Object implements IResourceLoader
 		foreach ($this->serviceIds as $format => $loaderId) {
 			$this->loaders[$format] = $this->serviceLocator->getService($loaderId);
 		}
-		$this->serviceIds = array();
+		$this->serviceIds = [];
 
 		return $this->loaders;
 	}

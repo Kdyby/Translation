@@ -63,7 +63,7 @@ class Translator extends BaseTranslator implements ITranslator
 	/**
 	 * @var array
 	 */
-	private $availableResourceLocales = array();
+	private $availableResourceLocales = [];
 
 	/**
 	 * @var string
@@ -129,7 +129,7 @@ class Translator extends BaseTranslator implements ITranslator
 	 *
 	 * @return string
 	 */
-	public function translate($message, $count = NULL, $parameters = array(), $domain = NULL, $locale = NULL)
+	public function translate($message, $count = NULL, $parameters = [], $domain = NULL, $locale = NULL)
 	{
 		if ($message instanceof Phrase) {
 			return $message->translate($this);
@@ -152,14 +152,14 @@ class Translator extends BaseTranslator implements ITranslator
 			return $message; // todo: what now?
 		}
 
-		$tmp = array();
+		$tmp = [];
 		foreach ($parameters as $key => $val) {
 			$tmp['%' . trim($key, '%') . '%'] = $val;
 		}
 		$parameters = $tmp;
 
 		if ($count !== NULL && is_scalar($count)) {
-			return $this->transChoice($message, $count, $parameters + array('%count%' => $count), $domain, $locale);
+			return $this->transChoice($message, $count, $parameters + ['%count%' => $count], $domain, $locale);
 		}
 
 		return $this->trans($message, $parameters, $domain, $locale);
@@ -170,7 +170,7 @@ class Translator extends BaseTranslator implements ITranslator
 	/**
 	 * {@inheritdoc}
 	 */
-	public function trans($message, array $parameters = array(), $domain = NULL, $locale = NULL)
+	public function trans($message, array $parameters = [], $domain = NULL, $locale = NULL)
 	{
 		if ($message instanceof Phrase) {
 			return $message->translate($this);
@@ -200,7 +200,7 @@ class Translator extends BaseTranslator implements ITranslator
 	/**
 	 * {@inheritdoc}
 	 */
-	public function transChoice($message, $number, array $parameters = array(), $domain = NULL, $locale = NULL)
+	public function transChoice($message, $number, array $parameters = [], $domain = NULL, $locale = NULL)
 	{
 		if ($message instanceof Phrase) {
 			return $message->translate($this);
@@ -431,7 +431,7 @@ class Translator extends BaseTranslator implements ITranslator
 			$domain = 'messages';
 		}
 
-		return array($domain, $message);
+		return [$domain, $message];
 	}
 
 

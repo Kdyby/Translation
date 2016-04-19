@@ -150,7 +150,7 @@ front.missingKey.namedHelloCounting' . "\n", (string) $template->setFile(__DIR__
 
 		/** @var Kdyby\Translation\Translator $translator */
 		$translator = $container->getByType('Nette\Localization\ITranslator');
-		$translator->setFallbackLocales(array('cs_CZ', 'cs'));
+		$translator->setFallbackLocales(['cs_CZ', 'cs']);
 		$translator->setLocale('cs');
 
 		return $container->getByType('Nette\Application\UI\ITemplateFactory')->createTemplate(new ControlMock());

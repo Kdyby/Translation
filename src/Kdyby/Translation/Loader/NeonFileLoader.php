@@ -52,7 +52,7 @@ class NeonFileLoader extends ArrayLoader implements LoaderInterface
 		}
 
 		if (empty($messages)) {
-			$messages = array();
+			$messages = [];
 		}
 
 		if (!is_array($messages)) {
