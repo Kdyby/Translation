@@ -412,7 +412,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 		try {
 			$def = $builder->getDefinition($this->loaders[$format]);
-			$refl = Reflection\ClassType::from($def->factory ? $def->factory->entity : $def->class);
+			$refl = Reflection\ClassType::from($def->getEntity() ?: $def->getClass());
 			if (($method = $refl->getConstructor()) && $method->getNumberOfRequiredParameters() > 1) {
 				return;
 			}
@@ -438,7 +438,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 	public function afterCompile(Code\ClassType $class)
 	{
-		$initialize = $class->methods['initialize'];
+		$initialize = $class->getMethod('initialize');
 		if (class_exists('Tracy\Debugger')) {
 			$initialize->addBody('Kdyby\Translation\Diagnostics\Panel::registerBluescreen();');
 		}
