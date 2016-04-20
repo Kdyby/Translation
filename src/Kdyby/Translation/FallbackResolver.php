@@ -24,7 +24,7 @@ class FallbackResolver extends Nette\Object
 	/**
 	 * @var array
 	 */
-	private $fallbackLocales = array();
+	private $fallbackLocales = [];
 
 
 
@@ -40,7 +40,7 @@ class FallbackResolver extends Nette\Object
 
 	public function compute(Translator $translator, $locale)
 	{
-		$locales = array();
+		$locales = [];
 		foreach ($this->fallbackLocales as $fallback) {
 			if ($fallback === $locale) {
 				continue;

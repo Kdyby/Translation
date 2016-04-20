@@ -74,7 +74,7 @@ class Phrase extends Nette\Object
 
 
 
-	public function translate(Translator $translator, $count = NULL, array $parameters = array(), $domain = NULL, $locale = NULL)
+	public function translate(Translator $translator, $count = NULL, array $parameters = [], $domain = NULL, $locale = NULL)
 	{
 		if (!is_string($this->message)) {
 			throw new InvalidStateException("Message is not a string, type " . gettype($this->message) . ' given.');
@@ -122,7 +122,7 @@ class Phrase extends Nette\Object
 	public function __sleep()
 	{
 		$this->translator = NULL;
-		return array('message', 'count', 'parameters', 'domain', 'locale');
+		return ['message', 'count', 'parameters', 'domain', 'locale'];
 	}
 
 }

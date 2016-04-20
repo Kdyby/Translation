@@ -61,15 +61,15 @@ class TranslatorTest extends TestCase
 		$loader = new Kdyby\Translation\TranslationLoader();
 
 		/** @var Kdyby\Translation\Translator $translator */
-		$translator = $container->createInstance('Kdyby\Translation\Translator', array(
+		$translator = $container->createInstance('Kdyby\Translation\Translator', [
 			'localeResolver' => $container->getService('translation.userLocaleResolver'),
 			'loader' => $loader
-		));
+		]);
 
-		Assert::same(array(), $loader->getLoaders());
+		Assert::same([], $loader->getLoaders());
 
 		$translator->addLoader('neon', $neonLoader = new Kdyby\Translation\Loader\NeonFileLoader());
-		Assert::same(array('neon' => $neonLoader), $loader->getLoaders());
+		Assert::same(['neon' => $neonLoader], $loader->getLoaders());
 	}
 
 
@@ -82,23 +82,23 @@ class TranslatorTest extends TestCase
 		$catalogueFactory = $container->createInstance('Kdyby\Translation\CatalogueFactory');
 
 		/** @var Kdyby\Translation\CatalogueCompiler $catalogueCompiler */
-		$catalogueCompiler = $container->createInstance('Kdyby\Translation\CatalogueCompiler', array(
+		$catalogueCompiler = $container->createInstance('Kdyby\Translation\CatalogueCompiler', [
 			'catalogueFactory' => $catalogueFactory,
-		));
+		]);
 
 		/** @var Kdyby\Translation\Translator $translator */
-		$translator = $container->createInstance('Kdyby\Translation\Translator', array(
+		$translator = $container->createInstance('Kdyby\Translation\Translator', [
 			'catalogueCompiler' => $catalogueCompiler,
 			'localeResolver' => $container->getService('translation.userLocaleResolver')
-		));
+		]);
 
-		Assert::same(array(), $catalogueFactory->getResources());
+		Assert::same([], $catalogueFactory->getResources());
 
 		$translator->addResource('neon', __DIR__ . '/files/front.cs_CZ.neon', 'cs_CZ', 'front');
 
-		Assert::same(array(
+		Assert::same([
 			__DIR__ . '/files/front.cs_CZ.neon'
-		), $catalogueFactory->getResources());
+		], $catalogueFactory->getResources());
 	}
 
 
@@ -106,25 +106,25 @@ class TranslatorTest extends TestCase
 	public function testAvailableLocales()
 	{
 		$translator = $this->createTranslator();
-		Assert::same(array('cs_CZ', 'en_US', 'sk_SK'), $translator->getAvailableLocales());
+		Assert::same(['cs_CZ', 'en_US', 'sk_SK'], $translator->getAvailableLocales());
 	}
 
 
 
 	public function dataWhitelistRegexp()
 	{
-		return array(
-			array('cs', TRUE),
-			array('cs_CZ', TRUE),
-			array('en', TRUE),
-			array('en_US', TRUE),
-			array('en_GB', TRUE),
-			array('de', TRUE),
-			array('fr', FALSE),
-			array('hu', FALSE),
-			array('eu', FALSE),
-			array('ru', FALSE),
-		);
+		return [
+			['cs', TRUE],
+			['cs_CZ', TRUE],
+			['en', TRUE],
+			['en_US', TRUE],
+			['en_GB', TRUE],
+			['de', TRUE],
+			['fr', FALSE],
+			['hu', FALSE],
+			['eu', FALSE],
+			['ru', FALSE],
+		];
 	}
 
 
@@ -134,7 +134,7 @@ class TranslatorTest extends TestCase
 	 */
 	public function testWhitelistRegexp($locale, $isMatching)
 	{
-		$regexp = Kdyby\Translation\Translator::buildWhitelistRegexp(array('cs', 'en', 'de'));
+		$regexp = Kdyby\Translation\Translator::buildWhitelistRegexp(['cs', 'en', 'de']);
 
 		Assert::same($isMatching, (bool) preg_match($regexp, $locale));
 	}

@@ -50,13 +50,13 @@ class PhraseTest extends TestCase
 		$check = $form->addCheckbox('useCredits');
 
 		$check->addRule(Form::FILLED, new Phrase('front.orderForm.useCredits', $credits = 10));
-		$form->validate(array($check));
+		$form->validate([$check]);
 
-		Assert::same(array(
+		Assert::same([
 			'Use 10 credits'
-		), $check->getErrors());
+		], $check->getErrors());
 
-		Assert::same(array(array('op' => ':filled', 'msg' => 'Use 10 credits')), $check->getControlPart()->attrs['data-nette-rules']);
+		Assert::same([['op' => ':filled', 'msg' => 'Use 10 credits']], $check->getControlPart()->attrs['data-nette-rules']);
 		Assert::match('<input%A% data-nette-rules=\'[{"op":":filled","msg":"Use 10 credits"}]\'>', (string) $check->getControlPart());
 	}
 

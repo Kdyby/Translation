@@ -59,7 +59,7 @@ class LatteExtractor extends Nette\Object implements ExtractorInterface
 		$parser->shortNoEscape = TRUE;
 
 		foreach ($tokens = $parser->parse(file_get_contents($file)) as $token) {
-			if ($token->type !== $token::MACRO_TAG || !in_array($token->name, array('_', '/_'), TRUE)) {
+			if ($token->type !== $token::MACRO_TAG || !in_array($token->name, ['_', '/_'], TRUE)) {
 				if ($buffer !== NULL) {
 					$buffer .= $token->text;
 				}
@@ -79,7 +79,7 @@ class LatteExtractor extends Nette\Object implements ExtractorInterface
 				$writer = new PhpWriter($args, $token->modifiers);
 
 				$message = $writer->write('%node.word');
-				if (in_array(substr(trim($message), 0, 1), array('"', '\''), TRUE)) {
+				if (in_array(substr(trim($message), 0, 1), ['"', '\''], TRUE)) {
 					$message = substr(trim($message), 1, -1);
 				}
 

@@ -59,7 +59,7 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 	 * @param string|NULL $locale
 	 * @return string
 	 */
-	public function translate($message, $count = NULL, $parameters = array(), $domain = NULL, $locale = NULL)
+	public function translate($message, $count = NULL, $parameters = [], $domain = NULL, $locale = NULL)
 	{
 		$translationString = ($message instanceof Phrase ? $message->message : $message);
 		$prefix = $this->prefix . '.';
@@ -76,7 +76,7 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 		if (is_array($count)) {
 			$locale = $domain ?: NULL;
 			$domain = $parameters ?: NULL;
-			$parameters = $count ?: array();
+			$parameters = $count ?: [];
 			$count = NULL;
 		}
 
@@ -135,13 +135,13 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 	private static function overrideTemplateTranslator($template, ITranslator $translator)
 	{
 		if ($template instanceof Latte\Template) {
-			$template->getEngine()->addFilter('translate', array(new TemplateHelpers($translator), 'translate'));
+			$template->getEngine()->addFilter('translate', [new TemplateHelpers($translator), 'translate']);
 
 		} elseif ($template instanceof \Nette\Bridges\ApplicationLatte\Template) {
-			$template->getLatte()->addFilter('translate', array(new TemplateHelpers($translator), 'translate'));
+			$template->getLatte()->addFilter('translate', [new TemplateHelpers($translator), 'translate']);
 
 		} elseif ($template instanceof \Nette\Templating\Template) {
-			$template->registerHelper('translate', array(new TemplateHelpers($translator), 'translate'));
+			$template->registerHelper('translate', [new TemplateHelpers($translator), 'translate']);
 		}
 
 		return $translator;

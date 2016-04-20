@@ -45,14 +45,14 @@ class LocaleSessionResolver extends TestCase
 		$sessionResolver->setLocale('cs');
 
 		// locale from request parameter should be ignored
-		$app->onRequest($app, new Nette\Application\Request('Test', 'GET', array('action' => 'default', 'locale' => 'en')));
+		$app->onRequest($app, new Nette\Application\Request('Test', 'GET', ['action' => 'default', 'locale' => 'en']));
 		Assert::same('cs', $translator->getLocale());
 
 		// force en locale
 		$sessionResolver->setLocale('en');
 
 		// locale from request parameter should be ignored
-		$app->onRequest($app, new Nette\Application\Request('Test', 'GET', array('action' => 'default', 'locale' => 'cs')));
+		$app->onRequest($app, new Nette\Application\Request('Test', 'GET', ['action' => 'default', 'locale' => 'cs']));
 		Assert::same('en', $translator->getLocale());
 	}
 

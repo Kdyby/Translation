@@ -38,10 +38,10 @@ class LocaleParamResolverTest extends TestCase
 		// this should fallback to default locale
 		Assert::same('en', $translator->getLocale());
 
-		$app->onRequest($app, new Nette\Application\Request('Test', 'GET', array('action' => 'default', 'locale' => 'cs')));
+		$app->onRequest($app, new Nette\Application\Request('Test', 'GET', ['action' => 'default', 'locale' => 'cs']));
 		Assert::same('cs', $translator->getLocale());
 
-		$app->onRequest($app, new Nette\Application\Request('Test', 'GET', array('action' => 'default', 'locale' => 'en')));
+		$app->onRequest($app, new Nette\Application\Request('Test', 'GET', ['action' => 'default', 'locale' => 'en']));
 		Assert::same('en', $translator->getLocale());
 	}
 

@@ -72,7 +72,7 @@ class ExtractCommand extends Command
 	{
 		$this->setName('kdyby:translation-extract')
 			->setDescription('Extracts strings from application to translation files')
-			->addOption('scan-dir', 'd', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, "The directory to parse the translations. Can contain %placeholders%.", array('%appDir%'))
+			->addOption('scan-dir', 'd', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, "The directory to parse the translations. Can contain %placeholders%.", ['%appDir%'])
 			->addOption('output-format', 'f', InputOption::VALUE_REQUIRED, "Format name of the messages.")
 			->addOption('output-dir', 'o', InputOption::VALUE_OPTIONAL, "Directory to write the messages to. Can contain %placeholders%.", $this->defaultOutputDir)
 			->addOption('catalogue-language', 'l', InputOption::VALUE_OPTIONAL, "The language of the catalogue", 'en_US');
@@ -132,9 +132,9 @@ class ExtractCommand extends Command
 			$this->extractor->extract($dir, $catalogue);
 		}
 
-		$this->writer->writeTranslations($catalogue, $this->outputFormat, array(
+		$this->writer->writeTranslations($catalogue, $this->outputFormat, [
 			'path' => $this->outputDir,
-		));
+		]);
 
 		$output->writeln('');
 		$output->writeln(sprintf('<info>Catalogue was written to %s</info>', $this->outputDir));

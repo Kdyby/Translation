@@ -38,8 +38,8 @@ class TemplateHelpers extends Nette\Object
 
 	public function register(Engine $engine)
 	{
-		$engine->addFilter('translate', array($this, 'translate'));
-		$engine->addFilter('getTranslator', array($this, 'getTranslator'));
+		$engine->addFilter('translate', [$this, 'translate']);
+		$engine->addFilter('getTranslator', [$this, 'getTranslator']);
 	}
 
 
@@ -54,12 +54,12 @@ class TemplateHelpers extends Nette\Object
 
 
 
-	public function translate($message, $count = NULL, $parameters = array(), $domain = NULL, $locale = NULL)
+	public function translate($message, $count = NULL, $parameters = [], $domain = NULL, $locale = NULL)
 	{
 		if (is_array($count)) {
 			$locale = $domain ?: NULL;
 			$domain = $parameters ?: NULL;
-			$parameters = $count ?: array();
+			$parameters = $count ?: [];
 			$count = NULL;
 		}
 
@@ -74,7 +74,7 @@ class TemplateHelpers extends Nette\Object
 	public function loader($method)
 	{
 		if (method_exists($this, $method) && strtolower($method) !== 'register') {
-			return array($this, $method);
+			return [$this, $method];
 		}
 	}
 
