@@ -424,12 +424,16 @@ class Translator extends BaseTranslator implements ITranslator
 	 */
 	private function extractMessageDomain($message)
 	{
-		if (strpos($message, '.') !== FALSE && strpos($message, ' ') === FALSE) {
-			list($domain, $message) = explode('.', $message, 2);
+		if (strpos($message, '.') !== FALSE) {
+			if(strrpos($message, '//') === 0) {
+				list($domain, $message) = explode('.', substr($message, 2), 2);
 
-		} elseif (strpos($message, '.') !== FALSE && strrpos($message, '//') === 0) {
-			list($domain, $message) = explode('.', substr($message, 2), 2);
+			} elseif (strpos($message, ' ') === FALSE) {
+				list($domain, $message) = explode('.', $message, 2);
 
+			} else {
+				$domain = 'messages';
+			}
 		} else {
 			$domain = 'messages';
 		}

@@ -84,12 +84,6 @@ class PrefixedTranslatorTest extends TestCase
 		Assert::same('Use 5 credits', $prefixed->translate(new Kdyby\Translation\Phrase('//front.orderForm.useCredits', 5)));
 	}
 
-	public function testGlobalDomainTranslate()
-	{
-		$translator = $this->createTranslator();
-
-		Assert::same('Welcome in my world', $translator->translate("//front.homepage.Hello world"));
-	}
 }
 
 \run(new PrefixedTranslatorTest());
