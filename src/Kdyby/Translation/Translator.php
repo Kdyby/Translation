@@ -427,6 +427,9 @@ class Translator extends BaseTranslator implements ITranslator
 		if (strpos($message, '.') !== FALSE && strpos($message, ' ') === FALSE) {
 			list($domain, $message) = explode('.', $message, 2);
 
+		} elseif (strpos($message, '.') !== FALSE && strrpos($message, '//') === 0) {
+			list($domain, $message) = explode('.', substr($message, 2), 2);
+
 		} else {
 			$domain = 'messages';
 		}

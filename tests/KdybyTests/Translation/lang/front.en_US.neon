@@ -2,6 +2,7 @@ homepage:
 	hello: Hello world
 	namedHello: Hello %name%
 	namedHelloCounting: Hello %name%|Helloes %name%
+	"Hello world": Welcome in my world
 
 noescape:
 	hello: Hello <b>world</b>
