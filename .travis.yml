@@ -29,7 +29,6 @@ matrix:
 before_install:
   - travis_retry composer self-update
   - wget -O /tmp/composer-nette https://raw.githubusercontent.com/Kdyby/TesterExtras/master/bin/composer-nette.php
-  - php /tmp/composer-nette
 
 install:
   - travis_retry composer update --no-interaction --prefer-dist $COMPOSER_EXTRA_ARGS
