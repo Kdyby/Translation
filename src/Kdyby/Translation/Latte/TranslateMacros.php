@@ -47,14 +47,14 @@ class TranslateMacros extends MacroSet
 	public function macroTranslate(MacroNode $node, PhpWriter $writer)
 	{
 		if ($node->closing) {
-			return $writer->write('echo %modify($template->translate(ob_get_clean()))');
+			return $writer->write('$_fi = new LR\FilterInfo(\Latte\Engine::CONTENT_TEXT); echo $this->filters->filterContent("translate", $_fi, ob_get_clean())');
 
 		} elseif ($node->isEmpty = ($node->args !== '')) {
 			if ($this->containsOnlyOneWord($node)) {
-				return $writer->write('echo %modify($template->translate(%node.word))');
+				return $writer->write('$_fi = new LR\FilterInfo(\Latte\Engine::CONTENT_TEXT); echo $this->filters->filterContent("translate", $_fi, %node.word)');
 
 			} else {
-				return $writer->write('echo %modify($template->translate(%node.word, %node.args))');
+				return $writer->write('$_fi = new LR\FilterInfo(\Latte\Engine::CONTENT_TEXT); echo $this->filters->filterContent("translate", $_fi, %node.word, %node.args)');
 			}
 
 		} else {
