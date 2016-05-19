@@ -46,19 +46,35 @@ class TranslateMacros extends MacroSet
 	 */
 	public function macroTranslate(MacroNode $node, PhpWriter $writer)
 	{
+		$nette24 = (class_exists('Latte\Runtime\FilterInfo')) ? TRUE : FALSE;
 		if ($node->closing) {
-			return $writer->write('echo %modify($template->translate(ob_get_clean()))');
+			if ($nette24) {
+				if (substr($node->modifiers, -7) === '|escape') {
+					$node->modifiers = substr($node->modifiers, 0, -7);
+				}
+				return $writer->write('$_fi = new LR\FilterInfo(%var); echo %modifyContent($this->filters->filterContent("translate", $_fi, ob_get_clean()))', $node->context[0]);
+			} else {
+				return $writer->write('echo %modify($template->translate(ob_get_clean()))');
+			}
 
-		} elseif ($node->isEmpty = ($node->args !== '')) {
+		} elseif ($node->empty = ($node->args !== '')) {
 			if ($this->containsOnlyOneWord($node)) {
-				return $writer->write('echo %modify($template->translate(%node.word))');
+				return $writer->write(($nette24)
+					? 'echo %modify(call_user_func($this->filters->translate, %node.word))'
+					: 'echo %modify($template->translate(%node.word))'
+				);
 
 			} else {
-				return $writer->write('echo %modify($template->translate(%node.word, %node.args))');
+				return $writer->write(($nette24)
+					? 'echo %modify(call_user_func($this->filters->translate, %node.word, %node.args))'
+					: 'echo %modify($template->translate(%node.word, %node.args))'
+				);
 			}
 
 		} else {
-			return 'ob_start()';
+			return ($nette24)
+				? 'ob_start()'
+				: 'ob_start(function () {})';
 		}
 	}
 
