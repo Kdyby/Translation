@@ -46,19 +46,40 @@ class TranslateMacros extends MacroSet
 	 */
 	public function macroTranslate(MacroNode $node, PhpWriter $writer)
 	{
-		if ($node->closing) {
-			return $writer->write('echo %modify($template->translate(ob_get_clean()))');
+		if (class_exists('Latte\Runtime\FilterInfo')) { // Nette 2.4
+			if ($node->closing) {
+				if (substr($node->modifiers, -7) === '|escape') {
+					$node->modifiers = substr($node->modifiers, 0, -7);
+				}
+				return $writer->write('$_fi = new LR\FilterInfo(%var); echo %modifyContent($this->filters->filterContent("translate", $_fi, ob_get_clean()))', $node->context[0]);
 
-		} elseif ($node->isEmpty = ($node->args !== '')) {
-			if ($this->containsOnlyOneWord($node)) {
-				return $writer->write('echo %modify($template->translate(%node.word))');
+			} elseif ($node->empty = ($node->args !== '')) {
+				if ($this->containsOnlyOneWord($node)) {
+					return $writer->write('echo %modify(call_user_func($this->filters->translate, %node.word))');
+
+				} else {
+					return $writer->write('echo %modify(call_user_func($this->filters->translate, %node.word, %node.args))');
+				}
 
 			} else {
-				return $writer->write('echo %modify($template->translate(%node.word, %node.args))');
+				return 'ob_start(function () {})';
 			}
 
-		} else {
-			return 'ob_start()';
+		} else { // <= Nette 2.3
+			if ($node->closing) {
+				return $writer->write('echo %modify($template->translate(ob_get_clean()))');
+
+			} elseif ($node->isEmpty = ($node->args !== '')) {
+				if ($this->containsOnlyOneWord($node)) {
+					return $writer->write('echo %modify($template->translate(%node.word))');
+
+				} else {
+					return $writer->write('echo %modify($template->translate(%node.word, %node.args))');
+				}
+
+			} else {
+				return 'ob_start()';
+			}
 		}
 	}
 
