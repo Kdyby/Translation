@@ -270,8 +270,12 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 				->addSetup('addFilter', ['getTranslator', [$this->prefix('@helpers'), 'getTranslator']]);
 		};
 
-		$latteFactoryService = $builder->getByType('Nette\Bridges\ApplicationLatte\ILatteFactory') ?: 'nette.latteFactory';
-		if ($builder->hasDefinition($latteFactoryService)) {
+		$latteFactoryService = $builder->getByType('Nette\Bridges\ApplicationLatte\ILatteFactory');
+		if (!$latteFactoryService || $builder->getDefinition($latteFactoryService)->getClass() !== 'Latte\Engine') {
+			$latteFactoryService = 'nette.latteFactory';
+		}
+
+		if ($builder->hasDefinition($latteFactoryService) && $builder->getDefinition($latteFactoryService)->getClass() === 'Latte\Engine') {
 			$registerToLatte($builder->getDefinition($latteFactoryService));
 		}
 
