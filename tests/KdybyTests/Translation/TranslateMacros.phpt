@@ -111,7 +111,7 @@ front.missingKey.namedHelloCounting' . "\n", (string) $template->setFile(__DIR__
 	{
 		$template = $this->buildTemplate();
 
-		Assert::same('
+		Assert::match('
 Ahoj %name%
 Ahoj Peter
 Ahoj Peter
@@ -120,19 +120,17 @@ Ahoj %name%
 Ahoj Peter
 Ahoj Peter
 
-
-
+%A?%
 front.missingKey.namedHello
 front.missingKey.namedHello
 front.missingKey.namedHello
 
-
-
+%A?%
 Helloes %name%
 Helloes Peter
 Hello Peter|Helloes Peter
 
-
+%A?%
 front.missingKey.namedHelloCounting
 front.missingKey.namedHelloCounting
 front.missingKey.namedHelloCounting' . "\n", (string) $template->setFile(__DIR__ . '/files/Order.default.latte'));
