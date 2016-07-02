@@ -67,7 +67,7 @@ class LatteExtractor extends Nette\Object implements ExtractorInterface
 				continue;
 			}
 
-			if ($token->name === '/_') {
+			if ($token->name === '/_' || ($token->name === '_' && $token->closing === TRUE)) {
 				$catalogue->set(($this->prefix ? $this->prefix . '.' : '') . $buffer, $buffer);
 				$buffer = NULL;
 
