@@ -271,11 +271,11 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		};
 
 		$latteFactoryService = $builder->getByType('Nette\Bridges\ApplicationLatte\ILatteFactory');
-		if (!$latteFactoryService || $builder->getDefinition($latteFactoryService)->getClass() !== 'Latte\Engine') {
+		if (!$latteFactoryService || !self::isOfType($builder->getDefinition($latteFactoryService)->getClass(), 'Latte\engine')) {
 			$latteFactoryService = 'nette.latteFactory';
 		}
 
-		if ($builder->hasDefinition($latteFactoryService) && $builder->getDefinition($latteFactoryService)->getClass() === 'Latte\Engine') {
+		if ($builder->hasDefinition($latteFactoryService) && self::isOfType($builder->getDefinition($latteFactoryService)->getClass(), 'Latte\Engine')) {
 			$registerToLatte($builder->getDefinition($latteFactoryService));
 		}
 
@@ -492,6 +492,18 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler) {
 			$compiler->addExtension('translation', new TranslationExtension());
 		};
+	}
+
+
+
+	/**
+	 * @param string $class
+	 * @param string $type
+	 * @return bool
+	 */
+	private static function isOfType($class, $type)
+	{
+		return $class === $type || is_subclass_of($class, $type);
 	}
 
 }
