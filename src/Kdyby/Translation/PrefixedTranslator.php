@@ -114,6 +114,20 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 	 */
 	public static function register($template, $prefix)
 	{
+		$translator = new static($prefix, $template->global->translator);
+		return self::overrideTemplateTranslator($template, $translator);
+	}
+
+
+
+	/**
+	 * @param Latte\Template|\Nette\Bridges\ApplicationLatte\Template|\Nette\Templating\Template $template
+	 * @param string $prefix
+	 * @return ITranslator
+	 * @throws InvalidArgumentException
+	 */
+	public static function register23($template, $prefix)
+	{
 		try {
 			$translator = $template->getTranslator();
 
@@ -129,12 +143,12 @@ class PrefixedTranslator extends Nette\Object implements ITranslator
 
 
 	/**
-	 * @param Latte\Template|\Nette\Bridges\ApplicationLatte\Template|\Nette\Templating\Template $template
+	 * @param Latte\Template|Latte\Runtime\Template|\Nette\Bridges\ApplicationLatte\Template|\Nette\Templating\Template $template
 	 * @param ITranslator $translator
 	 */
 	private static function overrideTemplateTranslator($template, ITranslator $translator)
 	{
-		if ($template instanceof Latte\Template) {
+		if ($template instanceof Latte\Runtime\Template || $template instanceof Latte\Template) {
 			$template->getEngine()->addFilter('translate', [new TemplateHelpers($translator), 'translate']);
 
 		} elseif ($template instanceof \Nette\Bridges\ApplicationLatte\Template) {

@@ -96,7 +96,12 @@ class TranslateMacros extends MacroSet
 		}
 
 		$node->isEmpty = $node->isEmpty || (substr($node->args, -1) === '/');
-		return $writer->write('$_translator = \Kdyby\Translation\PrefixedTranslator::register($template, %node.word);');
+
+		if (method_exists('Latte\Engine', 'addProvider')) { // Nette 2.4
+			return $writer->write('$_translator = \Kdyby\Translation\PrefixedTranslator::register($template, %node.word);');
+		} else {
+			return $writer->write('$_translator = \Kdyby\Translation\PrefixedTranslator::register23($template, %node.word);');
+		}
 	}
 
 

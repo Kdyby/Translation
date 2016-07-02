@@ -133,7 +133,6 @@ Helloes Peter
 Hello Peter|Helloes Peter
 
 
-
 front.missingKey.namedHelloCounting
 front.missingKey.namedHelloCounting
 front.missingKey.namedHelloCounting' . "\n", (string) $template->setFile(__DIR__ . '/files/Order.default.latte'));
