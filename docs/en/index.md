@@ -45,6 +45,12 @@ Example router might look like this
 $router[] = new Route('[<locale=cs cs|en>/]<presenter>/<action>', "Homepage:default");
 ```
 
+or with new version of Nette, you can get localization by TLD (top level domain) look like this
+
+```php
+$router[] = new Route('//%sld%.<locale=cs cs|sk>/<presenter>/<action>', "Homepage:default");
+```
+
 There is also an interface `IUserLocaleResolver` and few default implementations. These implementations try to figure out, in what language should the website be displayed.
 The first one looks in request parameters and searches for `locale`, that's why there is the persistent parameter and example route. If it fails, it tries to look at `Accept-Language` header, and if that fails, it fallbacks to default locale.
 
