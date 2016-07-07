@@ -12,6 +12,7 @@ namespace Kdyby\Translation;
 
 use Kdyby;
 use Latte\Engine;
+use Latte\Runtime\FilterInfo;
 use Nette;
 
 
@@ -38,7 +39,11 @@ class TemplateHelpers extends Nette\Object
 
 	public function register(Engine $engine)
 	{
-		$engine->addFilter('translate', [$this, 'translate']);
+		if (class_exists('Latte\Runtime\FilterInfo')) {
+			$engine->addFilter('translate', [$this, 'translateFilterAware']);
+		} else {
+			$engine->addFilter('translate', [$this, 'translate']);
+		}
 		$engine->addFilter('getTranslator', [$this, 'getTranslator']);
 	}
 
@@ -64,6 +69,13 @@ class TemplateHelpers extends Nette\Object
 		}
 
 		return $this->translator->translate($message, $count, (array) $parameters, $domain, $locale);
+	}
+
+
+
+	public function translateFilterAware(FilterInfo $filterInfo, $message, $count = NULL, $parameters = [], $domain = NULL, $locale = NULL)
+	{
+		return $this->translate($message, $count, $parameters, $domain, $locale);
 	}
 
 
