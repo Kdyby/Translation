@@ -14,6 +14,7 @@ use Kdyby;
 use Kdyby\Translation\Diagnostics\Panel;
 use Nette;
 use Nette\Utils\ObjectMixin;
+use Nette\Utils\Strings;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Translation\MessageSelector;
@@ -150,6 +151,10 @@ class Translator extends BaseTranslator implements ITranslator
 				$this->panel->markUntranslated($message, $domain);
 			}
 			return $message; // todo: what now?
+		}
+
+		if (Strings::startsWith($message, '//')) {
+			$message = Strings::substring($message, 2);
 		}
 
 		$tmp = [];
