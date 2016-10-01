@@ -47,22 +47,14 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 				->addRule($form::FILLED, "The image is missing!", 4);
 
 		$form->addSubmit("send", "Submit");
-		$form->onSuccess[] = $this->saveSucceeded;
+		$form->onSuccess[] = function (Form $form, $values) {
+			$this->flashMessage("Entry with id %id% was saved", 'warning')
+				->parameters = ['id' => $this->getParameter('id')];
+
+			$this->redirect('list');
+		};
 
 		return $form;
-	}
-
-
-
-	/**
-	 * @param Form $form
-	 */
-	public function saveSucceeded(Form $form)
-	{
-		$this->flashMessage("Entry with id %id% was saved", 'warning')
-			->parameters = ['id' => $this->getParameter('id')];
-
-		$this->redirect('list');
 	}
 
 }
