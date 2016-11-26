@@ -83,6 +83,7 @@ class PrefixedTranslatorTest extends TestCase
 
 		Assert::same('Use 5 credits', $prefixed->translate(new Kdyby\Translation\Phrase('//front.orderForm.useCredits', 5)));
 	}
+
 }
 
 \run(new PrefixedTranslatorTest());
