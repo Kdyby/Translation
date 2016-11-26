@@ -14,6 +14,7 @@ use Kdyby;
 use Kdyby\Translation\Diagnostics\Panel;
 use Nette;
 use Nette\Utils\ObjectMixin;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Translation\MessageSelector;
@@ -27,7 +28,7 @@ use Symfony\Component\Translation\Translator as BaseTranslator;
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Translator extends BaseTranslator implements ITranslator
+class Translator extends BaseTranslator implements ITranslator, LoggerAwareInterface
 {
 
 	/**
@@ -114,6 +115,16 @@ class Translator extends BaseTranslator implements ITranslator
 	public function injectPsrLogger(LoggerInterface $logger = NULL)
 	{
 		$this->psrLogger = $logger;
+	}
+
+
+
+	/**
+	 * @param LoggerInterface $logger
+	 */
+	public function setLogger(LoggerInterface $logger)
+	{
+		$this->injectPsrLogger($logger);
 	}
 
 
