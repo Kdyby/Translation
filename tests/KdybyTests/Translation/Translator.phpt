@@ -149,6 +149,15 @@ class TranslatorTest extends TestCase
 		Assert::same("Ahoj světe", $translator->translate('Hello World')); // default domain is 'messages'
 	}
 
+
+	public function testAbsoluteTranslations()
+	{
+		$translator = $this->createTranslator();
+		$translator->setLocale('cs');
+
+		Assert::same("Ahoj světe", $translator->translate('//front.homepage.hello'));
+	}
+
 }
 
 \run(new TranslatorTest());
