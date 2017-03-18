@@ -327,11 +327,11 @@ class Translator extends BaseTranslator implements ITranslator
 	 */
 	public function getLocale()
 	{
-		if ($this->locale === NULL) {
+		if (parent::getLocale() === NULL) {
 			$this->setLocale($this->localeResolver->resolve($this));
 		}
 
-		return $this->locale;
+		return parent::getLocale();
 	}
 
 
