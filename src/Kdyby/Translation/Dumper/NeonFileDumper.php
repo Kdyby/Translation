@@ -27,6 +27,16 @@ class NeonFileDumper extends FileDumper
 	/**
 	 * {@inheritDoc}
 	 */
+	public function formatCatalogue(MessageCatalogue $messages, $domain, array $options = [])
+	{
+		return Neon::encode($messages->all($domain), Neon::BLOCK);
+	}
+
+
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected function format(MessageCatalogue $messages, $domain)
 	{
 		return Neon::encode($messages->all($domain), Neon::BLOCK);
