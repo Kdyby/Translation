@@ -5,7 +5,7 @@ Kdyby/Translation
 [![Downloads this Month](https://img.shields.io/packagist/dm/kdyby/translation.svg)](https://packagist.org/packages/kdyby/translation)
 [![Latest stable](https://img.shields.io/packagist/v/kdyby/translation.svg)](https://packagist.org/packages/kdyby/translation)
 [![Coverage Status](https://coveralls.io/repos/github/Kdyby/Translation/badge.svg?branch=master)](https://coveralls.io/github/Kdyby/Translation?branch=master)
-[![Join the chat at https://gitter.im/Kdyby/Help](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Kdyby/Help)
+
 
 
 Requirements
