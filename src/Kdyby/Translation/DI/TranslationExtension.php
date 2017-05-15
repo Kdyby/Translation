@@ -252,13 +252,8 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$registerToLatte = function (Nette\DI\ServiceDefinition $def) {
 			$def->addSetup('?->onCompile[] = function($engine) { Kdyby\Translation\Latte\TranslateMacros::install($engine->getCompiler()); }', ['@self']);
 
-			if (method_exists('Latte\Engine', 'addProvider')) { // Nette 2.4
-				$def->addSetup('addProvider', ['translator', $this->prefix('@default')])
-					->addSetup('addFilter', ['translate', [$this->prefix('@helpers'), 'translateFilterAware']]);
-			} else {
-				$def->addSetup('addFilter', ['getTranslator', [$this->prefix('@helpers'), 'getTranslator']])
-					->addSetup('addFilter', ['translate', [$this->prefix('@helpers'), 'translate']]);
-			}
+			$def->addSetup('addProvider', ['translator', $this->prefix('@default')])
+				->addSetup('addFilter', ['translate', [$this->prefix('@helpers'), 'translateFilterAware']]);
 		};
 
 		$latteFactoryService = $builder->getByType('Nette\Bridges\ApplicationLatte\ILatteFactory');
@@ -440,6 +435,16 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 
 
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getConfig(array $defaults = NULL, $expand = TRUE)
+	{
+		return parent::getConfig($this->defaults) + ['fallback' => ['en_US']];
+	}
+
+
+
 	private function isRegisteredConsoleExtension()
 	{
 		foreach ($this->compiler->getExtensions() as $extension) {
@@ -454,11 +459,13 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * {@inheritdoc}
+	 * @param \Nette\Configurator $configurator
 	 */
-	public function getConfig(array $defaults = NULL, $expand = TRUE)
+	public static function register(Nette\Configurator $configurator)
 	{
-		return parent::getConfig($this->defaults) + ['fallback' => ['en_US']];
+		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler) {
+			$compiler->addExtension('translation', new TranslationExtension());
+		};
 	}
 
 
@@ -467,21 +474,9 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	 * @param string|\stdClass $statement
 	 * @return Nette\DI\Statement[]
 	 */
-	public static function filterArgs($statement)
+	protected static function filterArgs($statement)
 	{
-		return Nette\DI\Compiler::filterArguments([is_string($statement) ? new Nette\DI\Statement($statement) : $statement]);
-	}
-
-
-
-	/**
-	 * @param \Nette\Configurator $configurator
-	 */
-	public static function register(Nette\Configurator $configurator)
-	{
-		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler) {
-			$compiler->addExtension('translation', new TranslationExtension());
-		};
+		return \Nette\DI\Helpers::filterArguments([is_string($statement) ? new Nette\DI\Statement($statement) : $statement]);
 	}
 
 

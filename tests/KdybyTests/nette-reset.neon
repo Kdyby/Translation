@@ -12,6 +12,9 @@ translation:
 	resolvers:
 		session: on
 
+application:
+	scanDirs: false
+
 http:
 	frames: null
 
