@@ -18,6 +18,7 @@ env:
     - NETTE=nette-2.3
 
 matrix:
+  fast_finish: true
   include:
     - php: 5.6
       env: NETTE=nette-2.3 COMPOSER_EXTRA_ARGS="--prefer-lowest --prefer-stable"
