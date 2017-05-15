@@ -25,7 +25,7 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 	/**
 	 * @return Form
 	 */
-	protected function createComponent()
+	protected function createComponent($name)
 	{
 		$form = new Form();
 		$form->addProtection('Invalid CSRF token');
