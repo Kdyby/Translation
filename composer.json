@@ -74,6 +74,11 @@
 			"src/Kdyby/Translation/exceptions.php"
 		]
 	},
+	"autoload-dev": {
+		"classmap": [
+			"tests/KdybyTests/"
+		]
+	},
 	"extra": {
 		"branch-alias": {
 			"dev-nette-2.3": "2.3-dev"

@@ -58,4 +58,4 @@ class LocaleSessionResolver extends TestCase
 
 }
 
-\run(new LocaleSessionResolver());
+(new LocaleSessionResolver())->run();

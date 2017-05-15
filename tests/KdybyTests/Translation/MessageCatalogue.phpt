@@ -58,4 +58,4 @@ class MessageCatalogueTest extends Tester\TestCase
 
 }
 
-\run(new MessageCatalogueTest());
+(new MessageCatalogueTest())->run();

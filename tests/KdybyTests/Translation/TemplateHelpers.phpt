@@ -49,4 +49,4 @@ class TemplateHelpersTest extends TestCase
 
 }
 
-\run(new TemplateHelpersTest());
+(new TemplateHelpersTest())->run();

@@ -72,4 +72,4 @@ class CatalogueFactoryTest extends TestCase
 
 }
 
-\run(new CatalogueFactoryTest());
+(new CatalogueFactoryTest())->run();

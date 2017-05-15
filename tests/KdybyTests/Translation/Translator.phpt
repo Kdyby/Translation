@@ -160,4 +160,4 @@ class TranslatorTest extends TestCase
 
 }
 
-\run(new TranslatorTest());
+(new TranslatorTest())->run();

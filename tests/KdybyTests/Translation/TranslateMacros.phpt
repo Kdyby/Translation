@@ -155,4 +155,4 @@ front.missingKey.namedHelloCounting' . "\n", (string) $template->setFile(__DIR__
 
 }
 
-\run(new TranslateMacrosTest());
+(new TranslateMacrosTest())->run();

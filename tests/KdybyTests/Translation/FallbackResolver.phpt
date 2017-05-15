@@ -45,4 +45,4 @@ class FallbackResolverTest extends TestCase
 
 }
 
-\run(new FallbackResolverTest());
+(new FallbackResolverTest())->run();

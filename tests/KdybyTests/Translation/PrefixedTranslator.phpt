@@ -85,4 +85,4 @@ class PrefixedTranslatorTest extends TestCase
 	}
 }
 
-\run(new PrefixedTranslatorTest());
+(new PrefixedTranslatorTest())->run();
