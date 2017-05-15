@@ -47,4 +47,4 @@ class LocaleParamResolverTest extends TestCase
 
 }
 
-\run(new LocaleParamResolverTest());
+(new LocaleParamResolverTest())->run();

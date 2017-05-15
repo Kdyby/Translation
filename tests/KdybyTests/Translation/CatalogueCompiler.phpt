@@ -84,4 +84,4 @@ class CatalogueCompilerTest extends TestCase
 
 }
 
-\run(new CatalogueCompilerTest());
+(new CatalogueCompilerTest())->run();

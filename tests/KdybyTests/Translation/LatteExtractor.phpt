@@ -69,4 +69,4 @@ class LatteExtractorTest extends TestCase
 
 }
 
-\run(new LatteExtractorTest());
+(new LatteExtractorTest())->run();

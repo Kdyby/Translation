@@ -62,4 +62,4 @@ class PhraseTest extends TestCase
 
 }
 
-\run(new PhraseTest());
+(new PhraseTest())->run();

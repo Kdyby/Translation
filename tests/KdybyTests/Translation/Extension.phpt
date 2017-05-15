@@ -98,4 +98,4 @@ class ExtensionTest extends TestCase
 
 }
 
-\run(new ExtensionTest());
+(new ExtensionTest())->run();

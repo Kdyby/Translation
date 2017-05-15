@@ -62,4 +62,4 @@ class AcceptHeaderResolverTest extends TestCase
 
 }
 
-\run(new AcceptHeaderResolverTest());
+(new AcceptHeaderResolverTest())->run();

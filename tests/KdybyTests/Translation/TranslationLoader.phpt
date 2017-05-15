@@ -51,4 +51,4 @@ class TranslationLoaderTest extends TestCase
 
 }
 
-\run(new TranslationLoaderTest());
+(new TranslationLoaderTest())->run();
