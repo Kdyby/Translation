@@ -468,7 +468,7 @@ class Translator extends BaseTranslator implements ITranslator
 
 
 	/**
-	 * @param null|string $whitelist
+	 * @param array $whitelist
 	 * @return null|string
 	 */
 	public static function buildWhitelistRegexp($whitelist)
