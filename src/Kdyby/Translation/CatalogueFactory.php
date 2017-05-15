@@ -34,7 +34,7 @@ class CatalogueFactory extends Nette\Object
 	private $loader;
 
 	/**
-	 * @var array
+	 * @var array[]
 	 */
 	private $resources = [];
 
