@@ -10,3 +10,7 @@ noescape:
 
 orderForm:
 	useCredits: Použít %count% kredit|Použít %count% kredity|Použít %count% kreditů
+
+flashes:
+	weSentPasswordRequest: "Heslo vám bylo zasláno na email %email%"
+weSentPasswordRequest: "Heslo vám pošleme na email %email%"
