@@ -320,6 +320,10 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$config['dirs'] = array_merge($config['dirs'], array_values($extension->getTranslationResources()));
 		}
 
+		$config['dirs'] = array_map(function ($dir) {
+			return str_replace((DIRECTORY_SEPARATOR === '/') ? '\\' : '/', DIRECTORY_SEPARATOR, $dir);
+		}, $config['dirs']);
+
 		if ($dirs = array_values(array_filter($config['dirs'], Callback::closure('is_dir')))) {
 			foreach ($dirs as $dir) {
 				$builder->addDependency($dir);
