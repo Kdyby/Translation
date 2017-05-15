@@ -31,9 +31,34 @@ class ControlMock extends Nette\Application\UI\Control
 class TranslateMacrosTest extends TestCase
 {
 
+	/** @var Kdyby\Translation\Translator */
+	private $translator;
+
+	/** @var \Nette\Bridges\ApplicationLatte\Template */
+	private $template;
+
+
+
+	protected function setUp()
+	{
+		parent::setUp();
+
+		$container = $this->createContainer();
+
+		/** @var Kdyby\Translation\Translator $translator */
+		$this->translator = $container->getByType('Nette\Localization\ITranslator');
+		$this->translator->setFallbackLocales(['cs_CZ', 'cs']);
+		$this->translator->setLocale('cs');
+
+		$this->template = $container->getByType('Nette\Application\UI\ITemplateFactory')
+			->createTemplate(new ControlMock());
+	}
+
+
+
 	public function testRender_translate()
 	{
-		$template = $this->buildTemplate();
+		$this->template->setFile(__DIR__ . '/files/Homepage.default.latte');
 
 		Assert::same('Ahoj %name%
 Ahoj Peter
@@ -53,14 +78,14 @@ Hello Peter|Helloes Peter
 
 front.missingKey.namedHelloCounting
 front.missingKey.namedHelloCounting
-front.missingKey.namedHelloCounting' . "\n", (string) $template->setFile(__DIR__ . '/files/Homepage.default.latte'));
+front.missingKey.namedHelloCounting' . "\n", $this->template->__toString());
 	}
 
 
 
 	public function testRender_translate_noescape()
 	{
-		$template = $this->buildTemplate();
+		$this->template->setFile(__DIR__ . '/files/Article.noescape.latte');
 
 		Assert::same('Ahoj &lt;b&gt;%name%&lt;/b&gt;
 Ahoj &lt;b&gt;Peter&lt;/b&gt;
@@ -102,14 +127,14 @@ Hello <i>Peter</i>|Helloes <i>Peter</i>
 
 front.missingKey.namedHelloCounting
 front.missingKey.namedHelloCounting
-front.missingKey.namedHelloCounting' . "\n", (string) $template->setFile(__DIR__ . '/files/Article.noescape.latte'));
+front.missingKey.namedHelloCounting' . "\n", $this->template->__toString());
 	}
 
 
 
 	public function testRender_translate_prefixed()
 	{
-		$template = $this->buildTemplate();
+		$this->template->setFile(__DIR__ . '/files/Order.default.latte');
 
 		Assert::match('
 Ahoj %name%
@@ -133,24 +158,7 @@ Hello Peter|Helloes Peter
 %A?%
 front.missingKey.namedHelloCounting
 front.missingKey.namedHelloCounting
-front.missingKey.namedHelloCounting' . "\n", (string) $template->setFile(__DIR__ . '/files/Order.default.latte'));
-	}
-
-
-
-	/**
-	 * @return \Nette\Bridges\ApplicationLatte\Template
-	 */
-	private function buildTemplate()
-	{
-		$container = $this->createContainer();
-
-		/** @var Kdyby\Translation\Translator $translator */
-		$translator = $container->getByType('Nette\Localization\ITranslator');
-		$translator->setFallbackLocales(['cs_CZ', 'cs']);
-		$translator->setLocale('cs');
-
-		return $container->getByType('Nette\Application\UI\ITemplateFactory')->createTemplate(new ControlMock());
+front.missingKey.namedHelloCounting' . "\n", $this->template->__toString());
 	}
 
 }
