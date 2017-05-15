@@ -90,15 +90,13 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			->setClass('Kdyby\Translation\Translator', [$this->prefix('@userLocaleResolver')])
 			->addSetup('?->setTranslator(?)', [$this->prefix('@userLocaleResolver.param'), '@self'])
 			->addSetup('setDefaultLocale', [$config['default']])
-			->addSetup('setLocaleWhitelist', [$config['whitelist']])
-			->setInject(FALSE);
+			->addSetup('setLocaleWhitelist', [$config['whitelist']]);
 
 		Validators::assertField($config, 'fallback', 'list');
 		$translator->addSetup('setFallbackLocales', [$config['fallback']]);
 
 		$catalogueCompiler = $builder->addDefinition($this->prefix('catalogueCompiler'))
-			->setClass('Kdyby\Translation\CatalogueCompiler', self::filterArgs($config['cache']))
-			->setInject(FALSE);
+			->setClass('Kdyby\Translation\CatalogueCompiler', self::filterArgs($config['cache']));
 
 		if ($config['debugger'] && interface_exists('Tracy\IBarPanel')) {
 			$builder->addDefinition($this->prefix('panel'))
@@ -113,36 +111,29 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 		$builder->addDefinition($this->prefix('helpers'))
 			->setClass('Kdyby\Translation\TemplateHelpers')
-			->setFactory($this->prefix('@default') . '::createTemplateHelpers')
-			->setInject(FALSE);
+			->setFactory($this->prefix('@default') . '::createTemplateHelpers');
 
 		$builder->addDefinition($this->prefix('fallbackResolver'))
-			->setClass('Kdyby\Translation\FallbackResolver')
-			->setInject(FALSE);
+			->setClass('Kdyby\Translation\FallbackResolver');
 
 		$builder->addDefinition($this->prefix('catalogueFactory'))
-			->setClass('Kdyby\Translation\CatalogueFactory')
-			->setInject(FALSE);
+			->setClass('Kdyby\Translation\CatalogueFactory');
 
 		$builder->addDefinition($this->prefix('selector'))
-			->setClass('Symfony\Component\Translation\MessageSelector')
-			->setInject(FALSE);
+			->setClass('Symfony\Component\Translation\MessageSelector');
 
 		$builder->addDefinition($this->prefix('extractor'))
-			->setClass('Symfony\Component\Translation\Extractor\ChainExtractor')
-			->setInject(FALSE);
+			->setClass('Symfony\Component\Translation\Extractor\ChainExtractor');
 
 		$this->loadExtractors();
 
 		$builder->addDefinition($this->prefix('writer'))
-			->setClass('Symfony\Component\Translation\Writer\TranslationWriter')
-			->setInject(FALSE);
+			->setClass('Symfony\Component\Translation\Writer\TranslationWriter');
 
 		$this->loadDumpers();
 
 		$builder->addDefinition($this->prefix('loader'))
-			->setClass('Kdyby\Translation\TranslationLoader')
-			->setInject(FALSE);
+			->setClass('Kdyby\Translation\TranslationLoader');
 
 		$loaders = $this->loadFromFile(__DIR__ . '/config/loaders.neon');
 		$this->loadLoaders($loaders, $config['loaders'] ? : array_keys($loaders));
@@ -160,21 +151,17 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 		$builder->addDefinition($this->prefix('userLocaleResolver.param'))
 			->setClass('Kdyby\Translation\LocaleResolver\LocaleParamResolver')
-			->setAutowired(FALSE)
-			->setInject(FALSE);
+			->setAutowired(FALSE);
 
 		$builder->addDefinition($this->prefix('userLocaleResolver.acceptHeader'))
-			->setClass('Kdyby\Translation\LocaleResolver\AcceptHeaderResolver')
-			->setInject(FALSE);
+			->setClass('Kdyby\Translation\LocaleResolver\AcceptHeaderResolver');
 
 		$builder->addDefinition($this->prefix('userLocaleResolver.session'))
-			->setClass('Kdyby\Translation\LocaleResolver\SessionResolver')
-			->setInject(FALSE);
+			->setClass('Kdyby\Translation\LocaleResolver\SessionResolver');
 
 		$chain = $builder->addDefinition($this->prefix('userLocaleResolver'))
 			->setClass('Kdyby\Translation\IUserLocaleResolver')
-			->setFactory('Kdyby\Translation\LocaleResolver\ChainResolver')
-			->setInject(FALSE);
+			->setFactory('Kdyby\Translation\LocaleResolver\ChainResolver');
 
 		$resolvers = [];
 		if ($config['resolvers'][self::RESOLVER_HEADER]) {
@@ -208,7 +195,6 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$builder->addDefinition($this->prefix('console.extract'))
 			->setClass('Kdyby\Translation\Console\ExtractCommand')
 			->addSetup('$defaultOutputDir', [reset($config['dirs'])])
-			->setInject(FALSE)
 			->addTag('kdyby.console.command', 'latte');
 	}
 
@@ -310,7 +296,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 			$extractor->addSetup('addExtractor', [$meta, '@' . $extractorId]);
 
-			$builder->getDefinition($extractorId)->setAutowired(FALSE)->setInject(FALSE);
+			$builder->getDefinition($extractorId)->setAutowired(FALSE);
 		}
 
 		$writer = $builder->getDefinition($this->prefix('writer'));
@@ -319,19 +305,18 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 			$writer->addSetup('addDumper', [$meta, '@' . $dumperId]);
 
-			$builder->getDefinition($dumperId)->setAutowired(FALSE)->setInject(FALSE);
+			$builder->getDefinition($dumperId)->setAutowired(FALSE);
 		}
 
 		$this->loaders = [];
 		foreach ($builder->findByTag(self::TAG_LOADER) as $loaderId => $meta) {
 			Validators::assert($meta, 'string:2..');
-			$builder->getDefinition($loaderId)->setAutowired(FALSE)->setInject(FALSE);
+			$builder->getDefinition($loaderId)->setAutowired(FALSE);
 			$this->loaders[$meta] = $loaderId;
 		}
 
 		$builder->getDefinition($this->prefix('loader'))
-			->addSetup('injectServiceIds', [$this->loaders])
-			->setInject(FALSE);
+			->addSetup('injectServiceIds', [$this->loaders]);
 
 		foreach ($this->compiler->getExtensions() as $extension) {
 			if (!$extension instanceof ITranslationProvider) {
