@@ -85,7 +85,7 @@ class CatalogueCompiler extends Nette\Object
 	 * @param MessageCatalogueInterface[] $availableCatalogues
 	 * @param string $locale
 	 * @throws InvalidArgumentException
-	 * @return MessageCatalogueInterface|NULL
+	 * @return MessageCatalogueInterface[]|NULL
 	 */
 	public function compile(Translator $translator, array &$availableCatalogues, $locale)
 	{
