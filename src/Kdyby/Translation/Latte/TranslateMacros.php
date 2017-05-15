@@ -46,37 +46,19 @@ class TranslateMacros extends MacroSet
 	 */
 	public function macroTranslate(MacroNode $node, PhpWriter $writer)
 	{
-		if (class_exists('Latte\Runtime\FilterInfo')) { // Nette 2.4
-			if ($node->closing) {
-				return $writer->write('$_fi = new LR\FilterInfo(%var); echo %modifyContent($this->filters->filterContent("translate", $_fi, ob_get_clean()))', $node->context[0]);
+		if ($node->closing) {
+			return $writer->write('echo %modify($template->translate(ob_get_clean()))');
 
-			} elseif ($node->empty = ($node->args !== '')) {
-				if ($this->containsOnlyOneWord($node)) {
-					return $writer->write('echo %modify(call_user_func($this->filters->translate, %node.word))');
-
-				} else {
-					return $writer->write('echo %modify(call_user_func($this->filters->translate, %node.word, %node.args))');
-				}
+		} elseif ($node->isEmpty = ($node->args !== '')) {
+			if ($this->containsOnlyOneWord($node)) {
+				return $writer->write('echo %modify($template->translate(%node.word))');
 
 			} else {
-				return 'ob_start(function () {})';
+				return $writer->write('echo %modify($template->translate(%node.word, %node.args))');
 			}
 
-		} else { // <= Nette 2.3
-			if ($node->closing) {
-				return $writer->write('echo %modify($template->translate(ob_get_clean()))');
-
-			} elseif ($node->isEmpty = ($node->args !== '')) {
-				if ($this->containsOnlyOneWord($node)) {
-					return $writer->write('echo %modify($template->translate(%node.word))');
-
-				} else {
-					return $writer->write('echo %modify($template->translate(%node.word, %node.args))');
-				}
-
-			} else {
-				return 'ob_start()';
-			}
+		} else {
+			return 'ob_start()';
 		}
 	}
 
@@ -85,6 +67,7 @@ class TranslateMacros extends MacroSet
 	/**
 	 * @param MacroNode $node
 	 * @param PhpWriter $writer
+	 * @return string
 	 */
 	public function macroDomain(MacroNode $node, PhpWriter $writer)
 	{
@@ -94,11 +77,7 @@ class TranslateMacros extends MacroSet
 
 		$node->isEmpty = $node->isEmpty || (substr($node->args, -1) === '/');
 
-		if (method_exists('Latte\Engine', 'addProvider')) { // Nette 2.4
-			return $writer->write('$_translator = \Kdyby\Translation\PrefixedTranslator::register($template, %node.word);');
-		} else {
-			return $writer->write('$_translator = \Kdyby\Translation\PrefixedTranslator::register23($template, %node.word);');
-		}
+		return $writer->write('$_translator = \Kdyby\Translation\PrefixedTranslator::register($template, %node.word);');
 	}
 
 
@@ -106,6 +85,7 @@ class TranslateMacros extends MacroSet
 	/**
 	 * @param MacroNode $node
 	 * @param PhpWriter $writer
+	 * @return string|null
 	 */
 	public function macroDomainEnd(MacroNode $node, PhpWriter $writer)
 	{
@@ -116,6 +96,10 @@ class TranslateMacros extends MacroSet
 
 
 
+	/**
+	 * @param MacroNode $node
+	 * @return bool
+	 */
 	private function containsOnlyOneWord(MacroNode $node)
 	{
 		if (method_exists($node->tokenizer, 'fetchUntil')) {

@@ -251,14 +251,8 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 		$registerToLatte = function (Nette\DI\ServiceDefinition $def) {
 			$def->addSetup('?->onCompile[] = function($engine) { Kdyby\Translation\Latte\TranslateMacros::install($engine->getCompiler()); }', ['@self']);
-
-			if (method_exists('Latte\Engine', 'addProvider')) { // Nette 2.4
-				$def->addSetup('addProvider', ['translator', $this->prefix('@default')])
-					->addSetup('addFilter', ['translate', [$this->prefix('@helpers'), 'translateFilterAware']]);
-			} else {
-				$def->addSetup('addFilter', ['getTranslator', [$this->prefix('@helpers'), 'getTranslator']])
-					->addSetup('addFilter', ['translate', [$this->prefix('@helpers'), 'translate']]);
-			}
+			$def->addSetup('addFilter', ['getTranslator', [$this->prefix('@helpers'), 'getTranslator']])
+				->addSetup('addFilter', ['translate', [$this->prefix('@helpers'), 'translate']]);
 		};
 
 		$latteFactoryService = $builder->getByType('Nette\Bridges\ApplicationLatte\ILatteFactory');
