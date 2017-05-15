@@ -31,7 +31,7 @@ class TranslateMacros extends MacroSet
 		/** @var TranslateMacros $me */
 
 		$me->addMacro('_', [$me, 'macroTranslate'], [$me, 'macroTranslate']);
-		$me->addMacro('translator', [$me, 'macroDomain'], [$me, 'macroDomainEnd']);
+		$me->addMacro('translator', [$me, 'macroDomain'], [$me, 'macroDomain']);
 
 		return $me;
 	}
@@ -47,7 +47,15 @@ class TranslateMacros extends MacroSet
 	public function macroTranslate(MacroNode $node, PhpWriter $writer)
 	{
 		if ($node->closing) {
-			return $writer->write('$_fi = new LR\FilterInfo(%var); echo %modifyContent($this->filters->filterContent("translate", $_fi, ob_get_clean()))', $node->context[0]);
+			if (strpos($node->content, '<?php') === FALSE) {
+				$value = var_export($node->content, TRUE);
+				$node->content = '';
+			} else {
+				$node->openingCode = '<?php ob_start(function () {}) ?>' . $node->openingCode;
+				$value = 'ob_get_clean()';
+			}
+
+			return $writer->write('$_fi = new LR\FilterInfo(%var); echo %modifyContent($this->filters->filterContent("translate", $_fi, %raw))', $node->context[0], $value);
 
 		} elseif ($node->empty = ($node->args !== '')) {
 			if ($this->containsOnlyOneWord($node)) {
@@ -56,28 +64,7 @@ class TranslateMacros extends MacroSet
 			} else {
 				return $writer->write('echo %modify(call_user_func($this->filters->translate, %node.word, %node.args))');
 			}
-
-		} else {
-			return 'ob_start(function () {})';
 		}
-	}
-
-
-
-	/**
-	 * @param MacroNode $node
-	 * @param PhpWriter $writer
-	 * @return string
-	 */
-	public function macroDomain(MacroNode $node, PhpWriter $writer)
-	{
-		if ($node->isEmpty) {
-			throw new Latte\CompileException("Expected message prefix, none given");
-		}
-
-		$node->isEmpty = $node->isEmpty || (substr($node->args, -1) === '/');
-
-		return $writer->write('$_translator = \Kdyby\Translation\PrefixedTranslator::register($template, %node.word);');
 	}
 
 
@@ -87,10 +74,19 @@ class TranslateMacros extends MacroSet
 	 * @param PhpWriter $writer
 	 * @return string|null
 	 */
-	public function macroDomainEnd(MacroNode $node, PhpWriter $writer)
+	public function macroDomain(MacroNode $node, PhpWriter $writer)
 	{
-		if ($node->content !== NULL) {
-			return $writer->write('$_translator->unregister($template);');
+		if ($node->closing) {
+			if ($node->content !== NULL && $node->content !== '') {
+				return $writer->write('$_translator->unregister($this);');
+			}
+
+		} else {
+			if ($node->empty) {
+				throw new Latte\CompileException("Expected message prefix, none given");
+			}
+
+			return $writer->write('$_translator = \Kdyby\Translation\PrefixedTranslator::register($this, %node.word);');
 		}
 	}
 
