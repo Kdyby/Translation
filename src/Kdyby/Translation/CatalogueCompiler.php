@@ -106,7 +106,16 @@ class CatalogueCompiler extends Nette\Object
 			}
 
 			$this->catalogueFactory->createCatalogue($translator, $availableCatalogues, $locale);
-			$this->cache->save($cacheKey, $availableCatalogues[$locale]->all());
+
+			$localeTree = $translator->getFallbackLocales();
+			$messages = [];
+			foreach (array_reverse($localeTree) as $currentLocale) {
+				$messages = array_merge($messages, $availableCatalogues[$currentLocale]->all()['messages']);
+			}
+
+			$translations['messages'] = $messages;
+			$this->cache->save($cacheKey, $translations);
+
 			return $availableCatalogues;
 		}
 
