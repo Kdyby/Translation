@@ -195,9 +195,6 @@ class Translator extends BaseTranslator implements ITranslator
 		$result = parent::trans($id, $parameters, $domain, $locale);
 		if ($result === "\x01") {
 			$this->logMissingTranslation($message, $domain, $locale);
-			if ($this->panel !== NULL) {
-				$this->panel->markUntranslated($message, $domain);
-			}
 			$result = strtr($message, $parameters);
 		}
 
@@ -234,10 +231,6 @@ class Translator extends BaseTranslator implements ITranslator
 
 		if ($result === "\x01") {
 			$this->logMissingTranslation($message, $domain, $locale);
-			if ($this->panel !== NULL) {
-				$this->panel->markUntranslated($message, $domain);
-			}
-
 			if ($locale === NULL) {
 				$locale = $this->getLocale();
 			}
@@ -462,6 +455,10 @@ class Translator extends BaseTranslator implements ITranslator
 				'domain' => $domain,
 				'locale' => $locale ?: $this->getLocale(),
 			]);
+		}
+
+		if ($this->panel !== NULL) {
+			$this->panel->markUntranslated($message, $domain);
 		}
 	}
 
