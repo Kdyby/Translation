@@ -23,9 +23,9 @@
 		"nette/finder": "^2.4@dev",
 		"nette/http": "^2.4@dev",
 		"nette/neon": "^2.4@dev",
-		"nette/php-generator": "^2.4@dev",
+		"nette/php-generator": "^2.4@dev|^3.0@dev",
 		"nette/reflection": "^2.4@dev",
-		"nette/utils": "^2.4@dev",
+		"nette/utils": "^2.4@dev|^3.0@dev",
 
 		"psr/log": "^1.0",
 		"symfony/translation": "~2.5",
