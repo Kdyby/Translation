@@ -24,7 +24,7 @@ class AcceptHeaderResolver implements Kdyby\Translation\IUserLocaleResolver
 	use Kdyby\StrictObjects\Scream;
 
 	/**
-	 * @var Nette\Http\Request
+	 * @var Nette\Http\IRequest
 	 */
 	private $httpRequest;
 

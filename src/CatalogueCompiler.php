@@ -43,8 +43,11 @@ class CatalogueCompiler
 
 
 
-	public function __construct(Nette\Caching\IStorage $cacheStorage, FallbackResolver $fallbackResolver,
-		CatalogueFactory $catalogueFactory)
+	public function __construct(
+		Nette\Caching\IStorage $cacheStorage,
+		FallbackResolver $fallbackResolver,
+		CatalogueFactory $catalogueFactory
+	)
 	{
 		$this->cache = new Cache($cacheStorage, 'Kdyby\\Translation\\Translator');
 		$this->fallbackResolver = $fallbackResolver;
@@ -87,7 +90,7 @@ class CatalogueCompiler
 	 * @param MessageCatalogueInterface[] $availableCatalogues
 	 * @param string $locale
 	 * @throws InvalidArgumentException
-	 * @return MessageCatalogueInterface[]|NULL
+	 * @return MessageCatalogueInterface[]
 	 */
 	public function compile(Translator $translator, array &$availableCatalogues, $locale)
 	{
@@ -168,6 +171,9 @@ EOF
 
 
 
+	/**
+	 * @return MessageCatalogueInterface
+	 */
 	protected static function load(/*$file*/)
 	{
 		return include func_get_arg(0);

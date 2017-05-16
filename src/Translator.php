@@ -54,12 +54,12 @@ class Translator extends BaseTranslator implements ITranslator
 	private $translationsLoader;
 
 	/**
-	 * @var LoggerInterface
+	 * @var LoggerInterface|NULL
 	 */
 	private $psrLogger;
 
 	/**
-	 * @var Panel
+	 * @var Panel|NULL
 	 */
 	private $panel;
 
@@ -74,7 +74,7 @@ class Translator extends BaseTranslator implements ITranslator
 	private $defaultLocale;
 
 	/**
-	 * @var string
+	 * @var string|NULL
 	 */
 	private $localeWhitelist;
 
@@ -89,9 +89,15 @@ class Translator extends BaseTranslator implements ITranslator
 	 * @param CatalogueCompiler $catalogueCompiler
 	 * @param FallbackResolver $fallbackResolver
 	 * @param IResourceLoader $loader
+	 * @throws \InvalidArgumentException
 	 */
-	public function __construct(IUserLocaleResolver $localeResolver, MessageSelector $selector,
-		CatalogueCompiler $catalogueCompiler, FallbackResolver $fallbackResolver, IResourceLoader $loader)
+	public function __construct(
+		IUserLocaleResolver $localeResolver,
+		MessageSelector $selector,
+		CatalogueCompiler $catalogueCompiler,
+		FallbackResolver $fallbackResolver,
+		IResourceLoader $loader
+	)
 	{
 		$this->localeResolver = $localeResolver;
 		$this->selector = $selector;
@@ -99,7 +105,8 @@ class Translator extends BaseTranslator implements ITranslator
 		$this->fallbackResolver = $fallbackResolver;
 		$this->translationsLoader = $loader;
 
-		parent::__construct(NULL, $selector);
+		parent::__construct('', $selector);
+		$this->setLocale(NULL);
 	}
 
 
@@ -128,13 +135,13 @@ class Translator extends BaseTranslator implements ITranslator
 	/**
 	 * Translates the given string.
 	 *
-	 * @param string  $message    The message id
-	 * @param integer $count      The number to use to find the indice of the message
-	 * @param array   $parameters An array of parameters for the message
-	 * @param string  $domain     The domain for the message
-	 * @param string  $locale     The locale
-	 *
-	 * @return string
+	 * @param string|\Kdyby\Translation\Phrase|mixed $message The message id
+	 * @param int|array|NULL $count The number to use to find the indice of the message
+	 * @param string|array|NULL $parameters An array of parameters for the message
+	 * @param string|NULL $domain The domain for the message
+	 * @param string|NULL $locale The locale
+	 * @throws \InvalidArgumentException
+	 * @return string|\Nette\Utils\IHtmlString|\Latte\Runtime\IHtmlString
 	 */
 	public function translate($message, $count = NULL, $parameters = [], $domain = NULL, $locale = NULL)
 	{
@@ -143,8 +150,8 @@ class Translator extends BaseTranslator implements ITranslator
 		}
 
 		if (is_array($count)) {
-			$locale = $domain ?: NULL;
-			$domain = $parameters ?: NULL;
+			$locale = ($domain !== NULL) ? (string) $domain : NULL;
+			$domain = ($parameters !== NULL && !empty($parameters)) ? (string) $parameters : NULL;
 			$parameters = $count;
 			$count = NULL;
 		}
@@ -152,11 +159,13 @@ class Translator extends BaseTranslator implements ITranslator
 		if (empty($message)) {
 			return $message;
 
-		} elseif ($message instanceof Nette\Utils\Html) {
-			if ($this->panel) {
-				$this->panel->markUntranslated($message, $domain);
-			}
+		} elseif ($message instanceof Nette\Utils\IHtmlString || $message instanceof Latte\Runtime\IHtmlString) {
+			$this->logMissingTranslation($message->__toString(), $domain, $locale);
 			return $message; // todo: what now?
+		}
+
+		if (!is_string($message)) {
+			throw new InvalidArgumentException(sprintf('Message id must be a string, %s was given', gettype($message)));
 		}
 
 		if (Strings::startsWith($message, '//')) {
@@ -191,8 +200,8 @@ class Translator extends BaseTranslator implements ITranslator
 	 */
 	public function trans($message, array $parameters = [], $domain = NULL, $locale = NULL)
 	{
-		if ($message instanceof Phrase) {
-			return $message->translate($this);
+		if (!is_string($message)) {
+			throw new InvalidArgumentException(sprintf('Message id must be a string, %s was given', gettype($message)));
 		}
 
 		if ($domain === NULL) {
@@ -218,8 +227,8 @@ class Translator extends BaseTranslator implements ITranslator
 	 */
 	public function transChoice($message, $number, array $parameters = [], $domain = NULL, $locale = NULL)
 	{
-		if ($message instanceof Phrase) {
-			return $message->translate($this);
+		if (!is_string($message)) {
+			throw new InvalidArgumentException(sprintf('Message id must be a string, %s was given', gettype($message)));
 		}
 
 		if ($domain === NULL) {
@@ -244,7 +253,12 @@ class Translator extends BaseTranslator implements ITranslator
 			if ($locale === NULL) {
 				$locale = $this->getLocale();
 			}
-			$result = strtr($this->selector->choose($message, (int) $number, $locale), $parameters);
+			if ($locale === NULL) {
+				$result = strtr($message, $parameters);
+
+			} else {
+				$result = strtr($this->selector->choose($message, (int) $number, $locale), $parameters);
+			}
 		}
 
 		return $result;
@@ -290,8 +304,8 @@ class Translator extends BaseTranslator implements ITranslator
 	 */
 	public function addResource($format, $resource, $locale, $domain = NULL)
 	{
-		if ($this->localeWhitelist && !preg_match($this->localeWhitelist, $locale)) {
-			if ($this->panel) {
+		if ($this->localeWhitelist !== NULL && !preg_match($this->localeWhitelist, $locale)) {
+			if ($this->panel !== NULL) {
 				$this->panel->addIgnoredResource($format, $resource, $locale, $domain);
 			}
 			return;
@@ -301,7 +315,7 @@ class Translator extends BaseTranslator implements ITranslator
 		$this->catalogueCompiler->addResource($format, $resource, $locale, $domain);
 		$this->availableResourceLocales[$locale] = TRUE;
 
-		if ($this->panel) {
+		if ($this->panel !== NULL) {
 			$this->panel->addResource($format, $resource, $locale, $domain);
 		}
 	}
@@ -334,7 +348,23 @@ class Translator extends BaseTranslator implements ITranslator
 
 
 	/**
-	 * {@inheritdoc}
+	 * Sets the current locale.
+	 *
+	 * @param string|NULL $locale The locale
+	 *
+	 * @throws \InvalidArgumentException If the locale contains invalid characters
+	 */
+	public function setLocale($locale)
+	{
+		parent::setLocale($locale);
+	}
+
+
+
+	/**
+	 * Returns the current locale.
+	 *
+	 * @return string|NULL The locale
 	 */
 	public function getLocale()
 	{
@@ -453,13 +483,17 @@ class Translator extends BaseTranslator implements ITranslator
 
 
 	/**
-	 * @param string $message
-	 * @param string $domain
-	 * @param string $locale
+	 * @param string|NULL $message
+	 * @param string|NULL $domain
+	 * @param string|NULL $locale
 	 */
 	protected function logMissingTranslation($message, $domain, $locale)
 	{
-		if ($this->psrLogger) {
+		if ($message === NULL) {
+			return;
+		}
+
+		if ($this->psrLogger !== NULL) {
 			$this->psrLogger->notice('Missing translation', [
 				'message' => $message,
 				'domain' => $domain,
@@ -475,12 +509,12 @@ class Translator extends BaseTranslator implements ITranslator
 
 
 	/**
-	 * @param array $whitelist
+	 * @param array|NULL $whitelist
 	 * @return null|string
 	 */
 	public static function buildWhitelistRegexp($whitelist)
 	{
-		return $whitelist ? '~^(' . implode('|', $whitelist) . ')~i' : NULL;
+		return ($whitelist !== NULL) ? '~^(' . implode('|', $whitelist) . ')~i' : NULL;
 	}
 
 }

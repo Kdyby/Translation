@@ -30,7 +30,7 @@ class Phrase
 	public $message;
 
 	/**
-	 * @var int
+	 * @var int|NULL
 	 */
 	public $count;
 
@@ -40,34 +40,41 @@ class Phrase
 	public $parameters;
 
 	/**
-	 * @var string
+	 * @var string|NULL
 	 */
 	public $domain;
 
 	/**
-	 * @var string
+	 * @var string|NULL
 	 */
 	public $locale;
 
 	/**
-	 * @var Translator
+	 * @var Translator|NULL
 	 */
 	private $translator;
 
 
 
+	/**
+	 * @param string $message
+	 * @param int|array|NULL $count
+	 * @param string|array|NULL $parameters
+	 * @param string|NULL $domain
+	 * @param string|NULL $locale
+	 */
 	public function __construct($message, $count = NULL, $parameters = NULL, $domain = NULL, $locale = NULL)
 	{
 		$this->message = $message;
 
 		if (is_array($count)) {
-			$locale = $domain;
-			$domain = $parameters;
+			$locale = ($domain !== NULL) ? (string) $domain : NULL;
+			$domain = ($parameters !== NULL) ? (string) $parameters : NULL;
 			$parameters = $count;
 			$count = NULL;
 		}
 
-		$this->count = $count;
+		$this->count = $count !== NULL ? (int) $count : NULL;
 		$this->parameters = (array) $parameters;
 		$this->domain = $domain;
 		$this->locale = $locale;
@@ -75,16 +82,24 @@ class Phrase
 
 
 
+	/**
+	 * @param Translator $translator
+	 * @param int|NULL $count
+	 * @param array $parameters
+	 * @param string|NULL $domain
+	 * @param string|NULL $locale
+	 * @return string|\Nette\Utils\IHtmlString|\Latte\Runtime\IHtmlString
+	 */
 	public function translate(Translator $translator, $count = NULL, array $parameters = [], $domain = NULL, $locale = NULL)
 	{
 		if (!is_string($this->message)) {
 			throw new InvalidStateException("Message is not a string, type " . gettype($this->message) . ' given.');
 		}
 
-		$count = $count !== NULL ? $count : $this->count;
+		$count = ($count !== NULL) ? (int) $count : $this->count;
 		$parameters = !empty($parameters) ? $parameters : $this->parameters;
-		$domain = $domain !== NULL ? $domain : $this->domain;
-		$locale = $locale !== NULL ? $locale : $this->locale;
+		$domain = ($domain !== NULL) ? $domain : $this->domain;
+		$locale = ($locale !== NULL) ? $locale : $this->locale;
 
 		return $translator->translate($this->message, $count, (array) $parameters, $domain, $locale);
 	}
@@ -104,12 +119,12 @@ class Phrase
 
 	public function __toString()
 	{
-		if (!$this->translator) {
+		if ($this->translator === NULL) {
 			return $this->message;
 		}
 
 		try {
-			return $this->translate($this->translator);
+			return (string) $this->translate($this->translator);
 
 		} catch (\Exception $e) {
 			trigger_error($e->getMessage(), E_USER_ERROR);

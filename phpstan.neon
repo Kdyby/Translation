@@ -1,0 +1,12 @@
+parameters:
+	ignoreErrors:
+		- '#Constant TEMP_DIR not found#'
+		# Temporary, untill the resolvers are refactored to work on application request basis
+		- '#Strict comparison using === between string and null will always evaluate to false#'
+		# Optional arguments
+		- "#Casting to string something that's already string#"
+		- "#Casting to int something that's already int#"
+		- "#Casting to mixed\\[\\] something that's already mixed\\[\\]#"
+		# https://github.com/phpstan/phpstan/issues/290
+		- '#Parameter \#2 \$count of method Kdyby\\Translation\\Translator::translate\(\) expects mixed\[\]\|int\|null, int\|null given#'
+		- '#Parameter \#2 \$count of class Kdyby\\Translation\\Phrase constructor expects mixed\[\]\|int\|null, int\|null given#'

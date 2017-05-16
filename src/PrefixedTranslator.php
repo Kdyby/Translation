@@ -25,7 +25,7 @@ class PrefixedTranslator implements ITranslator
 	use Kdyby\StrictObjects\Scream;
 
 	/**
-	 * @var \Nette\Localization\ITranslator
+	 * @var \Kdyby\Translation\ITranslator|\Kdyby\Translation\Translator|\Kdyby\Translation\PrefixedTranslator
 	 */
 	private $translator;
 
@@ -38,10 +38,18 @@ class PrefixedTranslator implements ITranslator
 
 	/**
 	 * @param string $prefix
-	 * @param ITranslator $translator
+	 * @param \Kdyby\Translation\ITranslator $translator
+	 * @throws \Kdyby\Translation\InvalidArgumentException
 	 */
 	public function __construct($prefix, ITranslator $translator)
 	{
+		if (!$translator instanceof Translator && !$translator instanceof PrefixedTranslator) {
+			throw new InvalidArgumentException(sprintf(
+				'The given translator must be instance of Kdyby\Translation\Translator or Kdyby\Translation\PrefixedTranslator, bug %s was given',
+				get_class($translator)
+			));
+		}
+
 		if ($translator instanceof PrefixedTranslator) { // todo: this is just an experiment
 			$translator = $translator->unwrap();
 		}
@@ -53,12 +61,12 @@ class PrefixedTranslator implements ITranslator
 
 
 	/**
-	 * @param string $message
+	 * @param string|\Kdyby\Translation\Phrase $message
 	 * @param int|array|NULL $count
 	 * @param array|string|NULL $parameters
 	 * @param string|NULL $domain
 	 * @param string|NULL $locale
-	 * @return string
+	 * @return string|\Nette\Utils\IHtmlString|\Latte\Runtime\IHtmlString
 	 */
 	public function translate($message, $count = NULL, $parameters = [], $domain = NULL, $locale = NULL)
 	{
@@ -75,9 +83,9 @@ class PrefixedTranslator implements ITranslator
 		}
 
 		if (is_array($count)) {
-			$locale = $domain ?: NULL;
-			$domain = $parameters ?: NULL;
-			$parameters = $count ?: [];
+			$locale = $domain !== NULL ? (string) $domain : NULL;
+			$domain = $parameters !== NULL && !empty($parameters) ? (string) $parameters : NULL;
+			$parameters = $count;
 			$count = NULL;
 		}
 
@@ -87,7 +95,7 @@ class PrefixedTranslator implements ITranslator
 
 
 	/**
-	 * @return ITranslator
+	 * @return \Kdyby\Translation\ITranslator
 	 */
 	public function unwrap()
 	{
@@ -97,47 +105,36 @@ class PrefixedTranslator implements ITranslator
 
 
 	/**
-	 * @param $template
-	 * @return ITranslator
+	 * @param Latte\Runtime\Template $template
+	 * @return \Kdyby\Translation\ITranslator
 	 */
-	public function unregister($template)
+	public function unregister(Latte\Runtime\Template $template)
 	{
-		return self::overrideTemplateTranslator($template, $this->unwrap());
+		$translator = $this->unwrap();
+		self::overrideTemplateTranslator($template, $translator);
+		return $translator;
 	}
 
 
 
 	/**
-	 * @param Latte\Template|\Nette\Bridges\ApplicationLatte\Template|\Nette\Templating\Template $template
+	 * @param Latte\Runtime\Template $template
 	 * @param string $prefix
-	 * @return ITranslator
-	 * @throws InvalidArgumentException
+	 * @throws \Kdyby\Translation\InvalidArgumentException
+	 * @return \Kdyby\Translation\ITranslator
 	 */
-	public static function register($template, $prefix)
+	public static function register(Latte\Runtime\Template $template, $prefix)
 	{
 		$translator = new static($prefix, $template->global->translator);
-		return self::overrideTemplateTranslator($template, $translator);
+		self::overrideTemplateTranslator($template, $translator);
+		return $translator;
 	}
 
 
 
-	/**
-	 * @param Latte\Template|Latte\Runtime\Template|\Nette\Bridges\ApplicationLatte\Template|\Nette\Templating\Template $template
-	 * @param ITranslator $translator
-	 */
-	private static function overrideTemplateTranslator($template, ITranslator $translator)
+	private static function overrideTemplateTranslator(Latte\Runtime\Template $template, ITranslator $translator)
 	{
-		if ($template instanceof Latte\Runtime\Template || $template instanceof Latte\Template) {
-			$template->getEngine()->addFilter('translate', [new TemplateHelpers($translator), 'translate']);
-
-		} elseif ($template instanceof \Nette\Bridges\ApplicationLatte\Template) {
-			$template->getLatte()->addFilter('translate', [new TemplateHelpers($translator), 'translate']);
-
-		} elseif ($template instanceof \Nette\Templating\Template) {
-			$template->registerHelper('translate', [new TemplateHelpers($translator), 'translate']);
-		}
-
-		return $translator;
+		$template->getEngine()->addFilter('translate', [new TemplateHelpers($translator), 'translate']);
 	}
 
 }

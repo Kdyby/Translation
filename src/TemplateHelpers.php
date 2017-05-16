@@ -25,7 +25,7 @@ class TemplateHelpers
 	use Kdyby\StrictObjects\Scream;
 
 	/**
-	 * @var ITranslator
+	 * @var \Kdyby\Translation\ITranslator|\Kdyby\Translation\Translator|\Kdyby\Translation\PrefixedTranslator
 	 */
 	private $translator;
 
@@ -33,6 +33,13 @@ class TemplateHelpers
 
 	public function __construct(ITranslator $translator)
 	{
+		if (!$translator instanceof Translator && !$translator instanceof PrefixedTranslator) {
+			throw new InvalidArgumentException(sprintf(
+				'The given translator must be instance of Kdyby\Translation\Translator or Kdyby\Translation\PrefixedTranslator, bug %s was given',
+				get_class($translator)
+			));
+		}
+
 		$this->translator = $translator;
 	}
 
@@ -51,7 +58,7 @@ class TemplateHelpers
 
 
 	/**
-	 * @return ITranslator
+	 * @return \Kdyby\Translation\ITranslator|\Kdyby\Translation\Translator|\Kdyby\Translation\PrefixedTranslator
 	 */
 	public function getTranslator()
 	{
@@ -60,20 +67,43 @@ class TemplateHelpers
 
 
 
+	/**
+	 * @param string $message
+	 * @param int|array|NULL $count
+	 * @param string|array|NULL $parameters
+	 * @param string|NULL $domain
+	 * @param string|NULL $locale
+	 * @return string
+	 */
 	public function translate($message, $count = NULL, $parameters = [], $domain = NULL, $locale = NULL)
 	{
 		if (is_array($count)) {
-			$locale = $domain ?: NULL;
-			$domain = $parameters ?: NULL;
-			$parameters = $count ?: [];
+			$locale = ($domain !== NULL) ? (string) $domain : NULL;
+			$domain = ($parameters !== NULL && !empty($parameters)) ? (string) $parameters : NULL;
+			$parameters = $count;
 			$count = NULL;
 		}
 
-		return $this->translator->translate($message, $count, (array) $parameters, $domain, $locale);
+		return $this->translator->translate(
+			$message,
+			($count !== NULL) ? (int) $count : NULL,
+			(array) $parameters,
+			$domain,
+			$locale
+		);
 	}
 
 
 
+	/**
+	 * @param \Latte\Runtime\FilterInfo $filterInfo
+	 * @param string $message
+	 * @param int|array|NULL $count
+	 * @param string|array|NULL $parameters
+	 * @param string|NULL $domain
+	 * @param string|NULL $locale
+	 * @return string
+	 */
 	public function translateFilterAware(FilterInfo $filterInfo, $message, $count = NULL, $parameters = [], $domain = NULL, $locale = NULL)
 	{
 		return $this->translate($message, $count, $parameters, $domain, $locale);

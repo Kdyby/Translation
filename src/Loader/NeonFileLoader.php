@@ -44,9 +44,6 @@ class NeonFileLoader extends ArrayLoader implements LoaderInterface
 		try {
 			$messages = Neon\Neon::decode(file_get_contents($resource));
 
-		} catch (Nette\Utils\NeonException $e) {
-			throw new InvalidResourceException(sprintf("Error parsing Neon: %s", $e->getMessage()), 0, $e);
-
 		} catch (Nette\Neon\Exception $e) {
 			throw new InvalidResourceException(sprintf("Error parsing Neon: %s", $e->getMessage()), 0, $e);
 		}

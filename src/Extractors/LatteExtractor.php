@@ -14,7 +14,6 @@ use Kdyby;
 use Latte\Parser;
 use Latte\MacroTokens;
 use Latte\PhpWriter;
-use Nette;
 use Nette\Utils\Finder;
 use Symfony\Component\Translation\Extractor\ExtractorInterface;
 use Symfony\Component\Translation\MessageCatalogue;
@@ -24,8 +23,10 @@ use Symfony\Component\Translation\MessageCatalogue;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class LatteExtractor extends Nette\Object implements ExtractorInterface
+class LatteExtractor implements ExtractorInterface
 {
+
+	use Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var string
@@ -68,8 +69,10 @@ class LatteExtractor extends Nette\Object implements ExtractorInterface
 			}
 
 			if ($token->name === '/_' || ($token->name === '_' && $token->closing === TRUE)) {
-				$catalogue->set(($this->prefix ? $this->prefix . '.' : '') . $buffer, $buffer);
-				$buffer = NULL;
+				if ($buffer !== NULL) {
+					$catalogue->set(($this->prefix ? $this->prefix . '.' : '') . $buffer, $buffer);
+					$buffer = NULL;
+				}
 
 			} elseif ($token->name === '_' && empty($token->value)) {
 				$buffer = '';

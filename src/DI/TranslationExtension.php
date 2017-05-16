@@ -408,7 +408,8 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		try {
 			$def = $builder->getDefinition($this->loaders[$format]);
 			$refl = Reflection\ClassType::from($def->getEntity() ?: $def->getClass());
-			if (($method = $refl->getConstructor()) && $method->getNumberOfRequiredParameters() > 1) {
+			$method = $refl->getConstructor();
+			if ($method !== null && $method->getNumberOfRequiredParameters() > 1) {
 				return;
 			}
 
@@ -488,13 +489,13 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @param string $class
+	 * @param string|NULL $class
 	 * @param string $type
 	 * @return bool
 	 */
 	private static function isOfType($class, $type)
 	{
-		return $class === $type || is_subclass_of($class, $type);
+		return $class !== NULL && ($class === $type || is_subclass_of($class, $type));
 	}
 
 }

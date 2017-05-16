@@ -231,7 +231,7 @@ class Panel implements IBarPanel
 
 	/**
 	 * @param string $id
-	 * @param string $domain
+	 * @param string|NULL $domain
 	 */
 	public function markUntranslated($id, $domain)
 	{
@@ -245,6 +245,7 @@ class Panel implements IBarPanel
 
 	/**
 	 * @param \Exception|\Throwable $e
+	 * @param string|NULL $domain
 	 */
 	public function choiceError($e, $domain)
 	{
@@ -257,10 +258,10 @@ class Panel implements IBarPanel
 
 
 	/**
-	 * @param string $format
-	 * @param string $resource
-	 * @param string $locale
-	 * @param string $domain
+	 * @param string|NULL $format
+	 * @param string|NULL $resource
+	 * @param string|NULL $locale
+	 * @param string|NULL $domain
 	 */
 	public function addResource($format, $resource, $locale, $domain)
 	{
@@ -277,10 +278,10 @@ class Panel implements IBarPanel
 
 
 	/**
-	 * @param string $format
-	 * @param string $resource
-	 * @param string $locale
-	 * @param string $domain
+	 * @param string|NULL $format
+	 * @param string|NULL $resource
+	 * @param string|NULL $locale
+	 * @param string|NULL $domain
 	 */
 	public function addIgnoredResource($format, $resource, $locale, $domain)
 	{
@@ -368,7 +369,7 @@ class Panel implements IBarPanel
 		if (Debugger::$editor && is_file($file) && $text !== NULL) {
 			return Nette\Utils\Html::el('a')
 				->href(strtr(Debugger::$editor, ['%file' => rawurlencode($file), '%line' => $line]))
-				->title("$file:$line")
+				->setAttribute('title', "$file:$line")
 				->setHtml($text);
 
 		} else {

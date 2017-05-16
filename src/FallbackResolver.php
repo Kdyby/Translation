@@ -32,9 +32,9 @@ class FallbackResolver
 	/**
 	 * @param array $fallbackLocales
 	 */
-	public function setFallbackLocales($fallbackLocales)
+	public function setFallbackLocales(array $fallbackLocales)
 	{
-		$this->fallbackLocales = (array) $fallbackLocales;
+		$this->fallbackLocales = $fallbackLocales;
 	}
 
 
