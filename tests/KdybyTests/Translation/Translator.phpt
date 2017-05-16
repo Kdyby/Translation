@@ -158,6 +158,17 @@ class TranslatorTest extends TestCase
 		Assert::same("Ahoj světe", $translator->translate('//front.homepage.hello'));
 	}
 
+
+
+	public function testTranslatingAbsoluteMessageWithDomainIsNotSupported()
+	{
+		$translator = $this->createTranslator();
+
+		Assert::exception(function () use ($translator) {
+			$translator->translate('//homepage.hello', NULL, [], 'front');
+		}, 'Kdyby\Translation\InvalidArgumentException', 'Providing domain "front" while also having the message "//homepage.hello" absolute is not supported');
+	}
+
 }
 
 (new TranslatorTest())->run();
