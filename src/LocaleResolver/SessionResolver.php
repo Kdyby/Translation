@@ -29,8 +29,10 @@ use Nette;
  *
  * @author Filip Procházka <filip@prochazka.su>
  */
-class SessionResolver extends Nette\Object implements Kdyby\Translation\IUserLocaleResolver
+class SessionResolver implements Kdyby\Translation\IUserLocaleResolver
 {
+
+	use Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var \Nette\Http\SessionSection|\stdClass

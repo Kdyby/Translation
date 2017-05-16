@@ -18,8 +18,10 @@ use Nette;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class AcceptHeaderResolver extends Nette\Object implements Kdyby\Translation\IUserLocaleResolver
+class AcceptHeaderResolver implements Kdyby\Translation\IUserLocaleResolver
 {
+
+	use Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var Nette\Http\Request

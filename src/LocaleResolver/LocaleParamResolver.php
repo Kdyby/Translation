@@ -20,8 +20,10 @@ use Nette\Application\Request;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class LocaleParamResolver extends Nette\Object implements Kdyby\Translation\IUserLocaleResolver
+class LocaleParamResolver implements Kdyby\Translation\IUserLocaleResolver
 {
+
+	use Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var Nette\Application\Request

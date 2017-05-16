@@ -12,7 +12,6 @@ namespace Kdyby\Translation;
 
 use Kdyby;
 use Latte;
-use Nette;
 use Nette\Utils\Strings;
 
 
@@ -20,8 +19,10 @@ use Nette\Utils\Strings;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class PrefixedTranslator extends Nette\Object implements ITranslator
+class PrefixedTranslator implements ITranslator
 {
+
+	use Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var \Nette\Localization\ITranslator

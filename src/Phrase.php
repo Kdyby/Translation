@@ -11,7 +11,6 @@
 namespace Kdyby\Translation;
 
 use Kdyby;
-use Nette;
 
 
 
@@ -20,8 +19,10 @@ use Nette;
  *
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Phrase extends Nette\Object
+class Phrase
 {
+
+	use Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var string

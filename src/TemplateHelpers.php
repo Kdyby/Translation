@@ -13,15 +13,16 @@ namespace Kdyby\Translation;
 use Kdyby;
 use Latte\Engine;
 use Latte\Runtime\FilterInfo;
-use Nette;
 
 
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class TemplateHelpers extends Nette\Object
+class TemplateHelpers
 {
+
+	use Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var ITranslator

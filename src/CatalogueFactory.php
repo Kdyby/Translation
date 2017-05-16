@@ -11,7 +11,6 @@
 namespace Kdyby\Translation;
 
 use Kdyby;
-use Nette;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use Symfony\Component\Translation\MessageCatalogueInterface;
 
@@ -20,8 +19,10 @@ use Symfony\Component\Translation\MessageCatalogueInterface;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class CatalogueFactory extends Nette\Object
+class CatalogueFactory
 {
+
+	use Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var FallbackResolver

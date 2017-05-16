@@ -17,6 +17,7 @@
 		"issues": "https://github.com/kdyby/translation/issues"
 	},
 	"require": {
+		"kdyby/strict-objects": "^1.0",
 		"latte/latte": "^2.4@dev",
 		"nette/caching": "^2.4@dev",
 		"nette/di": "^2.4@dev",
@@ -26,7 +27,6 @@
 		"nette/php-generator": "^2.4@dev|^3.0@dev",
 		"nette/reflection": "^2.4@dev",
 		"nette/utils": "^2.4@dev|^3.0@dev",
-
 		"psr/log": "^1.0",
 		"symfony/translation": "^2.5|^3.0",
 		"symfony/config": "^2.5|^3.0"

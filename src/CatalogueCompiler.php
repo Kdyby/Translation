@@ -21,8 +21,10 @@ use Symfony\Component\Translation\MessageCatalogueInterface;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class CatalogueCompiler extends Nette\Object
+class CatalogueCompiler
 {
+
+	use Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var \Nette\Caching\Cache

@@ -12,15 +12,16 @@ namespace Kdyby\Translation\LocaleResolver;
 
 use Kdyby;
 use Kdyby\Translation\IUserLocaleResolver;
-use Nette;
 
 
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class ChainResolver extends Nette\Object implements IUserLocaleResolver
+class ChainResolver implements IUserLocaleResolver
 {
+
+	use Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var array|IUserLocaleResolver[]

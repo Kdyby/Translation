@@ -11,15 +11,16 @@
 namespace Kdyby\Translation;
 
 use Kdyby;
-use Nette;
 
 
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class FallbackResolver extends Nette\Object
+class FallbackResolver
 {
+
+	use Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var array

@@ -25,6 +25,10 @@ use Latte\Macros\MacroSet;
 class TranslateMacros extends MacroSet
 {
 
+	use Kdyby\StrictObjects\Scream;
+
+
+
 	public static function install(Compiler $compiler)
 	{
 		$me = new static($compiler);

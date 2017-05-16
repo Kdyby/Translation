@@ -10,6 +10,7 @@
 
 namespace Kdyby\Translation;
 
+use Kdyby;
 use Symfony;
 
 
@@ -19,6 +20,10 @@ use Symfony;
  */
 class MessageCatalogue extends Symfony\Component\Translation\MessageCatalogue
 {
+
+	use Kdyby\StrictObjects\Scream;
+
+
 
 	/**
 	 * {@inheritdoc}

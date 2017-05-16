@@ -26,6 +26,8 @@ use Kdyby\Translation\MessageCatalogue;
 class ExtractCommand extends Command
 {
 
+	use Kdyby\StrictObjects\Scream;
+
 	/**
 	 * @var string
 	 */
