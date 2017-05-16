@@ -50,11 +50,11 @@
 		"mockery/mockery": "~0.9"
 	},
 	"autoload": {
-		"psr-0": {
-			"Kdyby\\Translation": "src/"
+		"psr-4": {
+			"Kdyby\\Translation\\": "src/"
 		},
 		"classmap": [
-			"src/Kdyby/Translation/exceptions.php"
+			"src/exceptions.php"
 		]
 	},
 	"autoload-dev": {
