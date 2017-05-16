@@ -158,6 +158,14 @@ class Translator extends BaseTranslator implements ITranslator
 		}
 
 		if (Strings::startsWith($message, '//')) {
+			if ($domain !== NULL) {
+				throw new InvalidArgumentException(sprintf(
+					'Providing domain "%s" while also having the message "%s" absolute is not supported',
+					$domain,
+					$message
+				));
+			}
+
 			$message = Strings::substring($message, 2);
 		}
 
