@@ -22,7 +22,7 @@ require_once __DIR__ . '/../bootstrap.php';
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class LocaleSessionResolver extends TestCase
+class LocaleSessionResolverTest extends TestCase
 {
 
 	public function testInvalidateLocaleOnRequest()
@@ -58,4 +58,4 @@ class LocaleSessionResolver extends TestCase
 
 }
 
-(new LocaleSessionResolver())->run();
+(new LocaleSessionResolverTest())->run();
