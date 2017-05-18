@@ -95,7 +95,7 @@ class CatalogueCompiler
 	public function compile(Translator $translator, array &$availableCatalogues, $locale)
 	{
 		if (empty($locale)) {
-			throw new InvalidArgumentException("Invalid locale.");
+			throw new InvalidArgumentException('Invalid locale');
 		}
 
 		if (isset($availableCatalogues[$locale])) {

@@ -87,7 +87,7 @@ class TranslateMacros extends MacroSet
 
 		} else {
 			if ($node->empty) {
-				throw new Latte\CompileException("Expected message prefix, none given");
+				throw new Latte\CompileException('Expected message prefix, none given');
 			}
 
 			return $writer->write('$_translator = \Kdyby\Translation\PrefixedTranslator::register($this, %node.word);');

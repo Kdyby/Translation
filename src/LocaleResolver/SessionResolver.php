@@ -78,8 +78,8 @@ class SessionResolver implements Kdyby\Translation\IUserLocaleResolver
 	{
 		if (!$this->session->isStarted() && $this->httpResponse->isSent()) {
 			trigger_error(
-				"The advice of session locale resolver is required but the session has not been started and headers had been already sent. " .
-				"Either start your sessions earlier or disabled the SessionResolver.",
+				'The advice of session locale resolver is required but the session has not been started and headers had been already sent. ' .
+				'Either start your sessions earlier or disabled the SessionResolver.',
 				E_USER_WARNING
 			);
 			return NULL;

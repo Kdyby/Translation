@@ -427,7 +427,7 @@ class Translator extends BaseTranslator implements ITranslator
 	protected function loadCatalogue($locale)
 	{
 		if (empty($locale)) {
-			throw new InvalidArgumentException("Invalid locale.");
+			throw new InvalidArgumentException('Invalid locale.');
 		}
 
 		if (isset($this->catalogues[$locale])) {

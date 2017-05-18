@@ -353,7 +353,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 		} elseif ($config['logging'] !== NULL) {
 			throw new Kdyby\Translation\InvalidArgumentException(sprintf(
-				"Invalid config option for logger. Valid are TRUE for general psr/log or string for kdyby/monolog channel, but %s was given",
+				'Invalid config option for logger. Valid are TRUE for general psr/log or string for kdyby/monolog channel, but %s was given',
 				$config['logging']
 			));
 		}
@@ -426,7 +426,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$loader->load($file, $locale, $domain);
 
 		} catch (\Exception $e) {
-			throw new InvalidResourceException("Resource $file is not valid and cannot be loaded.", 0, $e);
+			throw new InvalidResourceException(sprintf('Resource %s is not valid and cannot be loaded.', $file), 0, $e);
 		}
 	}
 

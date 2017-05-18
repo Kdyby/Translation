@@ -35,10 +35,10 @@ class LatteExtractorTest extends TestCase
 
 		Assert::same([
 			'messages' => [
-				"Important title" => "Important title",
-				"Another important title" => "Another important title",
+				'Important title' => 'Important title',
+				'Another important title' => 'Another important title',
 				"\nInteresting article about interesting topic\n" => "\nInteresting article about interesting topic\n",
-				"Chapter 2" => "Chapter 2",
+				'Chapter 2' => 'Chapter 2',
 				'none|one|many' => 'none|one|many',
 				'sample.identificator' => 'sample.identificator',
 			]
@@ -57,10 +57,10 @@ class LatteExtractorTest extends TestCase
 
 		Assert::same([
 			'messages' => [
-				"homepage.Important title" => "Important title",
-				"homepage.Another important title" => "Another important title",
+				'homepage.Important title' => 'Important title',
+				'homepage.Another important title' => 'Another important title',
 				"homepage.\nInteresting article about interesting topic\n" => "\nInteresting article about interesting topic\n",
-				"homepage.Chapter 2" => "Chapter 2",
+				'homepage.Chapter 2' => 'Chapter 2',
 				'homepage.none|one|many' => 'none|one|many',
 				'homepage.sample.identificator' => 'sample.identificator',
 			]
