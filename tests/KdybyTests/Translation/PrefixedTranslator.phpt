@@ -11,6 +11,7 @@
 namespace KdybyTests\Translation;
 
 use Kdyby;
+use Kdyby\Translation\Phrase;
 use Nette;
 use Tester;
 use Tester\Assert;
@@ -41,7 +42,7 @@ class PrefixedTranslatorTest extends TestCase
 		$translator = $this->createTranslator();
 		$prefixed = $translator->domain('front.homepage');
 
-		Assert::same('Hello world', $prefixed->translate(new Kdyby\Translation\Phrase('hello')));
+		Assert::same('Hello world', $prefixed->translate(new Phrase('hello')));
 	}
 
 	public function testPhraseTranslateWithParameters()
@@ -49,7 +50,7 @@ class PrefixedTranslatorTest extends TestCase
 		$translator = $this->createTranslator();
 		$prefixed = $translator->domain('front.homepage');
 
-		Assert::same('Hello John', $prefixed->translate(new Kdyby\Translation\Phrase('namedHello', ['name' => 'John'])));
+		Assert::same('Hello John', $prefixed->translate(new Phrase('namedHello', ['name' => 'John'])));
 	}
 
 	public function testPhraseTranslateWithCount()
@@ -57,7 +58,7 @@ class PrefixedTranslatorTest extends TestCase
 		$translator = $this->createTranslator();
 		$prefixed = $translator->domain('front.orderForm');
 
-		Assert::same('Use 5 credits', $prefixed->translate(new Kdyby\Translation\Phrase('useCredits', 5)));
+		Assert::same('Use 5 credits', $prefixed->translate(new Phrase('useCredits', 5)));
 	}
 
 	public function testGlobalTranslate()
@@ -73,7 +74,7 @@ class PrefixedTranslatorTest extends TestCase
 		$translator = $this->createTranslator();
 		$prefixed = $translator->domain('front.homepage');
 
-		Assert::same('Hello John', $prefixed->translate(new Kdyby\Translation\Phrase('//front.homepage.namedHello', ['name' => 'John'])));
+		Assert::same('Hello John', $prefixed->translate(new Phrase('//front.homepage.namedHello', ['name' => 'John'])));
 	}
 
 	public function testGlobalPhraseTranslateWithCount()
@@ -81,7 +82,7 @@ class PrefixedTranslatorTest extends TestCase
 		$translator = $this->createTranslator();
 		$prefixed = $translator->domain('front.orderForm');
 
-		Assert::same('Use 5 credits', $prefixed->translate(new Kdyby\Translation\Phrase('//front.orderForm.useCredits', 5)));
+		Assert::same('Use 5 credits', $prefixed->translate(new Phrase('//front.orderForm.useCredits', 5)));
 	}
 }
 
