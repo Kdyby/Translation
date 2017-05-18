@@ -31,7 +31,7 @@ class CatalogueCompilerTest extends TestCase
 	{
 		$container = $this->createContainer();
 
-		/** @var Kdyby\Translation\Translator $translator */
+		/** @var \Kdyby\Translation\Translator $translator */
 		$translator = $container->getByType(Nette\Localization\ITranslator::class);
 		$translator->setFallbackLocales(['cs_CZ', 'cs']);
 
@@ -50,7 +50,7 @@ class CatalogueCompilerTest extends TestCase
 	{
 		$container = $this->createContainer();
 
-		/** @var Kdyby\Translation\Translator $translator */
+		/** @var \Kdyby\Translation\Translator $translator */
 		$translator = $container->getByType(Nette\Localization\ITranslator::class);
 		$translator->setFallbackLocales(['fr_FR', 'fr.UTF8', 'cs_CZ', 'cs']);
 

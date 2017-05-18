@@ -37,7 +37,7 @@ class ExtractCommand extends Command
 	public $defaultOutputDir = '%appDir%/lang';
 
 	/**
-	 * @var Kdyby\Translation\Translator
+	 * @var \Kdyby\Translation\Translator
 	 */
 	private $translator;
 
@@ -52,7 +52,7 @@ class ExtractCommand extends Command
 	private $extractor;
 
 	/**
-	 * @var Nette\DI\Container
+	 * @var \Nette\DI\Container
 	 */
 	private $serviceLocator;
 

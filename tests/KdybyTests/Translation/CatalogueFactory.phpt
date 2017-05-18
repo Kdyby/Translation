@@ -45,7 +45,7 @@ class CatalogueFactoryTest extends TestCase
 		$factory->addResource('neon', __DIR__ . '/lang/front.cs_CZ.neon', 'cs_CZ', 'front');
 		$factory->addResource('neon', __DIR__ . '/lang/front.en_US.neon', 'en_US', 'front');
 
-		/** @var Symfony\Component\Translation\MessageCatalogueInterface[] $catalogues */
+		/** @var \Symfony\Component\Translation\MessageCatalogueInterface[] $catalogues */
 		$catalogues = [];
 		$factory->createCatalogue($translator, $catalogues, 'cs');
 		Assert::truthy(isset($catalogues['cs']));

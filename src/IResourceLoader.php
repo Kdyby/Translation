@@ -44,7 +44,7 @@ interface IResourceLoader
 	 * @param string $resource
 	 * @param string $domain
 	 * @param MessageCatalogue $catalogue
-	 * @throws LoaderNotFoundException
+	 * @throws \Kdyby\Translation\LoaderNotFoundException
 	 */
 	public function loadResource($format, $resource, $domain, MessageCatalogue $catalogue);
 

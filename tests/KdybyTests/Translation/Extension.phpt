@@ -49,7 +49,7 @@ class ExtensionTest extends TestCase
 	{
 		$sl = $this->createContainer('resolvers.default-only');
 
-		/** @var Kdyby\Translation\Translator $translator */
+		/** @var \Kdyby\Translation\Translator $translator */
 		$translator = $sl->getByType(Kdyby\Translation\Translator::class);
 
 		Assert::same('cs', $translator->getLocale());
@@ -61,7 +61,7 @@ class ExtensionTest extends TestCase
 	{
 		$sl = $this->createContainer('loaders.custom');
 
-		/** @var Kdyby\Translation\TranslationLoader $loader */
+		/** @var \Kdyby\Translation\TranslationLoader $loader */
 		$loader = $sl->getService('translation.loader');
 
 		$loaders = $loader->getLoaders();

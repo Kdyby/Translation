@@ -44,13 +44,16 @@ abstract class TestCase extends Tester\TestCase
 
 
 
+	/**
+	 * @param string|NULL $configName
+	 * @return \Kdyby\Translation\Translator
+	 */
 	protected function createTranslator($configName = NULL)
 	{
 		$container = $this->createContainer($configName);
-
+		/** @var \Kdyby\Translation\Translator $translator */
 		$translator = $container->getByType(Nette\Localization\ITranslator::class);
-		/** @var Kdyby\Translation\Translator $translator */
-
+		/** pass */
 		return $translator;
 	}
 

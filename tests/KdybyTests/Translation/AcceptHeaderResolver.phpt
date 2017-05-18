@@ -13,7 +13,6 @@ namespace KdybyTests\Translation;
 use Kdyby;
 use Kdyby\Translation\LocaleResolver\AcceptHeaderResolver;
 use Nette;
-use Tester;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';

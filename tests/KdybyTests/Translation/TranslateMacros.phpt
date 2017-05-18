@@ -34,7 +34,7 @@ class ControlMock extends Nette\Application\UI\Control
 class TranslateMacrosTest extends TestCase
 {
 
-	/** @var Kdyby\Translation\Translator */
+	/** @var \Kdyby\Translation\Translator */
 	private $translator;
 
 	/** @var \Nette\Bridges\ApplicationLatte\Template */
@@ -48,7 +48,7 @@ class TranslateMacrosTest extends TestCase
 
 		$container = $this->createContainer();
 
-		/** @var Kdyby\Translation\Translator $translator */
+		/** @var \Kdyby\Translation\Translator $translator */
 		$this->translator = $container->getByType(Nette\Localization\ITranslator::class);
 		$this->translator->setFallbackLocales(['cs_CZ', 'cs']);
 		$this->translator->setLocale('cs');
