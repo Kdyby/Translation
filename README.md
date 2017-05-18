@@ -6,18 +6,6 @@ Kdyby/Translation
 [![Latest stable](https://img.shields.io/packagist/v/kdyby/translation.svg)](https://packagist.org/packages/kdyby/translation)
 [![Coverage Status](https://coveralls.io/repos/github/Kdyby/Translation/badge.svg?branch=master)](https://coveralls.io/github/Kdyby/Translation?branch=master)
 
-
-
-Requirements
-------------
-
-Kdyby/Translation requires PHP 5.3.2 or higher.
-
-- [Nette Framework](https://github.com/nette/nette)
-- [Symfony Translation](https://github.com/symfony/translation)
-- [Symfony Config](https://github.com/symfony/config)
-
-
 Installation
 ------------
 
@@ -27,12 +15,10 @@ The best way to install Kdyby/Translation is using the [Composer](http://getcomp
 $ composer require kdyby/translation
 ```
 
-
 Documentation
 ------------
 
 Learn more in the [documentation](https://github.com/Kdyby/Translation/blob/master/docs/en/index.md).
-
 
 -----
 
