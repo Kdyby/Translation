@@ -201,7 +201,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$builder->addDefinition($this->prefix('console.extract'))
 			->setClass(Kdyby\Translation\Console\ExtractCommand::class)
 			->addSetup('$defaultOutputDir', [reset($config['dirs'])])
-			->addTag('kdyby.console.command', 'latte');
+			->addTag(Kdyby\Console\DI\ConsoleExtension::TAG_COMMAND, 'latte');
 	}
 
 
