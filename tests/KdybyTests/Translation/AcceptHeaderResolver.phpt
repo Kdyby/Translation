@@ -43,7 +43,7 @@ class AcceptHeaderResolverTest extends TestCase
 	protected function resolve($header, array $locales)
 	{
 		$httpRequest = \Mockery::mock(Nette\Http\IRequest::class);
-		$httpRequest->shouldReceive('getHeader')->with('Accept-Language')->andReturn($header);
+		$httpRequest->shouldReceive('getHeader')->with(AcceptHeaderResolver::ACCEPT_LANGUAGE_HEADER)->andReturn($header);
 
 		$acceptHeaderResolver = new AcceptHeaderResolver($httpRequest);
 

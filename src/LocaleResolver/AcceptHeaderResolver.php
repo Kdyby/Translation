@@ -23,6 +23,8 @@ class AcceptHeaderResolver implements Kdyby\Translation\IUserLocaleResolver
 
 	use Kdyby\StrictObjects\Scream;
 
+	const ACCEPT_LANGUAGE_HEADER = 'Accept-Language';
+
 	/**
 	 * @var Nette\Http\IRequest
 	 */
@@ -50,7 +52,7 @@ class AcceptHeaderResolver implements Kdyby\Translation\IUserLocaleResolver
 	 */
 	public function resolve(Kdyby\Translation\Translator $translator)
 	{
-		$header = $this->httpRequest->getHeader('Accept-Language');
+		$header = $this->httpRequest->getHeader(self::ACCEPT_LANGUAGE_HEADER);
 		if (!$header) {
 			return NULL;
 		}
