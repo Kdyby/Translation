@@ -38,7 +38,7 @@ class CatalogueFactoryTest extends TestCase
 		$loader->addLoader('neon', new Kdyby\Translation\Loader\NeonFileLoader());
 
 		/** @var \Kdyby\Translation\Translator|\Mockery\MockInterface $translator */
-		$translator = \Mockery::mock('Kdyby\Translation\Translator');
+		$translator = \Mockery::mock(Kdyby\Translation\Translator::class);
 		$translator->shouldReceive('getAvailableLocales')->andReturn(['cs_CZ', 'en_US']);
 
 		$factory = new CatalogueFactory($fallbacks, $loader);

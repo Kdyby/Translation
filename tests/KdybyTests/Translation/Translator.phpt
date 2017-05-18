@@ -61,7 +61,7 @@ class TranslatorTest extends TestCase
 		$loader = new Kdyby\Translation\TranslationLoader();
 
 		/** @var Kdyby\Translation\Translator $translator */
-		$translator = $container->createInstance('Kdyby\Translation\Translator', [
+		$translator = $container->createInstance(Kdyby\Translation\Translator::class, [
 			'localeResolver' => $container->getService('translation.userLocaleResolver'),
 			'loader' => $loader
 		]);
@@ -79,15 +79,15 @@ class TranslatorTest extends TestCase
 		$container = $this->createContainer();
 
 		/** @var Kdyby\Translation\CatalogueFactory $catalogueFactory */
-		$catalogueFactory = $container->createInstance('Kdyby\Translation\CatalogueFactory');
+		$catalogueFactory = $container->createInstance(Kdyby\Translation\CatalogueFactory::class);
 
 		/** @var Kdyby\Translation\CatalogueCompiler $catalogueCompiler */
-		$catalogueCompiler = $container->createInstance('Kdyby\Translation\CatalogueCompiler', [
+		$catalogueCompiler = $container->createInstance(Kdyby\Translation\CatalogueCompiler::class, [
 			'catalogueFactory' => $catalogueFactory,
 		]);
 
 		/** @var Kdyby\Translation\Translator $translator */
-		$translator = $container->createInstance('Kdyby\Translation\Translator', [
+		$translator = $container->createInstance(Kdyby\Translation\Translator::class, [
 			'catalogueCompiler' => $catalogueCompiler,
 			'localeResolver' => $container->getService('translation.userLocaleResolver')
 		]);
@@ -166,7 +166,7 @@ class TranslatorTest extends TestCase
 
 		Assert::exception(function () use ($translator) {
 			$translator->translate('//homepage.hello', NULL, [], 'front');
-		}, 'Kdyby\Translation\InvalidArgumentException', 'Providing domain "front" while also having the message "//homepage.hello" absolute is not supported');
+		}, Kdyby\Translation\InvalidArgumentException::class, 'Providing domain "front" while also having the message "//homepage.hello" absolute is not supported');
 	}
 
 }

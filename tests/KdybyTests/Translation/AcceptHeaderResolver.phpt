@@ -11,6 +11,7 @@
 namespace KdybyTests\Translation;
 
 use Kdyby;
+use Kdyby\Translation\LocaleResolver\AcceptHeaderResolver;
 use Nette;
 use Tester;
 use Tester\Assert;
@@ -42,12 +43,12 @@ class AcceptHeaderResolverTest extends TestCase
 
 	protected function resolve($header, array $locales)
 	{
-		$httpRequest = \Mockery::mock('Nette\Http\IRequest');
+		$httpRequest = \Mockery::mock(Nette\Http\IRequest::class);
 		$httpRequest->shouldReceive('getHeader')->with('Accept-Language')->andReturn($header);
 
-		$acceptHeaderResolver = new Kdyby\Translation\LocaleResolver\AcceptHeaderResolver($httpRequest);
+		$acceptHeaderResolver = new AcceptHeaderResolver($httpRequest);
 
-		$translator = \Mockery::mock('Kdyby\Translation\Translator');
+		$translator = \Mockery::mock(Kdyby\Translation\Translator::class);
 		$translator->shouldReceive('getAvailableLocales')->andReturn($locales);
 
 		return $acceptHeaderResolver->resolve($translator);

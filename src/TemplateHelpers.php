@@ -35,7 +35,9 @@ class TemplateHelpers
 	{
 		if (!$translator instanceof Translator && !$translator instanceof PrefixedTranslator) {
 			throw new InvalidArgumentException(sprintf(
-				'The given translator must be instance of Kdyby\Translation\Translator or Kdyby\Translation\PrefixedTranslator, bug %s was given',
+				'The given translator must be instance of %s or %s, bug %s was given',
+				Translator::class,
+				PrefixedTranslator::class,
 				get_class($translator)
 			));
 		}
@@ -47,7 +49,7 @@ class TemplateHelpers
 
 	public function register(Engine $engine)
 	{
-		if (class_exists('Latte\Runtime\FilterInfo')) {
+		if (class_exists(FilterInfo::class)) {
 			$engine->addFilter('translate', [$this, 'translateFilterAware']);
 		} else {
 			$engine->addFilter('translate', [$this, 'translate']);

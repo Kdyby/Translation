@@ -17,6 +17,7 @@ use Nette;
 use Nette\Application\Application;
 use Nette\Application\Request;
 use Nette\Reflection\ClassType;
+use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Symfony\Component\Yaml;
 use Tracy\BlueScreen;
 use Tracy\Debugger;
@@ -346,7 +347,7 @@ class Panel implements IBarPanel
 			return NULL;
 		}
 
-		$method = 'Symfony\Component\Translation\Loader\YamlFileLoader::load';
+		$method = YamlFileLoader::class . '::load';
 		if ($call = Helpers::findTrace($e->getPrevious()->getTrace(), $method)) {
 			return [
 				'tab' => 'YAML dictionary',

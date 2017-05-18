@@ -30,13 +30,13 @@ class LocaleSessionResolver extends TestCase
 		$container = $this->createContainer();
 
 		/** @var Kdyby\Translation\Translator $translator */
-		$translator = $container->getByType('Kdyby\Translation\Translator');
+		$translator = $container->getByType(Kdyby\Translation\Translator::class);
 
 		/** @var Nette\Application\Application $app */
-		$app = $container->getByType('Nette\Application\Application');
+		$app = $container->getByType(Nette\Application\Application::class);
 
 		/** @var Kdyby\Translation\LocaleResolver\SessionResolver $sessionResolver */
-		$sessionResolver = $container->getByType('Kdyby\Translation\LocaleResolver\SessionResolver');
+		$sessionResolver = $container->getByType(Kdyby\Translation\LocaleResolver\SessionResolver::class);
 
 		// this should fallback to default locale
 		Assert::same('en', $translator->getLocale());

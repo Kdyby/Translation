@@ -45,7 +45,9 @@ class PrefixedTranslator implements ITranslator
 	{
 		if (!$translator instanceof Translator && !$translator instanceof PrefixedTranslator) {
 			throw new InvalidArgumentException(sprintf(
-				'The given translator must be instance of Kdyby\Translation\Translator or Kdyby\Translation\PrefixedTranslator, bug %s was given',
+				'The given translator must be instance of %s or %s, bug %s was given',
+				Translator::class,
+				PrefixedTranslator::class,
 				get_class($translator)
 			));
 		}

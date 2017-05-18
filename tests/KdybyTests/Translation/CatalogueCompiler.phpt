@@ -11,7 +11,9 @@
 namespace KdybyTests\Translation;
 
 use Kdyby;
+use Kdyby\Translation\CatalogueCompiler;
 use Nette;
+use Symfony\Component\Translation\MessageCatalogue;
 use Tester;
 use Tester\Assert;
 
@@ -30,7 +32,7 @@ class CatalogueCompilerTest extends TestCase
 		$container = $this->createContainer();
 
 		/** @var Kdyby\Translation\Translator $translator */
-		$translator = $container->getByType('Nette\Localization\ITranslator');
+		$translator = $container->getByType(Nette\Localization\ITranslator::class);
 		$translator->setFallbackLocales(['cs_CZ', 'cs']);
 
 		Assert::same("Ahoj světe", $translator->translate('homepage.hello', NULL, [], 'front', 'fr'));
@@ -49,11 +51,11 @@ class CatalogueCompilerTest extends TestCase
 		$container = $this->createContainer();
 
 		/** @var Kdyby\Translation\Translator $translator */
-		$translator = $container->getByType('Nette\Localization\ITranslator');
+		$translator = $container->getByType(Nette\Localization\ITranslator::class);
 		$translator->setFallbackLocales(['fr_FR', 'fr.UTF8', 'cs_CZ', 'cs']);
 
 		/** @var \Kdyby\Translation\CatalogueCompiler $compiler */
-		$compiler = $container->getByType('Kdyby\Translation\CatalogueCompiler');
+		$compiler = $container->getByType(CatalogueCompiler::class);
 
 		$catalogues = [];
 		$compiler->compile($translator, $catalogues, 'fr-FR.UTF8');
@@ -72,7 +74,7 @@ class CatalogueCompilerTest extends TestCase
 			return $__compiled;
 		}, reset($tempFiles));
 
-		Assert::type('Symfony\Component\Translation\MessageCatalogue', $compiledCatalogue);
+		Assert::type(MessageCatalogue::class, $compiledCatalogue);
 		Assert::same([
 			'catalogue',
 			'catalogueFr_FR',

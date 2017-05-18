@@ -11,12 +11,15 @@
 namespace Kdyby\Translation\Console;
 
 use Kdyby;
+use Kdyby\Translation\Translator;
 use Nette;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Kdyby\Translation\MessageCatalogue;
+use Symfony\Component\Translation\Extractor\ChainExtractor;
+use Symfony\Component\Translation\Writer\TranslationWriter;
 
 
 
@@ -85,9 +88,9 @@ class ExtractCommand extends Command
 
 	protected function initialize(InputInterface $input, OutputInterface $output)
 	{
-		$this->translator = $this->getHelper('container')->getByType('Kdyby\Translation\Translator');
-		$this->writer = $this->getHelper('container')->getByType('Symfony\Component\Translation\Writer\TranslationWriter');
-		$this->extractor = $this->getHelper('container')->getByType('Symfony\Component\Translation\Extractor\ChainExtractor');
+		$this->translator = $this->getHelper('container')->getByType(Translator::class);
+		$this->writer = $this->getHelper('container')->getByType(TranslationWriter::class);
+		$this->extractor = $this->getHelper('container')->getByType(ChainExtractor::class);
 		$this->serviceLocator = $this->getHelper('container')->getContainer();
 	}
 

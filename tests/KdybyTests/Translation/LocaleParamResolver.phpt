@@ -30,10 +30,10 @@ class LocaleParamResolverTest extends TestCase
 		$container = $this->createContainer();
 
 		/** @var Kdyby\Translation\Translator $translator */
-		$translator = $container->getByType('Kdyby\Translation\Translator');
+		$translator = $container->getByType(Kdyby\Translation\Translator::class);
 
 		/** @var Nette\Application\Application $app */
-		$app = $container->getByType('Nette\Application\Application');
+		$app = $container->getByType(Nette\Application\Application::class);
 
 		// this should fallback to default locale
 		Assert::same('en', $translator->getLocale());

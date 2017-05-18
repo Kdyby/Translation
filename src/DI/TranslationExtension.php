@@ -11,7 +11,10 @@
 namespace Kdyby\Translation\DI;
 
 use Kdyby;
+use Kdyby\Translation\Diagnostics\Panel;
 use Kdyby\Translation\InvalidResourceException;
+use Kdyby\Translation\Latte\TranslateMacros;
+use Latte;
 use Nette;
 use Nette\DI\Statement;
 use Nette\PhpGenerator as Code;
@@ -20,6 +23,7 @@ use Nette\Utils\Callback;
 use Nette\Utils\Finder;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
+use Symfony;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Tracy;
 
@@ -57,7 +61,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		'logging' => NULL, //  TRUE for psr/log, or string for kdyby/monolog channel
 		// 'fallback' => array('en_US', 'en'), // using custom merge strategy becase Nette's config merger appends lists of values
 		'dirs' => ['%appDir%/lang', '%appDir%/locale'],
-		'cache' => 'Kdyby\Translation\Caching\PhpFileStorage',
+		'cache' => Kdyby\Translation\Caching\PhpFileStorage::class,
 		'debugger' => '%debugMode%',
 		'resolvers' => [
 			self::RESOLVER_SESSION => FALSE,
@@ -89,7 +93,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$config = $this->getConfig();
 
 		$translator = $builder->addDefinition($this->prefix('default'))
-			->setClass('Kdyby\Translation\Translator', [$this->prefix('@userLocaleResolver')])
+			->setClass(Kdyby\Translation\Translator::class, [$this->prefix('@userLocaleResolver')])
 			->addSetup('?->setTranslator(?)', [$this->prefix('@userLocaleResolver.param'), '@self'])
 			->addSetup('setDefaultLocale', [$config['default']])
 			->addSetup('setLocaleWhitelist', [$config['whitelist']]);
@@ -98,11 +102,11 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$translator->addSetup('setFallbackLocales', [$config['fallback']]);
 
 		$catalogueCompiler = $builder->addDefinition($this->prefix('catalogueCompiler'))
-			->setClass('Kdyby\Translation\CatalogueCompiler', self::filterArgs($config['cache']));
+			->setClass(Kdyby\Translation\CatalogueCompiler::class, self::filterArgs($config['cache']));
 
-		if ($config['debugger'] && interface_exists('Tracy\IBarPanel')) {
+		if ($config['debugger'] && interface_exists(Tracy\IBarPanel::class)) {
 			$builder->addDefinition($this->prefix('panel'))
-				->setClass('Kdyby\Translation\Diagnostics\Panel', [dirname($builder->expand('%appDir%'))])
+				->setClass(Panel::class, [dirname($builder->expand('%appDir%'))])
 				->addSetup('setLocaleWhitelist', [$config['whitelist']]);
 
 			$translator->addSetup('?->register(?)', [$this->prefix('@panel'), '@self']);
@@ -112,30 +116,30 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$this->loadLocaleResolver($config);
 
 		$builder->addDefinition($this->prefix('helpers'))
-			->setClass('Kdyby\Translation\TemplateHelpers')
+			->setClass(Kdyby\Translation\TemplateHelpers::class)
 			->setFactory($this->prefix('@default') . '::createTemplateHelpers');
 
 		$builder->addDefinition($this->prefix('fallbackResolver'))
-			->setClass('Kdyby\Translation\FallbackResolver');
+			->setClass(Kdyby\Translation\FallbackResolver::class);
 
 		$builder->addDefinition($this->prefix('catalogueFactory'))
-			->setClass('Kdyby\Translation\CatalogueFactory');
+			->setClass(Kdyby\Translation\CatalogueFactory::class);
 
 		$builder->addDefinition($this->prefix('selector'))
-			->setClass('Symfony\Component\Translation\MessageSelector');
+			->setClass(Symfony\Component\Translation\MessageSelector::class);
 
 		$builder->addDefinition($this->prefix('extractor'))
-			->setClass('Symfony\Component\Translation\Extractor\ChainExtractor');
+			->setClass(Symfony\Component\Translation\Extractor\ChainExtractor::class);
 
 		$this->loadExtractors();
 
 		$builder->addDefinition($this->prefix('writer'))
-			->setClass('Symfony\Component\Translation\Writer\TranslationWriter');
+			->setClass(Symfony\Component\Translation\Writer\TranslationWriter::class);
 
 		$this->loadDumpers();
 
 		$builder->addDefinition($this->prefix('loader'))
-			->setClass('Kdyby\Translation\TranslationLoader');
+			->setClass(Kdyby\Translation\TranslationLoader::class);
 
 		$loaders = $this->loadFromFile(__DIR__ . '/config/loaders.neon');
 		$this->loadLoaders($loaders, $config['loaders'] ? : array_keys($loaders));
@@ -152,18 +156,18 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		$builder->addDefinition($this->prefix('userLocaleResolver.param'))
-			->setClass('Kdyby\Translation\LocaleResolver\LocaleParamResolver')
+			->setClass(Kdyby\Translation\LocaleResolver\LocaleParamResolver::class)
 			->setAutowired(FALSE);
 
 		$builder->addDefinition($this->prefix('userLocaleResolver.acceptHeader'))
-			->setClass('Kdyby\Translation\LocaleResolver\AcceptHeaderResolver');
+			->setClass(Kdyby\Translation\LocaleResolver\AcceptHeaderResolver::class);
 
 		$builder->addDefinition($this->prefix('userLocaleResolver.session'))
-			->setClass('Kdyby\Translation\LocaleResolver\SessionResolver');
+			->setClass(Kdyby\Translation\LocaleResolver\SessionResolver::class);
 
 		$chain = $builder->addDefinition($this->prefix('userLocaleResolver'))
-			->setClass('Kdyby\Translation\IUserLocaleResolver')
-			->setFactory('Kdyby\Translation\LocaleResolver\ChainResolver');
+			->setClass(Kdyby\Translation\IUserLocaleResolver::class)
+			->setFactory(Kdyby\Translation\LocaleResolver\ChainResolver::class);
 
 		$resolvers = [];
 		if ($config['resolvers'][self::RESOLVER_HEADER]) {
@@ -181,7 +185,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$chain->addSetup('addResolver', [$this->prefix('@userLocaleResolver.session')]);
 		}
 
-		if ($config['debugger'] && interface_exists('Tracy\IBarPanel')) {
+		if ($config['debugger'] && interface_exists(Tracy\IBarPanel::class)) {
 			$builder->getDefinition($this->prefix('panel'))
 				->addSetup('setLocaleResolvers', [array_reverse($resolvers)]);
 		}
@@ -195,7 +199,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 		Validators::assertField($config, 'dirs', 'list');
 		$builder->addDefinition($this->prefix('console.extract'))
-			->setClass('Kdyby\Translation\Console\ExtractCommand')
+			->setClass(Kdyby\Translation\Console\ExtractCommand::class)
 			->addSetup('$defaultOutputDir', [reset($config['dirs'])])
 			->addTag('kdyby.console.command', 'latte');
 	}
@@ -252,18 +256,18 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 		$this->beforeCompileLogging($config);
 
 		$registerToLatte = function (Nette\DI\ServiceDefinition $def) {
-			$def->addSetup('?->onCompile[] = function($engine) { Kdyby\Translation\Latte\TranslateMacros::install($engine->getCompiler()); }', ['@self']);
+			$def->addSetup('?->onCompile[] = function($engine) { ?::install($engine->getCompiler()); }', ['@self', new Code\PhpLiteral(TranslateMacros::class)]);
 
 			$def->addSetup('addProvider', ['translator', $this->prefix('@default')])
 				->addSetup('addFilter', ['translate', [$this->prefix('@helpers'), 'translateFilterAware']]);
 		};
 
-		$latteFactoryService = $builder->getByType('Nette\Bridges\ApplicationLatte\ILatteFactory');
-		if (!$latteFactoryService || !self::isOfType($builder->getDefinition($latteFactoryService)->getClass(), 'Latte\engine')) {
+		$latteFactoryService = $builder->getByType(Nette\Bridges\ApplicationLatte\ILatteFactory::class);
+		if (!$latteFactoryService || !self::isOfType($builder->getDefinition($latteFactoryService)->getClass(), Latte\Engine::class)) {
 			$latteFactoryService = 'nette.latteFactory';
 		}
 
-		if ($builder->hasDefinition($latteFactoryService) && self::isOfType($builder->getDefinition($latteFactoryService)->getClass(), 'Latte\Engine')) {
+		if ($builder->hasDefinition($latteFactoryService) && self::isOfType($builder->getDefinition($latteFactoryService)->getClass(), Latte\Engine::class)) {
 			$registerToLatte($builder->getDefinition($latteFactoryService));
 		}
 
@@ -271,20 +275,20 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 			$registerToLatte($builder->getDefinition('nette.latte'));
 		}
 
-		$applicationService = $builder->getByType('Nette\Application\Application') ?: 'application';
+		$applicationService = $builder->getByType(Nette\Application\Application::class) ?: 'application';
 		if ($builder->hasDefinition($applicationService)) {
 			$builder->getDefinition($applicationService)
 				->addSetup('$service->onRequest[] = ?', [[$this->prefix('@userLocaleResolver.param'), 'onRequest']]);
 
-			if ($config['debugger'] && interface_exists('Tracy\IBarPanel')) {
+			if ($config['debugger'] && interface_exists(Tracy\IBarPanel::class)) {
 				$builder->getDefinition($applicationService)
 					->addSetup('$self = $this; $service->onStartup[] = function () use ($self) { $self->getService(?); }', [$this->prefix('default')])
 					->addSetup('$service->onRequest[] = ?', [[$this->prefix('@panel'), 'onRequest']]);
 			}
 		}
 
-		if (class_exists('Tracy\Debugger')) {
-			Kdyby\Translation\Diagnostics\Panel::registerBluescreen();
+		if (class_exists(Tracy\Debugger::class)) {
+			Panel::registerBluescreen();
 		}
 
 		$extractor = $builder->getDefinition($this->prefix('extractor'));
@@ -348,7 +352,7 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 
 		} elseif (is_string($config['logging'])) { // channel for kdyby/monolog
 			$translator->addSetup('injectPsrLogger', [
-				new Statement('@Kdyby\Monolog\Logger::channel', [$config['logging']]),
+				new Statement(sprintf('@%s::channel', Kdyby\Monolog\Logger::class), [$config['logging']]),
 			]);
 
 		} elseif ($config['logging'] !== NULL) {
@@ -435,8 +439,8 @@ class TranslationExtension extends Nette\DI\CompilerExtension
 	public function afterCompile(Code\ClassType $class)
 	{
 		$initialize = $class->getMethod('initialize');
-		if (class_exists('Tracy\Debugger')) {
-			$initialize->addBody('Kdyby\Translation\Diagnostics\Panel::registerBluescreen();');
+		if (class_exists(Tracy\Debugger::class)) {
+			$initialize->addBody('?::registerBluescreen();', [new Code\PhpLiteral(Panel::class)]);
 		}
 	}
 

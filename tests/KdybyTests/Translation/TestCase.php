@@ -48,7 +48,7 @@ abstract class TestCase extends Tester\TestCase
 	{
 		$container = $this->createContainer($configName);
 
-		$translator = $container->getByType('Nette\Localization\ITranslator');
+		$translator = $container->getByType(Nette\Localization\ITranslator::class);
 		/** @var Kdyby\Translation\Translator $translator */
 
 		return $translator;

@@ -50,7 +50,7 @@ class ExtensionTest extends TestCase
 		$sl = $this->createContainer('resolvers.default-only');
 
 		/** @var Kdyby\Translation\Translator $translator */
-		$translator = $sl->getByType('Kdyby\Translation\Translator');
+		$translator = $sl->getByType(Kdyby\Translation\Translator::class);
 
 		Assert::same('cs', $translator->getLocale());
 	}
@@ -79,10 +79,10 @@ class ExtensionTest extends TestCase
 	{
 		$sl = $this->createContainer('logging');
 
-		$logger = $sl->getByType('Kdyby\Monolog\Logger');
+		$logger = $sl->getByType(Kdyby\Monolog\Logger::class);
 		$logger->pushHandler($loggingHandler = new TestHandler());
 
-		$translator = $sl->getByType('Kdyby\Translation\Translator');
+		$translator = $sl->getByType(Kdyby\Translation\Translator::class);
 		Assert::same('front.not.found', $translator->translate('front.not.found'));
 
 		list($record) = $loggingHandler->getRecords();

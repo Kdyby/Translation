@@ -49,11 +49,11 @@ class TranslateMacrosTest extends TestCase
 		$container = $this->createContainer();
 
 		/** @var Kdyby\Translation\Translator $translator */
-		$this->translator = $container->getByType('Nette\Localization\ITranslator');
+		$this->translator = $container->getByType(Nette\Localization\ITranslator::class);
 		$this->translator->setFallbackLocales(['cs_CZ', 'cs']);
 		$this->translator->setLocale('cs');
 
-		$this->template = $container->getByType('Nette\Application\UI\ITemplateFactory')
+		$this->template = $container->getByType(Nette\Application\UI\ITemplateFactory::class)
 			->createTemplate(new ControlMock());
 	}
 

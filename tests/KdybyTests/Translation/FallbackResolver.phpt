@@ -30,11 +30,11 @@ class FallbackResolverTest extends TestCase
 		$container = $this->createContainer();
 
 		/** @var Kdyby\Translation\Translator $translator */
-		$translator = $container->getByType('Nette\Localization\ITranslator');
+		$translator = $container->getByType(Nette\Localization\ITranslator::class);
 		$translator->setFallbackLocales(['cs_CZ', 'cs']);
 
 		/** @var Kdyby\Translation\FallbackResolver $fallbackResolver */
-		$fallbackResolver = $container->getByType('Kdyby\Translation\FallbackResolver');
+		$fallbackResolver = $container->getByType(Kdyby\Translation\FallbackResolver::class);
 
 		Assert::same(['cs_CZ'], $fallbackResolver->compute($translator, 'cs'));
 		Assert::same(['sk_SK', 'cs_CZ', 'cs'], $fallbackResolver->compute($translator, 'sk'));

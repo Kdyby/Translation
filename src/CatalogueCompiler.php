@@ -49,7 +49,7 @@ class CatalogueCompiler
 		CatalogueFactory $catalogueFactory
 	)
 	{
-		$this->cache = new Cache($cacheStorage, 'Kdyby\\Translation\\Translator');
+		$this->cache = new Cache($cacheStorage, Translator::class);
 		$this->fallbackResolver = $fallbackResolver;
 		$this->catalogueFactory = $catalogueFactory;
 	}
