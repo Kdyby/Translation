@@ -38,15 +38,15 @@ class TranslationLoaderTest extends TestCase
 
 
 
-	public function loadResource()
+	public function testLoadResource()
 	{
 		$loader = new TranslationLoader();
 		$loader->addLoader('neon', new Kdyby\Translation\Loader\NeonFileLoader());
 
 		$catalogue = new Kdyby\Translation\MessageCatalogue('cs_CZ');
-		$loader->loadResource('neon', __DIR__ . '/lang/front.cs_CZ.neon', 'front', 'cs_CZ', $catalogue);
+		$loader->loadResource('neon', __DIR__ . '/lang/front.cs_CZ.neon', 'front', $catalogue);
 
-		Assert::true($catalogue->defines('front.homepage.hello'));
+		Assert::true($catalogue->defines('homepage.hello', 'front'));
 	}
 
 }
