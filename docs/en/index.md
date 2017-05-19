@@ -69,9 +69,10 @@ The first one looks in request parameters and searches for `locale`, that's why 
 To change the default language, place this in your `app/config/config.neon`
 
 ```yml
-translation:
-	default: cs
-	fallback: [cs_CZ, cs]
+parameters:
+	translation:
+		default: cs
+		fallback: [cs_CZ, cs]
 ```
 
 
