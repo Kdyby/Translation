@@ -11,26 +11,19 @@
 namespace Kdyby\Translation;
 
 use Kdyby;
-use Symfony\Component\Translation\Exception\NotFoundResourceException;
-use Symfony\Component\Translation\MessageCatalogueInterface;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class CatalogueFactory
 {
 
-	use Kdyby\StrictObjects\Scream;
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
-	 * @var FallbackResolver
+	 * @var \Kdyby\Translation\FallbackResolver
 	 */
 	private $fallbackResolver;
 
 	/**
-	 * @var IResourceLoader
+	 * @var \Kdyby\Translation\IResourceLoader
 	 */
 	private $loader;
 
@@ -39,15 +32,11 @@ class CatalogueFactory
 	 */
 	private $resources = [];
 
-
-
 	public function __construct(FallbackResolver $fallbackResolver, IResourceLoader $loader)
 	{
 		$this->fallbackResolver = $fallbackResolver;
 		$this->loader = $loader;
 	}
-
-
 
 	/**
 	 * {@inheritdoc}
@@ -56,8 +45,6 @@ class CatalogueFactory
 	{
 		$this->resources[$locale][] = [$format, $resource, $domain];
 	}
-
-
 
 	/**
 	 * @return array
@@ -74,21 +61,19 @@ class CatalogueFactory
 		return $list;
 	}
 
-
-
 	/**
-	 * @param Translator $translator
-	 * @param MessageCatalogueInterface[] $availableCatalogues
+	 * @param \Kdyby\Translation\Translator $translator
+	 * @param \Symfony\Component\Translation\MessageCatalogueInterface[] $availableCatalogues
 	 * @param string $locale
-	 * @throws NotFoundResourceException
-	 * @return MessageCatalogueInterface
+	 * @throws \Symfony\Component\Translation\Exception\NotFoundResourceException
+	 * @return \Symfony\Component\Translation\MessageCatalogueInterface
 	 */
 	public function createCatalogue(Translator $translator, array &$availableCatalogues, $locale)
 	{
 		try {
 			$this->doLoadCatalogue($availableCatalogues, $locale);
 
-		} catch (NotFoundResourceException $e) {
+		} catch (\Symfony\Component\Translation\Exception\NotFoundResourceException $e) {
 			if (!$this->fallbackResolver->compute($translator, $locale)) {
 				throw $e;
 			}
@@ -103,7 +88,8 @@ class CatalogueFactory
 			}
 
 			$newFallback = $availableCatalogues[$fallback];
-			if (($newFallbackFallback = $newFallback->getFallbackCatalogue()) && isset($chain[$newFallbackFallback->getLocale()])) {
+			$newFallbackFallback = $newFallback->getFallbackCatalogue();
+			if ($newFallbackFallback !== NULL && isset($chain[$newFallbackFallback->getLocale()])) {
 				break;
 			}
 
@@ -114,8 +100,6 @@ class CatalogueFactory
 
 		return $availableCatalogues[$locale];
 	}
-
-
 
 	private function doLoadCatalogue(array &$availableCatalogues, $locale)
 	{

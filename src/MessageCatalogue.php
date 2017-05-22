@@ -10,20 +10,10 @@
 
 namespace Kdyby\Translation;
 
-use Kdyby;
-use Symfony;
-
-
-
-/**
- * @author Jan Langer <jan.langer@gmail.com>
- */
-class MessageCatalogue extends Symfony\Component\Translation\MessageCatalogue
+class MessageCatalogue extends \Symfony\Component\Translation\MessageCatalogue
 {
 
-	use Kdyby\StrictObjects\Scream;
-
-
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
 	 * {@inheritdoc}

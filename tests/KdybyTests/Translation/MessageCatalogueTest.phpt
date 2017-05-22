@@ -4,25 +4,16 @@
  * Test: Kdyby\Translation\MessageCatalogue.
  *
  * @testCase KdybyTests\Translation\MessageCatalogueTest
- * @author Filip Procházka <filip@prochazka.su>
- * @package Kdyby\Translation
  */
 
 namespace KdybyTests\Translation;
 
-use Kdyby;
-use Nette;
-use Tester;
+use Kdyby\Translation\MessageCatalogue;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class MessageCatalogueTest extends Tester\TestCase
+class MessageCatalogueTest extends \Tester\TestCase
 {
 
 	/**
@@ -30,27 +21,21 @@ class MessageCatalogueTest extends Tester\TestCase
 	 */
 	protected $catalogue;
 
-
-
 	protected function setUp()
 	{
-		$this->catalogue = new Kdyby\Translation\MessageCatalogue('cs_CZ', [
+		$this->catalogue = new MessageCatalogue('cs_CZ', [
 			'front' => [
-				'homepage.hello' => 'Ahoj světe!'
-			]
+				'homepage.hello' => 'Ahoj světe!',
+			],
 		]);
 	}
-
-
 
 	public function testGet()
 	{
 		Assert::same('Ahoj světe!', $this->catalogue->get('homepage.hello', 'front'));
 	}
 
-
-
-	public function testGet_untranslated()
+	public function testGetUntranslated()
 	{
 		Assert::same("\x01", $this->catalogue->get('missing', 'front'));
 		Assert::same("\x01", $this->catalogue->get('foo', 'missing'));

@@ -3,30 +3,22 @@
 /**
  * Test: Kdyby\Translation\CatalogueFactory.
  *
- * @testCase KdybyTests\Translation\CatalogueFactoryTest
- * @author Filip Procházka <filip@prochazka.su>
- * @package Kdyby\Translation
+ * @testCase
  */
 
 namespace KdybyTests\Translation;
 
-use Kdyby;
 use Kdyby\Translation\CatalogueFactory;
 use Kdyby\Translation\FallbackResolver;
+use Kdyby\Translation\Loader\NeonFileLoader;
 use Kdyby\Translation\TranslationLoader;
-use Nette;
-use Symfony;
-use Tester;
+use Kdyby\Translation\Translator;
+use Mockery;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class CatalogueFactoryTest extends TestCase
+class CatalogueFactoryTest extends \KdybyTests\Translation\TestCase
 {
 
 	public function testCircularFallback()
@@ -35,10 +27,10 @@ class CatalogueFactoryTest extends TestCase
 		$fallbacks->setFallbackLocales(['cs_CZ', 'cs']);
 
 		$loader = new TranslationLoader();
-		$loader->addLoader('neon', new Kdyby\Translation\Loader\NeonFileLoader());
+		$loader->addLoader('neon', new NeonFileLoader());
 
 		/** @var \Kdyby\Translation\Translator|\Mockery\MockInterface $translator */
-		$translator = \Mockery::mock(Kdyby\Translation\Translator::class);
+		$translator = Mockery::mock(Translator::class);
 		$translator->shouldReceive('getAvailableLocales')->andReturn(['cs_CZ', 'en_US']);
 
 		$factory = new CatalogueFactory($fallbacks, $loader);
@@ -63,11 +55,9 @@ class CatalogueFactoryTest extends TestCase
 		Assert::null($catalogues['cs_CZ']->getFallbackCatalogue());
 	}
 
-
-
 	protected function tearDown()
 	{
-		\Mockery::close();
+		Mockery::close();
 	}
 
 }

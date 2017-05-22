@@ -10,24 +10,15 @@
 
 namespace Kdyby\Translation;
 
-use Kdyby;
-
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class FallbackResolver
 {
 
-	use Kdyby\StrictObjects\Scream;
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var array
 	 */
 	private $fallbackLocales = [];
-
-
 
 	/**
 	 * @param array $fallbackLocales
@@ -36,8 +27,6 @@ class FallbackResolver
 	{
 		$this->fallbackLocales = $fallbackLocales;
 	}
-
-
 
 	public function compute(Translator $translator, $locale)
 	{
@@ -50,7 +39,7 @@ class FallbackResolver
 			$locales[] = $fallback;
 		}
 
-		if (strrchr($locale, '_') !== false) {
+		if (strrchr($locale, '_') !== FALSE) {
 			array_unshift($locales, substr($locale, 0, -strlen(strrchr($locale, '_'))));
 		}
 

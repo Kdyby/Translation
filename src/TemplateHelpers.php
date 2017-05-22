@@ -10,31 +10,23 @@
 
 namespace Kdyby\Translation;
 
-use Kdyby;
 use Latte\Engine;
 use Latte\Runtime\FilterInfo;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class TemplateHelpers
 {
 
-	use Kdyby\StrictObjects\Scream;
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var \Kdyby\Translation\ITranslator|\Kdyby\Translation\Translator|\Kdyby\Translation\PrefixedTranslator
 	 */
 	private $translator;
 
-
-
 	public function __construct(ITranslator $translator)
 	{
 		if (!$translator instanceof Translator && !$translator instanceof PrefixedTranslator) {
-			throw new InvalidArgumentException(sprintf(
+			throw new \Kdyby\Translation\InvalidArgumentException(sprintf(
 				'The given translator must be instance of %s or %s, bug %s was given',
 				Translator::class,
 				PrefixedTranslator::class,
@@ -44,8 +36,6 @@ class TemplateHelpers
 
 		$this->translator = $translator;
 	}
-
-
 
 	public function register(Engine $engine)
 	{
@@ -57,8 +47,6 @@ class TemplateHelpers
 		$engine->addFilter('getTranslator', [$this, 'getTranslator']);
 	}
 
-
-
 	/**
 	 * @return \Kdyby\Translation\ITranslator|\Kdyby\Translation\Translator|\Kdyby\Translation\PrefixedTranslator
 	 */
@@ -66,8 +54,6 @@ class TemplateHelpers
 	{
 		return $this->translator;
 	}
-
-
 
 	/**
 	 * @param string $message
@@ -95,8 +81,6 @@ class TemplateHelpers
 		);
 	}
 
-
-
 	/**
 	 * @param \Latte\Runtime\FilterInfo $filterInfo
 	 * @param string $message
@@ -110,8 +94,6 @@ class TemplateHelpers
 	{
 		return $this->translate($message, $count, $parameters, $domain, $locale);
 	}
-
-
 
 	/**
 	 * @deprecated

@@ -3,27 +3,21 @@
 /**
  * Test: Kdyby\Translation\Translator.
  *
- * @testCase KdybyTests\Translation\TranslatorTest
- * @author Filip Procházka <filip@prochazka.su>
- * @package Kdyby\Translation
+ * @testCase
  */
 
 namespace KdybyTests\Translation;
 
-use Kdyby;
-use Nette;
-use Symfony;
-use Tester;
+use Kdyby\Translation\CatalogueCompiler;
+use Kdyby\Translation\CatalogueFactory;
+use Kdyby\Translation\Loader\NeonFileLoader;
+use Kdyby\Translation\TranslationLoader;
+use Kdyby\Translation\Translator;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class TranslatorTest extends TestCase
+class TranslatorTest extends \KdybyTests\Translation\TestCase
 {
 
 	public function testDefaultLocale()
@@ -37,9 +31,7 @@ class TranslatorTest extends TestCase
 		Assert::same('en', $translator->getDefaultLocale());
 	}
 
-
-
-	public function testDefaultLocale_invalid()
+	public function testDefaultLocaleInvalid()
 	{
 		$translator = $this->createTranslator();
 
@@ -52,64 +44,57 @@ class TranslatorTest extends TestCase
 		}, 'InvalidArgumentException');
 	}
 
-
-
 	public function testAddLoader()
 	{
 		$container = $this->createContainer();
 
-		$loader = new Kdyby\Translation\TranslationLoader();
+		$loader = new TranslationLoader();
 
-		/** @var Kdyby\Translation\Translator $translator */
-		$translator = $container->createInstance(Kdyby\Translation\Translator::class, [
+		/** @var \Kdyby\Translation\Translator $translator */
+		$translator = $container->createInstance(Translator::class, [
 			'localeResolver' => $container->getService('translation.userLocaleResolver'),
-			'loader' => $loader
+			'loader' => $loader,
 		]);
 
 		Assert::same([], $loader->getLoaders());
 
-		$translator->addLoader('neon', $neonLoader = new Kdyby\Translation\Loader\NeonFileLoader());
+		$neonLoader = new NeonFileLoader();
+		$translator->addLoader('neon', $neonLoader);
 		Assert::same(['neon' => $neonLoader], $loader->getLoaders());
 	}
-
-
 
 	public function testAddResource()
 	{
 		$container = $this->createContainer();
 
-		/** @var Kdyby\Translation\CatalogueFactory $catalogueFactory */
-		$catalogueFactory = $container->createInstance(Kdyby\Translation\CatalogueFactory::class);
+		/** @var \Kdyby\Translation\CatalogueFactory $catalogueFactory */
+		$catalogueFactory = $container->createInstance(CatalogueFactory::class);
 
-		/** @var Kdyby\Translation\CatalogueCompiler $catalogueCompiler */
-		$catalogueCompiler = $container->createInstance(Kdyby\Translation\CatalogueCompiler::class, [
+		/** @var \Kdyby\Translation\CatalogueCompiler $catalogueCompiler */
+		$catalogueCompiler = $container->createInstance(CatalogueCompiler::class, [
 			'catalogueFactory' => $catalogueFactory,
 		]);
 
-		/** @var Kdyby\Translation\Translator $translator */
-		$translator = $container->createInstance(Kdyby\Translation\Translator::class, [
+		/** @var \Kdyby\Translation\Translator $translator */
+		$translator = $container->createInstance(Translator::class, [
 			'catalogueCompiler' => $catalogueCompiler,
-			'localeResolver' => $container->getService('translation.userLocaleResolver')
+			'localeResolver' => $container->getService('translation.userLocaleResolver'),
 		]);
 
 		Assert::same([], $catalogueFactory->getResources());
 
-		$translator->addResource('neon', __DIR__ . '/files/front.cs_CZ.neon', 'cs_CZ', 'front');
+		$translator->addResource('neon', __DIR__ . '/data/files/front.cs_CZ.neon', 'cs_CZ', 'front');
 
 		Assert::same([
-			__DIR__ . '/files/front.cs_CZ.neon'
+			__DIR__ . '/data/files/front.cs_CZ.neon',
 		], $catalogueFactory->getResources());
 	}
-
-
 
 	public function testAvailableLocales()
 	{
 		$translator = $this->createTranslator();
 		Assert::same(['cs_CZ', 'en_US', 'sk_SK'], $translator->getAvailableLocales());
 	}
-
-
 
 	public function dataWhitelistRegexp()
 	{
@@ -127,38 +112,31 @@ class TranslatorTest extends TestCase
 		];
 	}
 
-
-
 	/**
 	 * @dataProvider dataWhitelistRegexp
 	 */
 	public function testWhitelistRegexp($locale, $isMatching)
 	{
-		$regexp = Kdyby\Translation\Translator::buildWhitelistRegexp(['cs', 'en', 'de']);
+		$regexp = Translator::buildWhitelistRegexp(['cs', 'en', 'de']);
 
 		Assert::same($isMatching, (bool) preg_match($regexp, $locale));
 	}
-
-
 
 	public function testNonIdTranslations()
 	{
 		$translator = $this->createTranslator();
 		$translator->setLocale('cs');
 
-		Assert::same("Ahoj světe", $translator->translate('Hello World')); // default domain is 'messages'
+		Assert::same('Ahoj světe', $translator->translate('Hello World')); // default domain is 'messages'
 	}
-
 
 	public function testAbsoluteTranslations()
 	{
 		$translator = $this->createTranslator();
 		$translator->setLocale('cs');
 
-		Assert::same("Ahoj světe", $translator->translate('//front.homepage.hello'));
+		Assert::same('Ahoj světe', $translator->translate('//front.homepage.hello'));
 	}
-
-
 
 	public function testTranslatingAbsoluteMessageWithDomainIsNotSupported()
 	{
@@ -166,7 +144,7 @@ class TranslatorTest extends TestCase
 
 		Assert::exception(function () use ($translator) {
 			$translator->translate('//homepage.hello', NULL, [], 'front');
-		}, Kdyby\Translation\InvalidArgumentException::class, 'Providing domain "front" while also having the message "//homepage.hello" absolute is not supported');
+		}, \Kdyby\Translation\InvalidArgumentException::class, 'Providing domain "front" while also having the message "//homepage.hello" absolute is not supported');
 	}
 
 }

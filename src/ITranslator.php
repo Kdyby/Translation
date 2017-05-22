@@ -10,17 +10,10 @@
 
 namespace Kdyby\Translation;
 
-use Kdyby;
-use Nette;
-
-
-
 /**
- * @author Filip Procházka <filip@prochazka.su>
- *
  * @method translate($message, $count = NULL, $parameters = array(), $domain = NULL, $locale = NULL);
  */
-interface ITranslator extends Nette\Localization\ITranslator
+interface ITranslator extends \Nette\Localization\ITranslator
 {
 
 	// function translate($message, $count = NULL, array $parameters = array(), $domain = NULL, $locale = NULL);

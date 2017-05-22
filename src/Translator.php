@@ -10,56 +10,49 @@
 
 namespace Kdyby\Translation;
 
-use Kdyby;
 use Kdyby\Translation\Diagnostics\Panel;
-use Latte;
-use Nette;
+use Latte\Runtime\IHtmlString as LatteHtmlString;
+use Nette\Utils\IHtmlString as NetteHtmlString;
 use Nette\Utils\Strings;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Translation\MessageSelector;
-use Symfony\Component\Translation\Translator as BaseTranslator;
-
-
 
 /**
  * Translator.
- *
- * @author Fabien Potencier <fabien@symfony.com>
- * @author Filip Procházka <filip@prochazka.su>
  */
-class Translator extends BaseTranslator implements ITranslator
+class Translator extends \Symfony\Component\Translation\Translator implements \Kdyby\Translation\ITranslator
 {
 
-	use Kdyby\StrictObjects\Scream;
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
-	 * @var IUserLocaleResolver
+	 * @var \Kdyby\Translation\IUserLocaleResolver
 	 */
 	private $localeResolver;
 
 	/**
-	 * @var CatalogueCompiler
+	 * @var \Kdyby\Translation\CatalogueCompiler
 	 */
 	private $catalogueCompiler;
 
 	/**
-	 * @var FallbackResolver
+	 * @var \Kdyby\Translation\FallbackResolver
 	 */
 	private $fallbackResolver;
 
 	/**
-	 * @var IResourceLoader
+	 * @var \Kdyby\Translation\IResourceLoader
 	 */
 	private $translationsLoader;
 
 	/**
-	 * @var LoggerInterface|NULL
+	 * @var \Psr\Log\LoggerInterface|NULL
 	 */
 	private $psrLogger;
 
 	/**
-	 * @var Panel|NULL
+	 * @var \Kdyby\Translation\Diagnostics\Panel|NULL
 	 */
 	private $panel;
 
@@ -79,16 +72,16 @@ class Translator extends BaseTranslator implements ITranslator
 	private $localeWhitelist;
 
 	/**
-	 * @var MessageSelector
+	 * @var \Symfony\Component\Translation\MessageSelector
 	 */
 	private $selector;
 
 	/**
-	 * @param IUserLocaleResolver $localeResolver
-	 * @param MessageSelector $selector The message selector for pluralization
-	 * @param CatalogueCompiler $catalogueCompiler
-	 * @param FallbackResolver $fallbackResolver
-	 * @param IResourceLoader $loader
+	 * @param \Kdyby\Translation\IUserLocaleResolver $localeResolver
+	 * @param \Symfony\Component\Translation\MessageSelector $selector The message selector for pluralization
+	 * @param \Kdyby\Translation\CatalogueCompiler $catalogueCompiler
+	 * @param \Kdyby\Translation\FallbackResolver $fallbackResolver
+	 * @param \Kdyby\Translation\IResourceLoader $loader
 	 * @throws \InvalidArgumentException
 	 */
 	public function __construct(
@@ -109,28 +102,22 @@ class Translator extends BaseTranslator implements ITranslator
 		$this->setLocale(NULL);
 	}
 
-
-
 	/**
 	 * @internal
-	 * @param Panel $panel
+	 * @param \Kdyby\Translation\Diagnostics\Panel $panel
 	 */
 	public function injectPanel(Panel $panel)
 	{
 		$this->panel = $panel;
 	}
 
-
-
 	/**
-	 * @param LoggerInterface|NULL $logger
+	 * @param \Psr\Log\LoggerInterface|NULL $logger
 	 */
 	public function injectPsrLogger(LoggerInterface $logger = NULL)
 	{
 		$this->psrLogger = $logger;
 	}
-
-
 
 	/**
 	 * Translates the given string.
@@ -159,18 +146,18 @@ class Translator extends BaseTranslator implements ITranslator
 		if (empty($message)) {
 			return $message;
 
-		} elseif ($message instanceof Nette\Utils\IHtmlString || $message instanceof Latte\Runtime\IHtmlString) {
+		} elseif ($message instanceof NetteHtmlString || $message instanceof LatteHtmlString) {
 			$this->logMissingTranslation($message->__toString(), $domain, $locale);
-			return $message; // todo: what now?
+			return $message; // what now?
 		}
 
 		if (!is_string($message)) {
-			throw new InvalidArgumentException(sprintf('Message id must be a string, %s was given', gettype($message)));
+			throw new \Kdyby\Translation\InvalidArgumentException(sprintf('Message id must be a string, %s was given', gettype($message)));
 		}
 
 		if (Strings::startsWith($message, '//')) {
 			if ($domain !== NULL) {
-				throw new InvalidArgumentException(sprintf(
+				throw new \Kdyby\Translation\InvalidArgumentException(sprintf(
 					'Providing domain "%s" while also having the message "%s" absolute is not supported',
 					$domain,
 					$message
@@ -193,15 +180,13 @@ class Translator extends BaseTranslator implements ITranslator
 		return $this->trans($message, $parameters, $domain, $locale);
 	}
 
-
-
 	/**
 	 * {@inheritdoc}
 	 */
 	public function trans($message, array $parameters = [], $domain = NULL, $locale = NULL)
 	{
 		if (!is_string($message)) {
-			throw new InvalidArgumentException(sprintf('Message id must be a string, %s was given', gettype($message)));
+			throw new \Kdyby\Translation\InvalidArgumentException(sprintf('Message id must be a string, %s was given', gettype($message)));
 		}
 
 		if ($domain === NULL) {
@@ -220,15 +205,13 @@ class Translator extends BaseTranslator implements ITranslator
 		return $result;
 	}
 
-
-
 	/**
 	 * {@inheritdoc}
 	 */
 	public function transChoice($message, $number, array $parameters = [], $domain = NULL, $locale = NULL)
 	{
 		if (!is_string($message)) {
-			throw new InvalidArgumentException(sprintf('Message id must be a string, %s was given', gettype($message)));
+			throw new \Kdyby\Translation\InvalidArgumentException(sprintf('Message id must be a string, %s was given', gettype($message)));
 		}
 
 		if ($domain === NULL) {
@@ -264,19 +247,15 @@ class Translator extends BaseTranslator implements ITranslator
 		return $result;
 	}
 
-
-
 	/**
 	 * @param string $format
-	 * @param LoaderInterface $loader
+	 * @param \Symfony\Component\Translation\Loader\LoaderInterface $loader
 	 */
 	public function addLoader($format, LoaderInterface $loader)
 	{
 		parent::addLoader($format, $loader);
 		$this->translationsLoader->addLoader($format, $loader);
 	}
-
-
 
 	/**
 	 * @return \Symfony\Component\Translation\Loader\LoaderInterface[]
@@ -286,18 +265,13 @@ class Translator extends BaseTranslator implements ITranslator
 		return $this->translationsLoader->getLoaders();
 	}
 
-
-
 	/**
 	 * @param array $whitelist
-	 * @return Translator
 	 */
 	public function setLocaleWhitelist(array $whitelist = NULL)
 	{
 		$this->localeWhitelist = self::buildWhitelistRegexp($whitelist);
 	}
-
-
 
 	/**
 	 * {@inheritdoc}
@@ -320,8 +294,6 @@ class Translator extends BaseTranslator implements ITranslator
 		}
 	}
 
-
-
 	/**
 	 * {@inheritdoc}
 	 */
@@ -330,8 +302,6 @@ class Translator extends BaseTranslator implements ITranslator
 		parent::setFallbackLocales($locales);
 		$this->fallbackResolver->setFallbackLocales($locales);
 	}
-
-
 
 	/**
 	 * Returns array of locales from given resources
@@ -345,8 +315,6 @@ class Translator extends BaseTranslator implements ITranslator
 		return $locales;
 	}
 
-
-
 	/**
 	 * Sets the current locale.
 	 *
@@ -358,8 +326,6 @@ class Translator extends BaseTranslator implements ITranslator
 	{
 		parent::setLocale($locale);
 	}
-
-
 
 	/**
 	 * Returns the current locale.
@@ -375,8 +341,6 @@ class Translator extends BaseTranslator implements ITranslator
 		return parent::getLocale();
 	}
 
-
-
 	/**
 	 * @return string
 	 */
@@ -385,11 +349,9 @@ class Translator extends BaseTranslator implements ITranslator
 		return $this->defaultLocale;
 	}
 
-
-
 	/**
 	 * @param string $locale
-	 * @return Translator
+	 * @return \Kdyby\Translation\Translator
 	 */
 	public function setDefaultLocale($locale)
 	{
@@ -398,28 +360,22 @@ class Translator extends BaseTranslator implements ITranslator
 		return $this;
 	}
 
-
-
 	/**
 	 * @param string $messagePrefix
-	 * @return ITranslator
+	 * @return \Kdyby\Translation\ITranslator
 	 */
 	public function domain($messagePrefix)
 	{
 		return new PrefixedTranslator($messagePrefix, $this);
 	}
 
-
-
 	/**
-	 * @return TemplateHelpers
+	 * @return \Kdyby\Translation\TemplateHelpers
 	 */
 	public function createTemplateHelpers()
 	{
 		return new TemplateHelpers($this);
 	}
-
-
 
 	/**
 	 * {@inheritdoc}
@@ -427,7 +383,7 @@ class Translator extends BaseTranslator implements ITranslator
 	protected function loadCatalogue($locale)
 	{
 		if (empty($locale)) {
-			throw new InvalidArgumentException('Invalid locale.');
+			throw new \Kdyby\Translation\InvalidArgumentException('Invalid locale.');
 		}
 
 		if (isset($this->catalogues[$locale])) {
@@ -437,8 +393,6 @@ class Translator extends BaseTranslator implements ITranslator
 		$this->catalogues = $this->catalogueCompiler->compile($this, $this->catalogues, $locale);
 	}
 
-
-
 	/**
 	 * {@inheritdoc}
 	 */
@@ -446,8 +400,6 @@ class Translator extends BaseTranslator implements ITranslator
 	{
 		return $this->fallbackResolver->compute($this, $locale);
 	}
-
-
 
 	/**
 	 * Asserts that the locale is valid, throws an Exception if not.
@@ -461,8 +413,6 @@ class Translator extends BaseTranslator implements ITranslator
 			throw new \InvalidArgumentException(sprintf('Invalid "%s" locale.', $locale));
 		}
 	}
-
-
 
 	/**
 	 * @param string $message
@@ -479,8 +429,6 @@ class Translator extends BaseTranslator implements ITranslator
 
 		return [$domain, $message];
 	}
-
-
 
 	/**
 	 * @param string|NULL $message
@@ -505,8 +453,6 @@ class Translator extends BaseTranslator implements ITranslator
 			$this->panel->markUntranslated($message, $domain);
 		}
 	}
-
-
 
 	/**
 	 * @param array|NULL $whitelist

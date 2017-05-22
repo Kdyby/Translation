@@ -10,38 +10,26 @@
 
 namespace Kdyby\Translation\Latte;
 
-use Kdyby;
 use Kdyby\Translation\PrefixedTranslator;
-use Latte;
 use Latte\Compiler;
 use Latte\MacroNode;
 use Latte\PhpWriter;
-use Latte\Macros\MacroSet;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class TranslateMacros extends MacroSet
+class TranslateMacros extends \Latte\Macros\MacroSet
 {
 
-	use Kdyby\StrictObjects\Scream;
-
-
+	use \Kdyby\StrictObjects\Scream;
 
 	public static function install(Compiler $compiler)
 	{
 		$me = new static($compiler);
-		/** @var TranslateMacros $me */
+		/** @var \Kdyby\Translation\Latte\TranslateMacros $me */
 
 		$me->addMacro('_', [$me, 'macroTranslate'], [$me, 'macroTranslate']);
 		$me->addMacro('translator', [$me, 'macroDomain'], [$me, 'macroDomain']);
 
 		return $me;
 	}
-
-
 
 	/**
 	 * {_$var |modifiers}
@@ -62,7 +50,8 @@ class TranslateMacros extends MacroSet
 
 			return $writer->write('$_fi = new LR\FilterInfo(%var); echo %modifyContent($this->filters->filterContent("translate", $_fi, %raw))', $node->context[0], $value);
 
-		} elseif ($node->empty = ($node->args !== '')) {
+		} elseif ($node->args !== '') {
+			$node->empty = TRUE;
 			if ($this->containsOnlyOneWord($node)) {
 				return $writer->write('echo %modify(call_user_func($this->filters->translate, %node.word))');
 
@@ -72,12 +61,11 @@ class TranslateMacros extends MacroSet
 		}
 	}
 
-
-
 	/**
-	 * @param MacroNode $node
-	 * @param PhpWriter $writer
-	 * @return string|null
+	 * @param \Latte\MacroNode $node
+	 * @param \Latte\PhpWriter $writer
+	 * @throws \Latte\CompileException for invalid domain
+	 * @return string|NULL
 	 */
 	public function macroDomain(MacroNode $node, PhpWriter $writer)
 	{
@@ -88,17 +76,15 @@ class TranslateMacros extends MacroSet
 
 		} else {
 			if ($node->empty) {
-				throw new Latte\CompileException('Expected message prefix, none given');
+				throw new \Latte\CompileException('Expected message prefix, none given');
 			}
 
 			return $writer->write('$_translator = ' . PrefixedTranslator::class . '::register($this, %node.word);');
 		}
 	}
 
-
-
 	/**
-	 * @param MacroNode $node
+	 * @param \Latte\MacroNode $node
 	 * @return bool
 	 */
 	private function containsOnlyOneWord(MacroNode $node)

@@ -3,31 +3,25 @@
 /**
  * Test: Kdyby\Translation\AcceptHeaderResolver.
  *
- * @testCase KdybyTests\Translation\AcceptHeaderResolverTest
- * @author Filip Procházka <filip@prochazka.su>
- * @package Kdyby\Translation
+ * @testCase
  */
 
 namespace KdybyTests\Translation;
 
-use Kdyby;
 use Kdyby\Translation\LocaleResolver\AcceptHeaderResolver;
-use Nette;
+use Kdyby\Translation\Translator;
+use Mockery;
+use Nette\Http\IRequest;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-
-
-/**
- * @author Jáchym Toušek <enumag@gmail.com>
- */
-class AcceptHeaderResolverTest extends TestCase
+class AcceptHeaderResolverTest extends \KdybyTests\Translation\TestCase
 {
 
 	public function testResolve()
 	{
-		Assert::null($this->resolve(null, ['xx']));
+		Assert::null($this->resolve(NULL, ['xx']));
 		Assert::null($this->resolve('en', []));
 		Assert::null($this->resolve('garbage', ['en']));
 		Assert::same('en', $this->resolve('en, cs', ['en', 'cs']));
@@ -38,26 +32,22 @@ class AcceptHeaderResolverTest extends TestCase
 		Assert::same('en-gb', $this->resolve('da, en_gb', ['en', 'en-gb']));
 	}
 
-
-
 	protected function resolve($header, array $locales)
 	{
-		$httpRequest = \Mockery::mock(Nette\Http\IRequest::class);
+		$httpRequest = Mockery::mock(IRequest::class);
 		$httpRequest->shouldReceive('getHeader')->with(AcceptHeaderResolver::ACCEPT_LANGUAGE_HEADER)->andReturn($header);
 
 		$acceptHeaderResolver = new AcceptHeaderResolver($httpRequest);
 
-		$translator = \Mockery::mock(Kdyby\Translation\Translator::class);
+		$translator = Mockery::mock(Translator::class);
 		$translator->shouldReceive('getAvailableLocales')->andReturn($locales);
 
 		return $acceptHeaderResolver->resolve($translator);
 	}
 
-
-
 	protected function tearDown()
 	{
-		\Mockery::close();
+		Mockery::close();
 	}
 
 }

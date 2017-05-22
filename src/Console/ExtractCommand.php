@@ -10,36 +10,22 @@
 
 namespace Kdyby\Translation\Console;
 
-use Kdyby;
-use Kdyby\Translation\Translator;
-use Nette;
-use Symfony\Component\Console\Command\Command;
+use Kdyby\Translation\MessageCatalogue;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Kdyby\Translation\MessageCatalogue;
 use Symfony\Component\Translation\Extractor\ChainExtractor;
 use Symfony\Component\Translation\Writer\TranslationWriter;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class ExtractCommand extends Command
+class ExtractCommand extends \Symfony\Component\Console\Command\Command
 {
 
-	use Kdyby\StrictObjects\Scream;
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var string
 	 */
 	public $defaultOutputDir = '%appDir%/lang';
-
-	/**
-	 * @var \Kdyby\Translation\Translator
-	 */
-	private $translator;
 
 	/**
 	 * @var \Symfony\Component\Translation\Writer\TranslationWriter
@@ -71,36 +57,29 @@ class ExtractCommand extends Command
 	 */
 	private $outputDir;
 
-
-
 	protected function configure()
 	{
 		$this->setName('kdyby:translation-extract')
 			->setDescription('Extracts strings from application to translation files')
-			->addOption('scan-dir', 'd', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, "The directory to parse the translations. Can contain %placeholders%.", ['%appDir%'])
-			->addOption('output-format', 'f', InputOption::VALUE_REQUIRED, "Format name of the messages.")
-			->addOption('output-dir', 'o', InputOption::VALUE_OPTIONAL, "Directory to write the messages to. Can contain %placeholders%.", $this->defaultOutputDir)
-			->addOption('catalogue-language', 'l', InputOption::VALUE_OPTIONAL, "The language of the catalogue", 'en_US');
-			// todo: append
+			->addOption('scan-dir', 'd', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The directory to parse the translations. Can contain %placeholders%.', ['%appDir%'])
+			->addOption('output-format', 'f', InputOption::VALUE_REQUIRED, 'Format name of the messages.')
+			->addOption('output-dir', 'o', InputOption::VALUE_OPTIONAL, 'Directory to write the messages to. Can contain %placeholders%.', $this->defaultOutputDir)
+			->addOption('catalogue-language', 'l', InputOption::VALUE_OPTIONAL, 'The language of the catalogue', 'en_US');
 	}
-
-
 
 	protected function initialize(InputInterface $input, OutputInterface $output)
 	{
-		$this->translator = $this->getHelper('container')->getByType(Translator::class);
 		$this->writer = $this->getHelper('container')->getByType(TranslationWriter::class);
 		$this->extractor = $this->getHelper('container')->getByType(ChainExtractor::class);
 		$this->serviceLocator = $this->getHelper('container')->getContainer();
 	}
 
-
-
 	protected function validate(InputInterface $input, OutputInterface $output)
 	{
-		if (!in_array($this->outputFormat = trim($input->getOption('output-format'), '='), $formats = $this->writer->getFormats(), TRUE)) {
+		$this->outputFormat = trim($input->getOption('output-format'), '=');
+		if (!in_array($this->outputFormat, $this->writer->getFormats(), TRUE)) {
 			$output->writeln('<error>Unknown --output-format</error>');
-			$output->writeln(sprintf("<info>Choose one of: %s</info>", implode(', ', $formats)));
+			$output->writeln(sprintf('<info>Choose one of: %s</info>', implode(', ', $this->writer->getFormats())));
 
 			return FALSE;
 		}
@@ -114,7 +93,8 @@ class ExtractCommand extends Command
 			}
 		}
 
-		if (!is_dir($this->outputDir = $this->serviceLocator->expand($input->getOption('output-dir'))) || !is_writable($this->outputDir)) {
+		$this->outputDir = $this->serviceLocator->expand($input->getOption('output-dir'));
+		if (!is_dir($this->outputDir) || !is_writable($this->outputDir)) {
 			$output->writeln(sprintf('<error>Given --output-dir "%s" does not exists or is not writable.</error>', $this->outputDir));
 
 			return FALSE;
@@ -122,8 +102,6 @@ class ExtractCommand extends Command
 
 		return TRUE;
 	}
-
-
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{

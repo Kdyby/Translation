@@ -10,49 +10,27 @@
 
 namespace Kdyby\Translation;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 interface Exception
 {
 
 }
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class InvalidArgumentException extends \InvalidArgumentException implements Exception
+class InvalidArgumentException extends \InvalidArgumentException implements \Kdyby\Translation\Exception
 {
 
 }
 
-
-
-class InvalidStateException extends \RuntimeException implements Exception
+class InvalidStateException extends \RuntimeException implements \Kdyby\Translation\Exception
 {
 
 }
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class InvalidResourceException extends \UnexpectedValueException implements Exception
+class InvalidResourceException extends \UnexpectedValueException implements \Kdyby\Translation\Exception
 {
 
 }
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class LoaderNotFoundException extends \RuntimeException implements Exception
+class LoaderNotFoundException extends \RuntimeException implements \Kdyby\Translation\Exception
 {
 
 }

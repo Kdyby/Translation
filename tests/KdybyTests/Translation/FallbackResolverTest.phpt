@@ -4,25 +4,17 @@
  * Test: Kdyby\Translation\FallbackResolver.
  *
  * @testCase KdybyTests\Translation\FallbackResolverTest
- * @author Filip Procházka <filip@prochazka.su>
- * @package Kdyby\Translation
  */
 
 namespace KdybyTests\Translation;
 
-use Kdyby;
-use Nette;
-use Tester;
+use Kdyby\Translation\FallbackResolver;
+use Nette\Localization\ITranslator;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class FallbackResolverTest extends TestCase
+class FallbackResolverTest extends \KdybyTests\Translation\TestCase
 {
 
 	public function testCompute()
@@ -30,11 +22,11 @@ class FallbackResolverTest extends TestCase
 		$container = $this->createContainer();
 
 		/** @var \Kdyby\Translation\Translator $translator */
-		$translator = $container->getByType(Nette\Localization\ITranslator::class);
+		$translator = $container->getByType(ITranslator::class);
 		$translator->setFallbackLocales(['cs_CZ', 'cs']);
 
 		/** @var \Kdyby\Translation\FallbackResolver $fallbackResolver */
-		$fallbackResolver = $container->getByType(Kdyby\Translation\FallbackResolver::class);
+		$fallbackResolver = $container->getByType(FallbackResolver::class);
 
 		Assert::same(['cs_CZ'], $fallbackResolver->compute($translator, 'cs'));
 		Assert::same(['sk_SK', 'cs_CZ', 'cs'], $fallbackResolver->compute($translator, 'sk'));

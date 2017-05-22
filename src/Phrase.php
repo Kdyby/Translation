@@ -10,19 +10,13 @@
 
 namespace Kdyby\Translation;
 
-use Kdyby;
-
-
-
 /**
  * Object wrapper for message that can store default parameters and related information for translation.
- *
- * @author Filip Procházka <filip@prochazka.su>
  */
 class Phrase
 {
 
-	use Kdyby\StrictObjects\Scream;
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var string
@@ -50,11 +44,9 @@ class Phrase
 	public $locale;
 
 	/**
-	 * @var Translator|NULL
+	 * @var \Kdyby\Translation\Translator|NULL
 	 */
 	private $translator;
-
-
 
 	/**
 	 * @param string $message
@@ -80,10 +72,8 @@ class Phrase
 		$this->locale = $locale;
 	}
 
-
-
 	/**
-	 * @param Translator $translator
+	 * @param \Kdyby\Translation\Translator $translator
 	 * @param int|NULL $count
 	 * @param array $parameters
 	 * @param string|NULL $domain
@@ -93,7 +83,7 @@ class Phrase
 	public function translate(Translator $translator, $count = NULL, array $parameters = [], $domain = NULL, $locale = NULL)
 	{
 		if (!is_string($this->message)) {
-			throw new InvalidStateException("Message is not a string, type " . gettype($this->message) . ' given.');
+			throw new \Kdyby\Translation\InvalidStateException('Message is not a string, type ' . gettype($this->message) . ' given.');
 		}
 
 		$count = ($count !== NULL) ? (int) $count : $this->count;
@@ -104,8 +94,6 @@ class Phrase
 		return $translator->translate($this->message, $count, (array) $parameters, $domain, $locale);
 	}
 
-
-
 	/**
 	 * @internal
 	 * @param \Kdyby\Translation\Translator $translator
@@ -114,8 +102,6 @@ class Phrase
 	{
 		$this->translator = $translator;
 	}
-
-
 
 	public function __toString()
 	{
@@ -132,8 +118,6 @@ class Phrase
 
 		return '';
 	}
-
-
 
 	public function __sleep()
 	{

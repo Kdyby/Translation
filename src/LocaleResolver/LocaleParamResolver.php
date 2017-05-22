@@ -10,43 +10,33 @@
 
 namespace Kdyby\Translation\LocaleResolver;
 
-use Kdyby;
-use Nette;
+use Kdyby\Translation\Translator;
 use Nette\Application\Application;
 use Nette\Application\Request;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class LocaleParamResolver implements Kdyby\Translation\IUserLocaleResolver
+class LocaleParamResolver implements \Kdyby\Translation\IUserLocaleResolver
 {
 
-	use Kdyby\StrictObjects\Scream;
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
-	 * @var Nette\Application\Request
+	 * @var \Nette\Application\Request
 	 */
 	private $request;
 
 	/**
-	 * @var Kdyby\Translation\Translator
+	 * @var \Kdyby\Translation\Translator
 	 */
 	private $translator;
 
-
-
-	public function setTranslator(Kdyby\Translation\Translator $translator)
+	public function setTranslator(Translator $translator)
 	{
 		$this->translator = $translator;
 	}
 
-
-
 	/**
-	 * @param Application $sender
-	 * @param Request $request
+	 * @param \Nette\Application\Application $sender
+	 * @param \Nette\Application\Request $request
 	 */
 	public function onRequest(Application $sender, Request $request)
 	{
@@ -65,13 +55,11 @@ class LocaleParamResolver implements Kdyby\Translation\IUserLocaleResolver
 		$this->translator->getLocale(); // invoke resolver
 	}
 
-
-
 	/**
 	 * @param \Kdyby\Translation\Translator $translator
 	 * @return string|NULL
 	 */
-	public function resolve(Kdyby\Translation\Translator $translator)
+	public function resolve(Translator $translator)
 	{
 		if ($this->request === NULL) {
 			return NULL;

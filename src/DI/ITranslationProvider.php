@@ -10,14 +10,6 @@
 
 namespace Kdyby\Translation\DI;
 
-use Kdyby;
-use Nette;
-
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 interface ITranslationProvider
 {
 

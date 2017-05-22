@@ -10,19 +10,11 @@
 
 namespace Kdyby\Translation;
 
-use Kdyby;
-use Nette;
-
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 interface IUserLocaleResolver
 {
 
 	/**
-	 * @param Translator $translator
+	 * @param \Kdyby\Translation\Translator $translator
 	 * @return string|NULL
 	 */
 	public function resolve(Translator $translator);

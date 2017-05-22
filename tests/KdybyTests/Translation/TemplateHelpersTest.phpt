@@ -3,32 +3,23 @@
 /**
  * Test: Kdyby\Translation\TemplateHelpers.
  *
- * @testCase KdybyTests\Translation\TemplateHelpersTest
- * @author Filip Procházka <filip@prochazka.su>
- * @package Kdyby\Translation
+ * @testCase
  */
 
 namespace KdybyTests\Translation;
 
-use Kdyby;
-use Nette;
-use Tester;
+use Kdyby\Translation\TemplateHelpers;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class TemplateHelpersTest extends TestCase
+class TemplateHelpersTest extends \KdybyTests\Translation\TestCase
 {
 
 	public function testTranslate()
 	{
 		$translator = $this->createTranslator();
-		$helper = new Kdyby\Translation\TemplateHelpers($translator);
+		$helper = new TemplateHelpers($translator);
 
 		Assert::same('Ahoj %name%', $helper->translate('front.homepage.namedHello', 3, NULL, NULL, 'cs'));
 		Assert::same('Ahoj Peter', $helper->translate('front.homepage.namedHello', 3, ['name' => 'Peter'], NULL, 'cs'));

@@ -10,44 +10,36 @@
 
 namespace Kdyby\Translation\LocaleResolver;
 
-use Kdyby;
 use Kdyby\Translation\IUserLocaleResolver;
+use Kdyby\Translation\Translator;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class ChainResolver implements IUserLocaleResolver
+class ChainResolver implements \Kdyby\Translation\IUserLocaleResolver
 {
 
-	use Kdyby\StrictObjects\Scream;
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
-	 * @var array|IUserLocaleResolver[]
+	 * @var array|\Kdyby\Translation\IUserLocaleResolver[]
 	 */
 	private $resolvers = [];
 
-
-
 	/**
-	 * @param IUserLocaleResolver $resolver
+	 * @param \Kdyby\Translation\IUserLocaleResolver $resolver
 	 */
 	public function addResolver(IUserLocaleResolver $resolver)
 	{
 		array_unshift($this->resolvers, $resolver); // first the newer
 	}
 
-
-
 	/**
 	 * @param \Kdyby\Translation\Translator $translator
 	 * @return string|NULL
 	 */
-	public function resolve(Kdyby\Translation\Translator $translator)
+	public function resolve(Translator $translator)
 	{
 		foreach ($this->resolvers as $resolver) {
-			if (($locale = $resolver->resolve($translator)) !== NULL) {
+			$locale = $resolver->resolve($translator);
+			if ($locale !== NULL) {
 				return $locale;
 			}
 		}

@@ -10,31 +10,24 @@
 
 namespace KdybyTests\Translation;
 
-use Kdyby;
-use Nette;
 use Nette\Application\UI\Form;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class HomepagePresenter extends Nette\Application\UI\Presenter
+class HomepagePresenter extends \Nette\Application\UI\Presenter
 {
 
 	/**
-	 * @return Form
+	 * @return \Nette\Application\UI\Form
 	 */
 	protected function createComponent($name)
 	{
 		$form = new Form();
 		$form->addProtection('Invalid CSRF token');
-		$form->addError("Nope!");
+		$form->addError('Nope!');
 		$form->addText('a', $label = NULL, $cols = NULL, $maxLength = NULL);
 		$form->addPassword('b', $label = NULL, $cols = NULL, $maxLength = NULL);
 		$form->addTextArea('c', $label = NULL, $cols = 40, $rows = 10);
 		$form->addUpload('d', $label = NULL)
-			->addError("Yep!");
+			->addError('Yep!');
 		$form->addHidden('e', $default = NULL);
 		$form->addCheckbox('f', $caption = NULL);
 		$form->addRadioList('g', $label = NULL, $items = NULL);
@@ -44,11 +37,11 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 		$form->addButton('k', $caption);
 		$form->addImage('l', $src = NULL, $alt = NULL)
 			->addCondition($form::EQUAL, 1)
-				->addRule($form::FILLED, "The image is missing!", 4);
+			->addRule($form::FILLED, 'The image is missing!', 4);
 
-		$form->addSubmit("send", "Submit");
+		$form->addSubmit('send', 'Submit');
 		$form->onSuccess[] = function (Form $form, $values) {
-			$this->flashMessage("Entry with id %id% was saved", 'warning')
+			$this->flashMessage('Entry with id %id% was saved', 'warning')
 				->parameters = ['id' => $this->getParameter('id')];
 
 			$this->redirect('list');

@@ -3,28 +3,18 @@
 /**
  * Test: Kdyby\Translation\Phrase.
  *
- * @testCase KdybyTests\Translation\PhraseTest
- * @author Filip Procházka <filip@prochazka.su>
- * @package Kdyby\Translation
+ * @testCase
  */
 
 namespace KdybyTests\Translation;
 
-use Kdyby;
 use Kdyby\Translation\Phrase;
-use Nette;
 use Nette\Application\UI\Form;
-use Tester;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class PhraseTest extends TestCase
+class PhraseTest extends \KdybyTests\Translation\TestCase
 {
 
 	public function testCheckboxCaption()
@@ -37,8 +27,6 @@ class PhraseTest extends TestCase
 		$check = $form->addCheckbox('useCredits', new Phrase('front.orderForm.useCredits', $credits = 10));
 		Assert::same('Use 10 credits', $check->getLabelPart()->getText());
 	}
-
-
 
 	public function testValidationMessage()
 	{
@@ -53,7 +41,7 @@ class PhraseTest extends TestCase
 		$form->validate([$check]);
 
 		Assert::same([
-			'Use 10 credits'
+			'Use 10 credits',
 		], $check->getErrors());
 
 		Assert::same([['op' => ':filled', 'msg' => 'Use 10 credits']], $check->getControlPart()->attrs['data-nette-rules']);

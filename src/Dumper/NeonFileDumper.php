@@ -10,24 +10,16 @@
 
 namespace Kdyby\Translation\Dumper;
 
-use Kdyby;
 use Nette\Neon\Neon;
-use Symfony\Component\Translation\Dumper\FileDumper;
 use Symfony\Component\Translation\MessageCatalogue;
-
-
 
 /**
  * Generates Neon files from a message catalogue.
- *
- * @author Filip Procházka <filip@prochazka.su>
  */
-class NeonFileDumper extends FileDumper
+class NeonFileDumper extends \Symfony\Component\Translation\Dumper\FileDumper
 {
 
-	use Kdyby\StrictObjects\Scream;
-
-
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
 	 * {@inheritDoc}
@@ -37,8 +29,6 @@ class NeonFileDumper extends FileDumper
 		return Neon::encode($messages->all($domain), Neon::BLOCK);
 	}
 
-
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -46,8 +36,6 @@ class NeonFileDumper extends FileDumper
 	{
 		return Neon::encode($messages->all($domain), Neon::BLOCK);
 	}
-
-
 
 	/**
 	 * {@inheritDoc}

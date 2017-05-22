@@ -10,39 +10,35 @@
 
 namespace KdybyTests\Translation;
 
-use Kdyby;
-use Nette;
-use Tester;
+use Kdyby\Console\DI\ConsoleExtension;
+use Kdyby\Monolog\DI\MonologExtension;
+use Kdyby\Translation\DI\TranslationExtension;
+use Nette\Configurator;
+use Nette\Localization\ITranslator;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-abstract class TestCase extends Tester\TestCase
+abstract class TestCase extends \Tester\TestCase
 {
 
+	/**
+	 * @param string|NULL $configName
+	 * @return \Nette\DI\Container
+	 */
 	protected function createContainer($configName = NULL)
 	{
-		$config = new Nette\Configurator();
+		$config = new Configurator();
 		$config->setTempDirectory(TEMP_DIR);
 		$config->addParameters(['appDir' => __DIR__]);
-		Kdyby\Translation\DI\TranslationExtension::register($config);
-		Kdyby\Monolog\DI\MonologExtension::register($config);
-		Kdyby\Console\DI\ConsoleExtension::register($config);
+		TranslationExtension::register($config);
+		MonologExtension::register($config);
+		ConsoleExtension::register($config);
 		$config->addConfig(__DIR__ . '/../nette-reset.neon');
 
 		if ($configName) {
 			$config->addConfig(__DIR__ . '/config/' . $configName . '.neon');
 		}
 
-		$container = $config->createContainer();
-		/** @var \Nette\DI\Container|\SystemContainer $container */
-
-		return $container;
+		return $config->createContainer();
 	}
-
-
 
 	/**
 	 * @param string|NULL $configName
@@ -52,8 +48,8 @@ abstract class TestCase extends Tester\TestCase
 	{
 		$container = $this->createContainer($configName);
 		/** @var \Kdyby\Translation\Translator $translator */
-		$translator = $container->getByType(Nette\Localization\ITranslator::class);
-		/** pass */
+		$translator = $container->getByType(ITranslator::class);
+		// type hacking
 		return $translator;
 	}
 

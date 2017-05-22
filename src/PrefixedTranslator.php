@@ -10,19 +10,13 @@
 
 namespace Kdyby\Translation;
 
-use Kdyby;
-use Latte;
+use Latte\Runtime\Template;
 use Nette\Utils\Strings;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class PrefixedTranslator implements ITranslator
+class PrefixedTranslator implements \Kdyby\Translation\ITranslator
 {
 
-	use Kdyby\StrictObjects\Scream;
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var \Kdyby\Translation\ITranslator|\Kdyby\Translation\Translator|\Kdyby\Translation\PrefixedTranslator
@@ -34,8 +28,6 @@ class PrefixedTranslator implements ITranslator
 	 */
 	private $prefix;
 
-
-
 	/**
 	 * @param string $prefix
 	 * @param \Kdyby\Translation\ITranslator $translator
@@ -44,23 +36,21 @@ class PrefixedTranslator implements ITranslator
 	public function __construct($prefix, ITranslator $translator)
 	{
 		if (!$translator instanceof Translator && !$translator instanceof PrefixedTranslator) {
-			throw new InvalidArgumentException(sprintf(
+			throw new \Kdyby\Translation\InvalidArgumentException(sprintf(
 				'The given translator must be instance of %s or %s, bug %s was given',
 				Translator::class,
-				PrefixedTranslator::class,
+				self::class,
 				get_class($translator)
 			));
 		}
 
-		if ($translator instanceof PrefixedTranslator) { // todo: this is just an experiment
+		if ($translator instanceof PrefixedTranslator) {
 			$translator = $translator->unwrap();
 		}
 
 		$this->translator = $translator;
 		$this->prefix = rtrim($prefix, '.');
 	}
-
-
 
 	/**
 	 * @param string|\Kdyby\Translation\Phrase $message
@@ -94,8 +84,6 @@ class PrefixedTranslator implements ITranslator
 		return $this->translator->translate($prefix . $translationString, $count, (array) $parameters, $domain, $locale);
 	}
 
-
-
 	/**
 	 * @return \Kdyby\Translation\ITranslator
 	 */
@@ -104,37 +92,31 @@ class PrefixedTranslator implements ITranslator
 		return $this->translator;
 	}
 
-
-
 	/**
-	 * @param Latte\Runtime\Template $template
+	 * @param \Latte\Runtime\Template $template
 	 * @return \Kdyby\Translation\ITranslator
 	 */
-	public function unregister(Latte\Runtime\Template $template)
+	public function unregister(Template $template)
 	{
 		$translator = $this->unwrap();
 		self::overrideTemplateTranslator($template, $translator);
 		return $translator;
 	}
 
-
-
 	/**
-	 * @param Latte\Runtime\Template $template
+	 * @param \Latte\Runtime\Template $template
 	 * @param string $prefix
 	 * @throws \Kdyby\Translation\InvalidArgumentException
 	 * @return \Kdyby\Translation\ITranslator
 	 */
-	public static function register(Latte\Runtime\Template $template, $prefix)
+	public static function register(Template $template, $prefix)
 	{
 		$translator = new static($prefix, $template->global->translator);
 		self::overrideTemplateTranslator($template, $translator);
 		return $translator;
 	}
 
-
-
-	private static function overrideTemplateTranslator(Latte\Runtime\Template $template, ITranslator $translator)
+	private static function overrideTemplateTranslator(Template $template, ITranslator $translator)
 	{
 		$template->getEngine()->addFilter('translate', [new TemplateHelpers($translator), 'translate']);
 	}

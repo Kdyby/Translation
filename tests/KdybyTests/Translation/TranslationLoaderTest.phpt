@@ -3,28 +3,19 @@
 /**
  * Test: Kdyby\Translation\TranslationLoader.
  *
- * @testCase KdybyTests\Translation\TranslationLoaderTest
- * @author Filip Procházka <filip@prochazka.su>
- * @package Kdyby\Translation
+ * @testCase
  */
 
 namespace KdybyTests\Translation;
 
-use Kdyby;
+use Kdyby\Translation\Loader\NeonFileLoader;
+use Kdyby\Translation\MessageCatalogue;
 use Kdyby\Translation\TranslationLoader;
-use Nette;
-use Symfony;
-use Tester;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class TranslationLoaderTest extends TestCase
+class TranslationLoaderTest extends \KdybyTests\Translation\TestCase
 {
 
 	public function testAddLoaders()
@@ -32,18 +23,17 @@ class TranslationLoaderTest extends TestCase
 		$loader = new TranslationLoader();
 		Assert::same([], $loader->getLoaders());
 
-		$loader->addLoader('neon', $neonLoader = new Kdyby\Translation\Loader\NeonFileLoader());
+		$neonLoader = new NeonFileLoader();
+		$loader->addLoader('neon', $neonLoader);
 		Assert::same(['neon' => $neonLoader], $loader->getLoaders());
 	}
-
-
 
 	public function testLoadResource()
 	{
 		$loader = new TranslationLoader();
-		$loader->addLoader('neon', new Kdyby\Translation\Loader\NeonFileLoader());
+		$loader->addLoader('neon', new NeonFileLoader());
 
-		$catalogue = new Kdyby\Translation\MessageCatalogue('cs_CZ');
+		$catalogue = new MessageCatalogue('cs_CZ');
 		$loader->loadResource('neon', __DIR__ . '/lang/front.cs_CZ.neon', 'front', $catalogue);
 
 		Assert::true($catalogue->defines('homepage.hello', 'front'));

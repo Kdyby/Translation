@@ -3,35 +3,21 @@
 /**
  * Test: Kdyby\Translation\TranslateMacros.
  *
- * @testCase KdybyTests\Translation\TranslateMacrosTest
- * @author Filip Procházka <filip@prochazka.su>
- * @package Kdyby\Translation
+ * @testCase
  */
 
 namespace KdybyTests\Translation;
 
-use Kdyby;
 use Kdyby\Translation\Phrase;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
-use Nette;
-use Latte;
-use Tester;
+use Nette\Application\UI\ITemplateFactory;
+use Nette\Localization\ITranslator;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-
-
-class ControlMock extends Nette\Application\UI\Control
-{
-
-}
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class TranslateMacrosTest extends TestCase
+class TranslateMacrosTest extends \KdybyTests\Translation\TestCase
 {
 
 	/** @var \Kdyby\Translation\Translator */
@@ -40,8 +26,6 @@ class TranslateMacrosTest extends TestCase
 	/** @var \Nette\Bridges\ApplicationLatte\Template */
 	private $template;
 
-
-
 	protected function setUp()
 	{
 		parent::setUp();
@@ -49,19 +33,17 @@ class TranslateMacrosTest extends TestCase
 		$container = $this->createContainer();
 
 		/** @var \Kdyby\Translation\Translator $translator */
-		$this->translator = $container->getByType(Nette\Localization\ITranslator::class);
+		$this->translator = $container->getByType(ITranslator::class);
 		$this->translator->setFallbackLocales(['cs_CZ', 'cs']);
 		$this->translator->setLocale('cs');
 
-		$this->template = $container->getByType(Nette\Application\UI\ITemplateFactory::class)
+		$this->template = $container->getByType(ITemplateFactory::class)
 			->createTemplate(new ControlMock());
 	}
 
-
-
-	public function testRender_translate()
+	public function testRenderTranslate()
 	{
-		$this->template->setFile(__DIR__ . '/files/Homepage.default.latte');
+		$this->template->setFile(__DIR__ . '/data/files/Homepage.default.latte');
 
 		Assert::same('Ahoj %name%
 Ahoj Peter
@@ -84,11 +66,9 @@ front.missingKey.namedHelloCounting
 front.missingKey.namedHelloCounting' . "\n", $this->template->__toString());
 	}
 
-
-
-	public function testRender_translate_noescape()
+	public function testRenderTranslateNoescape()
 	{
-		$this->template->setFile(__DIR__ . '/files/Article.noescape.latte');
+		$this->template->setFile(__DIR__ . '/data/files/Article.noescape.latte');
 
 		Assert::same('Ahoj &lt;b&gt;%name%&lt;/b&gt;
 Ahoj &lt;b&gt;Peter&lt;/b&gt;
@@ -133,11 +113,9 @@ front.missingKey.namedHelloCounting
 front.missingKey.namedHelloCounting' . "\n", $this->template->__toString());
 	}
 
-
-
-	public function testRender_translate_prefixed()
+	public function testRenderTranslatePrefixed()
 	{
-		$this->template->setFile(__DIR__ . '/files/Order.default.latte');
+		$this->template->setFile(__DIR__ . '/data/files/Order.default.latte');
 
 		Assert::match('
 Ahoj %name%
@@ -164,8 +142,6 @@ front.missingKey.namedHelloCounting
 front.missingKey.namedHelloCounting' . "\n", $this->template->__toString());
 	}
 
-
-
 	public function testPhraseInFlashMessage()
 	{
 		$logger = new Logger('translator');
@@ -173,7 +149,7 @@ front.missingKey.namedHelloCounting' . "\n", $this->template->__toString());
 		$logger->pushHandler($handler);
 		$this->translator->injectPsrLogger($logger);
 
-		$this->template->setFile(__DIR__ . '/files/flashMessage.latte');
+		$this->template->setFile(__DIR__ . '/data/files/flashMessage.latte');
 		$this->template->setParameters([
 			'flashes' => unserialize(serialize([
 				(object) [

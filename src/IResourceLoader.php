@@ -10,15 +10,9 @@
 
 namespace Kdyby\Translation;
 
-use Kdyby;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Translation\MessageCatalogue;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 interface IResourceLoader
 {
 
@@ -26,24 +20,20 @@ interface IResourceLoader
 	 * Adds a loader to the translation extractor.
 	 *
 	 * @param string $format The format of the loader
-	 * @param LoaderInterface $loader
+	 * @param \Symfony\Component\Translation\Loader\LoaderInterface $loader
 	 */
 	public function addLoader($format, LoaderInterface $loader);
 
-
-
 	/**
-	 * @return LoaderInterface[]
+	 * @return \Symfony\Component\Translation\Loader\LoaderInterface[]
 	 */
 	public function getLoaders();
-
-
 
 	/**
 	 * @param string $format
 	 * @param string $resource
 	 * @param string $domain
-	 * @param MessageCatalogue $catalogue
+	 * @param \Symfony\Component\Translation\MessageCatalogue $catalogue
 	 * @throws \Kdyby\Translation\LoaderNotFoundException
 	 */
 	public function loadResource($format, $resource, $domain, MessageCatalogue $catalogue);

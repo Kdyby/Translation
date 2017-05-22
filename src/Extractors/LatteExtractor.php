@@ -10,30 +10,21 @@
 
 namespace Kdyby\Translation\Extractors;
 
-use Kdyby;
-use Latte\Parser;
 use Latte\MacroTokens;
+use Latte\Parser;
 use Latte\PhpWriter;
 use Nette\Utils\Finder;
-use Symfony\Component\Translation\Extractor\ExtractorInterface;
 use Symfony\Component\Translation\MessageCatalogue;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class LatteExtractor implements ExtractorInterface
+class LatteExtractor implements \Symfony\Component\Translation\Extractor\ExtractorInterface
 {
 
-	use Kdyby\StrictObjects\Scream;
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var string
 	 */
 	private $prefix;
-
-
 
 	/**
 	 * {@inheritDoc}
@@ -45,13 +36,11 @@ class LatteExtractor implements ExtractorInterface
 		}
 	}
 
-
-
 	/**
 	 * Extracts translation messages from a file to the catalogue.
 	 *
-	 * @param string           $file The path to look into
-	 * @param MessageCatalogue $catalogue The catalogue
+	 * @param string $file The path to look into
+	 * @param \Symfony\Component\Translation\MessageCatalogue $catalogue The catalogue
 	 */
 	public function extractFile($file, MessageCatalogue $catalogue)
 	{
@@ -90,8 +79,6 @@ class LatteExtractor implements ExtractorInterface
 			}
 		}
 	}
-
-
 
 	/**
 	 * {@inheritDoc}

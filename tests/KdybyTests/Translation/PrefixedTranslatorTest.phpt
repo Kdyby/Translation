@@ -4,26 +4,18 @@
  * Test: Kdyby\Translation\PrefixedTranslator.
  *
  * @testCase KdybyTests\Translation\PrefixedTranslatorTest
- * @author Filip Procházka <filip@prochazka.su>
- * @package Kdyby\Translation
  */
 
 namespace KdybyTests\Translation;
 
-use Kdyby;
 use Kdyby\Translation\Phrase;
-use Nette;
-use Tester;
+use Kdyby\Translation\PrefixedTranslator;
+use Nette\Localization\ITranslator;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class PrefixedTranslatorTest extends TestCase
+class PrefixedTranslatorTest extends \KdybyTests\Translation\TestCase
 {
 
 	public function testTranslate()
@@ -31,8 +23,8 @@ class PrefixedTranslatorTest extends TestCase
 		$translator = $this->createTranslator();
 		$prefixed = $translator->domain('front.homepage');
 
-		Assert::true($prefixed instanceof Kdyby\Translation\PrefixedTranslator);
-		Assert::true($prefixed instanceof Nette\Localization\ITranslator);
+		Assert::true($prefixed instanceof PrefixedTranslator);
+		Assert::true($prefixed instanceof ITranslator);
 
 		Assert::same('Hello world', $prefixed->translate('hello'));
 	}
@@ -66,7 +58,7 @@ class PrefixedTranslatorTest extends TestCase
 		$translator = $this->createTranslator();
 		$prefixed = $translator->domain('front.homepage');
 
-		Assert::same('Hello world', $prefixed->translate("//front.homepage.hello"));
+		Assert::same('Hello world', $prefixed->translate('//front.homepage.hello'));
 	}
 
 	public function testGlobalPhraseTranslateWithParameters()
@@ -84,6 +76,7 @@ class PrefixedTranslatorTest extends TestCase
 
 		Assert::same('Use 5 credits', $prefixed->translate(new Phrase('//front.orderForm.useCredits', 5)));
 	}
+
 }
 
 (new PrefixedTranslatorTest())->run();

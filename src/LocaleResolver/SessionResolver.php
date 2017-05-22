@@ -10,11 +10,9 @@
 
 namespace Kdyby\Translation\LocaleResolver;
 
-use Kdyby;
 use Kdyby\Translation\Translator;
-use Nette;
-
-
+use Nette\Http\IResponse;
+use Nette\Http\Session;
 
 /**
  * When you don't want to use the param resolver,
@@ -26,13 +24,11 @@ use Nette;
  *
  * Get this class using autowire, but beware, use only Kdyby\Translation\LocaleResolver\SessionResolver,
  * do not try to autowire Kdyby\Translation\IUserLocaleResolver, it will fail.
- *
- * @author Filip Procházka <filip@prochazka.su>
  */
-class SessionResolver implements Kdyby\Translation\IUserLocaleResolver
+class SessionResolver implements \Kdyby\Translation\IUserLocaleResolver
 {
 
-	use Kdyby\StrictObjects\Scream;
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var \Nette\Http\SessionSection|\stdClass
@@ -49,16 +45,12 @@ class SessionResolver implements Kdyby\Translation\IUserLocaleResolver
 	 */
 	private $session;
 
-
-
-	public function __construct(Nette\Http\Session $session, Nette\Http\IResponse $httpResponse)
+	public function __construct(Session $session, IResponse $httpResponse)
 	{
 		$this->localeSession = $session->getSection(get_class($this));
 		$this->httpResponse = $httpResponse;
 		$this->session = $session;
 	}
-
-
 
 	/**
 	 * @param string $locale
@@ -68,10 +60,8 @@ class SessionResolver implements Kdyby\Translation\IUserLocaleResolver
 		$this->localeSession->locale = $locale;
 	}
 
-
-
 	/**
-	 * @param Translator $translator
+	 * @param \Kdyby\Translation\Translator $translator
 	 * @return string|NULL
 	 */
 	public function resolve(Translator $translator)

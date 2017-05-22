@@ -10,47 +10,39 @@
 
 namespace Kdyby\Translation\LocaleResolver;
 
-use Kdyby;
-use Nette;
+use Kdyby\Translation\Translator;
+use Nette\Http\IRequest;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class AcceptHeaderResolver implements Kdyby\Translation\IUserLocaleResolver
+class AcceptHeaderResolver implements \Kdyby\Translation\IUserLocaleResolver
 {
 
-	use Kdyby\StrictObjects\Scream;
+	use \Kdyby\StrictObjects\Scream;
 
 	const ACCEPT_LANGUAGE_HEADER = 'Accept-Language';
 
 	/**
-	 * @var Nette\Http\IRequest
+	 * @var \Nette\Http\IRequest
 	 */
 	private $httpRequest;
 
-
-
 	/**
-	 * @param Nette\Http\IRequest $httpRequest
+	 * @param \Nette\Http\IRequest $httpRequest
 	 */
-	public function __construct(Nette\Http\IRequest $httpRequest)
+	public function __construct(IRequest $httpRequest)
 	{
 		$this->httpRequest = $httpRequest;
 	}
 
-
-
 	/**
 	 * Detects language from the Accept-Language header.
 	 * This method uses the code from Nette\Http\Request::detectLanguage.
-	 * @link https://github.com/nette/http/blob/0d9ef49051fba799148ef877dd32928a68731766/src/Http/Request.php#L294-L326
-	 * @author David Grudl
-	 * @param Kdyby\Translation\Translator $translator
+	 *
+	 * @see https://github.com/nette/http/blob/0d9ef49051fba799148ef877dd32928a68731766/src/Http/Request.php#L294-L326
+	 *
+	 * @param \Kdyby\Translation\Translator $translator
 	 * @return string|NULL
 	 */
-	public function resolve(Kdyby\Translation\Translator $translator)
+	public function resolve(Translator $translator)
 	{
 		$header = $this->httpRequest->getHeader(self::ACCEPT_LANGUAGE_HEADER);
 		if (!$header) {

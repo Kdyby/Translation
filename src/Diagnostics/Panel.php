@@ -10,29 +10,22 @@
 
 namespace Kdyby\Translation\Diagnostics;
 
-use Kdyby;
-use Kdyby\Translation\InvalidResourceException;
 use Kdyby\Translation\Translator;
-use Nette;
 use Nette\Application\Application;
 use Nette\Application\Request;
 use Nette\Reflection\ClassType;
+use Nette\Utils\Arrays;
+use Nette\Utils\Html;
+use Nette\Utils\Strings;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
-use Symfony\Component\Yaml;
 use Tracy\BlueScreen;
 use Tracy\Debugger;
 use Tracy\Helpers;
-use Tracy\IBarPanel;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class Panel implements IBarPanel
+class Panel implements \Tracy\IBarPanel
 {
 
-	use Kdyby\StrictObjects\Scream;
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var \Kdyby\Translation\Translator
@@ -60,7 +53,7 @@ class Panel implements IBarPanel
 	private $localeWhitelist = [];
 
 	/**
-	 * @var array|Kdyby\Translation\IUserLocaleResolver[]
+	 * @var array|\Kdyby\Translation\IUserLocaleResolver[]
 	 */
 	private $localeResolvers = [];
 
@@ -74,8 +67,6 @@ class Panel implements IBarPanel
 	 */
 	private $rootDir;
 
-
-
 	/**
 	 * @param string $rootDir
 	 */
@@ -83,8 +74,6 @@ class Panel implements IBarPanel
 	{
 		$this->rootDir = $rootDir;
 	}
-
-
 
 	/**
 	 * Renders HTML code for custom tab.
@@ -97,8 +86,6 @@ class Panel implements IBarPanel
 			. $this->translator->getLocale() . ($this->untranslated ? ' <b>(' . count(array_unique($this->untranslated, SORT_REGULAR)) . ' errors)</b>' : '')
 			. '</span>';
 	}
-
-
 
 	/**
 	 * Renders HTML code for custom panel.
@@ -125,13 +112,14 @@ class Panel implements IBarPanel
 			foreach ($this->onRequestLocaleSnapshot as $i => $snapshot) {
 				$s = $i > 0 ? '<br>' : '';
 
-				/** @var Request[] $snapshot */
+				/** @var \Nette\Application\Request[] $snapshot */
 				$params = $snapshot['request']->getParameters();
 				$s .= '<tr><th width="10px">&nbsp;</th>' .
 					'<th>' . $h($snapshot['request']->getPresenterName() . (isset($params['action']) ? ':' . $params['action'] : '')) . '</th>' .
 					'<th>' . $h($snapshot['locale']) . '</th></tr>';
 
 				$l = 1;
+				/** @var mixed[][] $snapshot */
 				foreach ($snapshot['resolvers'] as $name => $resolvedLocale) {
 					$s .= '<tr><td>' . ($l++) . '.</td><td>' . $h($name) . '</td><td>' . $h($resolvedLocale) . '</td></tr>';
 				}
@@ -159,16 +147,14 @@ class Panel implements IBarPanel
 		}
 
 		return empty($panel) ? '' :
-			'<h1>Missing translations: ' .  count(array_unique($this->untranslated, SORT_REGULAR)) .
-			', Resources: ' . count(Nette\Utils\Arrays::flatten($this->resources)) . '</h1>' .
+			'<h1>Missing translations: ' . count(array_unique($this->untranslated, SORT_REGULAR)) .
+			', Resources: ' . count(Arrays::flatten($this->resources)) . '</h1>' .
 			'<div class="nette-inner tracy-inner kdyby-TranslationPanel" style="min-width:500px">' . implode($panel) . '</div>' .
 			'<style>
 				#nette-debug .kdyby-TranslationPanel h2,
 				#tracy-debug .kdyby-TranslationPanel h2 {font-size: 23px;}
 			</style>';
 	}
-
-
 
 	private function renderUntranslated()
 	{
@@ -183,7 +169,7 @@ class Panel implements IBarPanel
 			if ($message instanceof \Exception || $message instanceof \Throwable) {
 				$s .= '<span style="color:red">' . $h($message->getMessage()) . '</span>';
 
-			} elseif ($message instanceof Nette\Utils\Html) {
+			} elseif ($message instanceof Html) {
 				$s .= '<span style="color:red">Nette\Utils\Html(' . $h((string) $message) . ')</span>';
 
 			} else {
@@ -195,8 +181,6 @@ class Panel implements IBarPanel
 
 		return '<table style="width:100%"><tr><th>Untranslated message</th><th>Translation domain</th></tr>' . $s . '</table>';
 	}
-
-
 
 	private function renderResources($resourcesMap)
 	{
@@ -211,7 +195,7 @@ class Panel implements IBarPanel
 				$s .= '<td>' . $h($domain) . '</td>';
 
 				$relativePath = str_replace(rtrim($this->rootDir, '/') . '/', '', $resourcePath);
-				if (Nette\Utils\Strings::startsWith($relativePath, 'vendor/')) {
+				if (Strings::startsWith($relativePath, 'vendor/')) {
 					$parts = explode('/', $relativePath, 4);
 					$left = array_pop($parts);
 					$relativePath = $h(implode('/', $parts) . '/.../') . '<b>' . $h(basename($left)) . '</b>';
@@ -228,8 +212,6 @@ class Panel implements IBarPanel
 		return '<table style="width:100%"><tr><th>Locale</th><th>Domain</th><th>Resource filename</th></tr>' . $s . '</table>';
 	}
 
-
-
 	/**
 	 * @param string $id
 	 * @param string|NULL $domain
@@ -241,8 +223,6 @@ class Panel implements IBarPanel
 			'domain' => $domain,
 		];
 	}
-
-
 
 	/**
 	 * @param \Exception|\Throwable $e
@@ -256,8 +236,6 @@ class Panel implements IBarPanel
 		];
 	}
 
-
-
 	/**
 	 * @param string|NULL $format
 	 * @param string|NULL $resource
@@ -269,14 +247,10 @@ class Panel implements IBarPanel
 		$this->resources[$locale][$resource] = $domain;
 	}
 
-
-
 	public function setLocaleWhitelist($whitelist)
 	{
 		$this->localeWhitelist = $whitelist;
 	}
-
-
 
 	/**
 	 * @param string|NULL $format
@@ -289,8 +263,6 @@ class Panel implements IBarPanel
 		$this->ignoredResources[$locale][$resource] = $domain;
 	}
 
-
-
 	public function setLocaleResolvers(array $resolvers)
 	{
 		$this->localeResolvers = [];
@@ -298,8 +270,6 @@ class Panel implements IBarPanel
 			$this->localeResolvers[ClassType::from($resolver)->getShortName()] = $resolver;
 		}
 	}
-
-
 
 	public function onRequest(Application $app, Request $request)
 	{
@@ -315,8 +285,6 @@ class Panel implements IBarPanel
 		$this->onRequestLocaleSnapshot[] = $snapshot;
 	}
 
-
-
 	public function register(Translator $translator)
 	{
 		$this->translator = $translator;
@@ -327,50 +295,49 @@ class Panel implements IBarPanel
 		return $this;
 	}
 
-
-
 	public static function registerBluescreen()
 	{
 		Debugger::getBlueScreen()->addPanel([get_called_class(), 'renderException']);
 	}
 
-
-
 	public static function renderException($e = NULL)
 	{
-		if (!$e instanceof InvalidResourceException || !($previous = $e->getPrevious())) {
+		if (!$e instanceof \Kdyby\Translation\InvalidResourceException) {
+			return NULL;
+		}
+		$previous = $e->getPrevious();
+		if ($previous === NULL) {
 			return NULL;
 		}
 
 		$previous = $previous->getPrevious();
-		if (!$previous instanceof Yaml\Exception\ParseException) {
+		if (!$previous instanceof \Symfony\Component\Yaml\Exception\ParseException) {
 			return NULL;
 		}
 
 		$method = YamlFileLoader::class . '::load';
-		if ($call = Helpers::findTrace($e->getPrevious()->getTrace(), $method)) {
+		$call = Helpers::findTrace($e->getPrevious()->getTrace(), $method);
+		if ($call !== NULL) {
 			return [
 				'tab' => 'YAML dictionary',
 				'panel' => '<p><b>File:</b> ' . self::editorLink($call['args'][0], $previous->getParsedLine()) . '</p>'
 					. ($previous->getParsedLine() ? BlueScreen::highlightFile($call['args'][0], $previous->getParsedLine()) : '')
-					. '<p>' . $previous->getMessage() . ' </p>'
+					. '<p>' . $previous->getMessage() . ' </p>',
 			];
 		}
 	}
 
-
-
 	/**
 	 * Returns link to editor.
-	 * @author David Grudl
-	 * @return Nette\Utils\Html|string
+	 *
+	 * @return \Nette\Utils\Html|string
 	 */
 	private static function editorLink($file, $line, $text = NULL)
 	{
 		if (Debugger::$editor && is_file($file) && $text !== NULL) {
-			return Nette\Utils\Html::el('a')
+			return Html::el('a')
 				->href(strtr(Debugger::$editor, ['%file' => rawurlencode($file), '%line' => $line]))
-				->setAttribute('title', "$file:$line")
+				->setAttribute('title', sprintf('%s:%s', $file, $line))
 				->setHtml($text);
 
 		} else {

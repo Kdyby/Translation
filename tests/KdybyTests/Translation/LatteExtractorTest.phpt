@@ -4,26 +4,17 @@
  * Test: Kdyby\Translation\LatteExtractor.
  *
  * @testCase KdybyTests\Translation\LatteExtractorTest
- * @author Filip Procházka <filip@prochazka.su>
- * @package Kdyby\Translation
  */
 
 namespace KdybyTests\Translation;
 
 use Kdyby\Translation\Extractors\LatteExtractor;
-use Nette;
 use Symfony\Component\Translation\MessageCatalogue;
-use Tester;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class LatteExtractorTest extends TestCase
+class LatteExtractorTest extends \KdybyTests\Translation\TestCase
 {
 
 	public function testExtractDirectory()
@@ -31,7 +22,7 @@ class LatteExtractorTest extends TestCase
 		$extractor = new LatteExtractor();
 
 		$catalogue = new MessageCatalogue('cs_CZ');
-		$extractor->extract(__DIR__ . '/extractor-files', $catalogue);
+		$extractor->extract(__DIR__ . '/data/extractor-files', $catalogue);
 
 		Assert::same([
 			'messages' => [
@@ -41,19 +32,17 @@ class LatteExtractorTest extends TestCase
 				'Chapter 2' => 'Chapter 2',
 				'none|one|many' => 'none|one|many',
 				'sample.identificator' => 'sample.identificator',
-			]
+			],
 		], $catalogue->all());
 	}
 
-
-
-	public function testExtractDirectory_withPrefix()
+	public function testExtractDirectoryWithPrefix()
 	{
 		$extractor = new LatteExtractor();
 		$extractor->setPrefix('homepage');
 
 		$catalogue = new MessageCatalogue('cs_CZ');
-		$extractor->extract(__DIR__ . '/extractor-files', $catalogue);
+		$extractor->extract(__DIR__ . '/data/extractor-files', $catalogue);
 
 		Assert::same([
 			'messages' => [
@@ -63,7 +52,7 @@ class LatteExtractorTest extends TestCase
 				'homepage.Chapter 2' => 'Chapter 2',
 				'homepage.none|one|many' => 'none|one|many',
 				'homepage.sample.identificator' => 'sample.identificator',
-			]
+			],
 		], $catalogue->all());
 	}
 
