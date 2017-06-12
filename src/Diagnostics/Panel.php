@@ -244,6 +244,10 @@ class Panel implements \Tracy\IBarPanel
 	 */
 	public function addResource($format, $resource, $locale, $domain)
 	{
+		if (is_array($resource)) {
+			$resource = 'array ' . md5(serialize($resource));
+		}
+
 		$this->resources[$locale][$resource] = $domain;
 	}
 
@@ -260,6 +264,10 @@ class Panel implements \Tracy\IBarPanel
 	 */
 	public function addIgnoredResource($format, $resource, $locale, $domain)
 	{
+		if (is_array($resource)) {
+			$resource = 'array ' . md5(serialize($resource));
+		}
+
 		$this->ignoredResources[$locale][$resource] = $domain;
 	}
 
