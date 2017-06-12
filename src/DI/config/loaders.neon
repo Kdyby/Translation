@@ -1,3 +1,4 @@
+array: Symfony\Component\Translation\Loader\ArrayLoader
 php: Symfony\Component\Translation\Loader\PhpFileLoader
 yml: Symfony\Component\Translation\Loader\YamlFileLoader
 xlf: Symfony\Component\Translation\Loader\XliffFileLoader
