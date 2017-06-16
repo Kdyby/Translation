@@ -63,7 +63,11 @@ Hello Peter|Helloes Peter
 
 front.missingKey.namedHelloCounting
 front.missingKey.namedHelloCounting
-front.missingKey.namedHelloCounting' . "\n", $this->template->__toString());
+front.missingKey.namedHelloCounting
+
+Default ahoj světe
+Default ahoj Peter
+Default Helloes Peter' . "\n", $this->template->__toString());
 	}
 
 	public function testRenderTranslateNoescape()

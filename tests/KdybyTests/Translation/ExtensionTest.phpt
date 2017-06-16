@@ -29,6 +29,7 @@ class ExtensionTest extends \KdybyTests\Translation\TestCase
 		Assert::true($translator instanceof SymfonyTranslator);
 
 		Assert::same('Ahoj světe', $translator->translate('homepage.hello', NULL, [], 'front', 'cs'));
+		Assert::same('Default ahoj světe', $translator->translate('homepage.hello2', NULL, [], 'front', 'cs'));
 		Assert::same('Hello world', $translator->translate('homepage.hello', NULL, [], 'front', 'en'));
 
 		Assert::same('front.not.found', $translator->translate('front.not.found'));

@@ -20,6 +20,11 @@ class NeonFileLoader extends \Symfony\Component\Translation\Loader\ArrayLoader i
 {
 
 	/**
+	 * @internal
+	 */
+	const INCLUDES_KEY = 'includes';
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function load($resource, $locale, $domain = 'messages')
@@ -43,6 +48,8 @@ class NeonFileLoader extends \Symfony\Component\Translation\Loader\ArrayLoader i
 			$messages = [];
 		}
 
+		$messages = $this->recursiveLoadResources($resource, $messages);
+
 		if (!is_array($messages)) {
 			throw new \Symfony\Component\Translation\Exception\InvalidResourceException(sprintf('The file "%s" must contain a Neon array.', $resource));
 		}
@@ -51,6 +58,30 @@ class NeonFileLoader extends \Symfony\Component\Translation\Loader\ArrayLoader i
 		$catalogue->addResource(new FileResource($resource));
 
 		return $catalogue;
+	}
+
+	/**
+	 * @param string $resource
+	 * @param array $messages
+	 * @return array
+	 */
+	private function recursiveLoadResources($resource, array $messages)
+	{
+		if (isset($messages[self::INCLUDES_KEY])) {
+			foreach ($messages[self::INCLUDES_KEY] as $include) {
+				if (!preg_match('#([a-z]:)?[/\\\\]#Ai', $include)) {
+					$include = dirname($resource) . '/' . $include;
+				}
+
+				$parent = array_filter(Neon::decode(file_get_contents($include)));
+				$parent = $this->recursiveLoadResources($include, $parent);
+				$messages = array_merge($parent, array_filter($messages));
+			}
+
+			unset($messages[self::INCLUDES_KEY]);
+		}
+
+		return $messages;
 	}
 
 }
