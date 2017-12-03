@@ -15,7 +15,7 @@ use Latte\Runtime\IHtmlString as LatteHtmlString;
 use Nette\Utils\IHtmlString as NetteHtmlString;
 use Nette\Utils\Strings;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Translation\Formatter\MessageFormatterInterface;
+use Symfony\Component\Translation\Formatter\MessageFormatter;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 
 /**
@@ -72,13 +72,13 @@ class Translator extends \Symfony\Component\Translation\Translator implements IT
 	private $localeWhitelist;
 
 	/**
-	 * @var \Symfony\Component\Translation\Formatter\MessageFormatterInterface
+	 * @var \Symfony\Component\Translation\Formatter\MessageFormatter
 	 */
 	private $formatter;
 
 	/**
 	 * @param IUserLocaleResolver $localeResolver
-	 * @param MessageFormatterInterface $formatter
+	 * @param MessageFormatter  $formatter
 	 * @param CatalogueCompiler $catalogueCompiler
 	 * @param FallbackResolver $fallbackResolver
 	 * @param IResourceLoader $loader
@@ -86,7 +86,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements IT
 	 */
 	public function __construct(
 		IUserLocaleResolver $localeResolver,
-		MessageFormatterInterface $formatter,
+		MessageFormatter $formatter,
 		CatalogueCompiler $catalogueCompiler,
 		FallbackResolver $fallbackResolver,
 		IResourceLoader $loader

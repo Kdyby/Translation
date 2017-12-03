@@ -115,7 +115,7 @@ class ExtractCommand extends \Symfony\Component\Console\Command\Command
 			$this->extractor->extract($dir, $catalogue);
 		}
 
-		$this->writer->writeTranslations($catalogue, $this->outputFormat, [
+		$this->writer->write($catalogue, $this->outputFormat, [
 			'path' => $this->outputDir,
 		]);
 
