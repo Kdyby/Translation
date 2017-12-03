@@ -77,11 +77,11 @@ class Translator extends \Symfony\Component\Translation\Translator implements IT
 	private $formatter;
 
 	/**
-	 * @param IUserLocaleResolver $localeResolver
-	 * @param MessageFormatter  $formatter
-	 * @param CatalogueCompiler $catalogueCompiler
-	 * @param FallbackResolver $fallbackResolver
-	 * @param IResourceLoader $loader
+	 * @param \Kdyby\Translation\IUserLocaleResolver $localeResolver
+	 * @param \Symfony\Component\Translation\Formatter\MessageFormatter $formatter
+	 * @param \Kdyby\Translation\CatalogueCompiler $catalogueCompiler
+	 * @param \Kdyby\Translation\FallbackResolver $fallbackResolver
+	 * @param \Kdyby\Translation\IResourceLoader $loader
 	 * @throws \InvalidArgumentException
 	 */
 	public function __construct(
