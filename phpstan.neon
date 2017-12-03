@@ -6,7 +6,9 @@ parameters:
 		# Optional arguments
 		- "#Casting to string something that's already string#"
 		- "#Casting to int something that's already int#"
-		- "#Casting to mixed\\[\\] something that's already mixed\\[\\]#"
-		# https://github.com/phpstan/phpstan/issues/290
-		- '#Parameter \#2 \$count of method Kdyby\\Translation\\Translator::translate\(\) expects mixed\[\]\|int\|null, int\|null given#'
-		- '#Parameter \#2 \$count of class Kdyby\\Translation\\Phrase constructor expects mixed\[\]\|int\|null, int\|null given#'
+		- "#Casting to array something that's already array#"
+		# Other errors
+		- '#Access to an undefined property Nette\\Http\\SessionSection\|stdClass::\$locale#'
+		- '#Argument of an invalid type array\|string\|null supplied for foreach, only iterables are supported#'
+		- '#Parameter \#1 \$locale of method Symfony\\Component\\Translation\\Translator::setLocale\(\) expects string, string\|null given#'
+		- '#Array \(array\<Symfony\\Component\\Translation\\Loader\\LoaderInterface\>\) does not accept object#'

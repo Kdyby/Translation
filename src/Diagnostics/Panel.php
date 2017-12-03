@@ -238,7 +238,7 @@ class Panel implements \Tracy\IBarPanel
 
 	/**
 	 * @param string|NULL $format
-	 * @param string|NULL $resource
+	 * @param string|array|NULL $resource
 	 * @param string|NULL $locale
 	 * @param string|NULL $domain
 	 */
@@ -258,7 +258,7 @@ class Panel implements \Tracy\IBarPanel
 
 	/**
 	 * @param string|NULL $format
-	 * @param string|NULL $resource
+	 * @param string|array|NULL $resource
 	 * @param string|NULL $locale
 	 * @param string|NULL $domain
 	 */
