@@ -15,13 +15,13 @@ use Latte\Runtime\IHtmlString as LatteHtmlString;
 use Nette\Utils\IHtmlString as NetteHtmlString;
 use Nette\Utils\Strings;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Translation\Formatter\MessageFormatterInterface;
 use Symfony\Component\Translation\Loader\LoaderInterface;
-use Symfony\Component\Translation\MessageSelector;
 
 /**
  * Translator.
  */
-class Translator extends \Symfony\Component\Translation\Translator implements \Kdyby\Translation\ITranslator
+class Translator extends \Symfony\Component\Translation\Translator implements ITranslator
 {
 
 	use \Kdyby\StrictObjects\Scream;
@@ -72,33 +72,33 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	private $localeWhitelist;
 
 	/**
-	 * @var \Symfony\Component\Translation\MessageSelector
+	 * @var \Symfony\Component\Translation\Formatter\MessageFormatterInterface
 	 */
-	private $selector;
+	private $formatter;
 
 	/**
-	 * @param \Kdyby\Translation\IUserLocaleResolver $localeResolver
-	 * @param \Symfony\Component\Translation\MessageSelector $selector The message selector for pluralization
-	 * @param \Kdyby\Translation\CatalogueCompiler $catalogueCompiler
-	 * @param \Kdyby\Translation\FallbackResolver $fallbackResolver
-	 * @param \Kdyby\Translation\IResourceLoader $loader
+	 * @param IUserLocaleResolver $localeResolver
+	 * @param MessageFormatterInterface $formatter
+	 * @param CatalogueCompiler $catalogueCompiler
+	 * @param FallbackResolver $fallbackResolver
+	 * @param IResourceLoader $loader
 	 * @throws \InvalidArgumentException
 	 */
 	public function __construct(
 		IUserLocaleResolver $localeResolver,
-		MessageSelector $selector,
+		MessageFormatterInterface $formatter,
 		CatalogueCompiler $catalogueCompiler,
 		FallbackResolver $fallbackResolver,
 		IResourceLoader $loader
 	)
 	{
 		$this->localeResolver = $localeResolver;
-		$this->selector = $selector;
+		$this->formatter = $formatter;
 		$this->catalogueCompiler = $catalogueCompiler;
 		$this->fallbackResolver = $fallbackResolver;
 		$this->translationsLoader = $loader;
 
-		parent::__construct('', $selector);
+		parent::__construct('', $formatter);
 		$this->setLocale(NULL);
 	}
 
@@ -240,7 +240,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 				$result = strtr($message, $parameters);
 
 			} else {
-				$result = strtr($this->selector->choose($message, (int) $number, $locale), $parameters);
+				$result = $this->formatter->choiceFormat($message, (int) $number, $locale, $parameters);
 			}
 		}
 

@@ -29,8 +29,8 @@
 		"nette/reflection": "^2.4@dev",
 		"nette/utils": "^2.4@dev || ^3.0@dev",
 		"psr/log": "^1.0",
-		"symfony/translation": "^2.5 || ^3.0 || ^4.0",
-		"symfony/config": "^2.5 || ^3.0 || ^4.0"
+		"symfony/translation": "^3.4 || ^4.0",
+		"symfony/config": "^3.4 || ^4.0"
 	},
 	"suggest": {
 		"kdyby/console": "If you wanna use extract command and much others, install also console.",
@@ -46,8 +46,8 @@
 		"tracy/tracy": "^2.4@dev",
 		"kdyby/console": "^2.7@dev",
 		"kdyby/monolog": "^1.2@dev",
-		"symfony/yaml": "^2.5 || ^3.0",
-		"symfony/console": "^2.5 || ^3.0",
+		"symfony/yaml": "^3.4 || ^4.0",
+		"symfony/console": "^3.4 || ^4.0",
 		"nette/tester": "~1.7",
 		"mockery/mockery": "~0.9"
 	},
