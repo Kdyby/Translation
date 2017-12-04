@@ -18,10 +18,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Formatter\MessageFormatter;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 
-/**
- * Translator.
- */
-class Translator extends \Symfony\Component\Translation\Translator implements ITranslator
+class Translator extends \Symfony\Component\Translation\Translator implements \Kdyby\Translation\ITranslator
 {
 
 	use \Kdyby\StrictObjects\Scream;
