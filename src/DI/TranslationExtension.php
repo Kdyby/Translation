@@ -386,14 +386,14 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 				}
 
 				$relativePath = str_replace($dir, '', $file->getPath());
-				if($relativePath !== '') {
+				if ($relativePath !== '') {
 					$foldersDomain = str_replace(DIRECTORY_SEPARATOR, '.', $relativePath);
 					$foldersDomain = ltrim($foldersDomain, '.');
-					$m['domain'] = "$foldersDomain.{$m['domain']}";
+					$m['domain'] = $foldersDomain . '.' . $m['domain'];
 				}
 
 				if (is_string($baseDomain)) {
-					$m['domain'] = "$baseDomain.{$m['domain']}";
+					$m['domain'] = $baseDomain . '.' . $m['domain'];
 				}
 
 				if ($whitelistRegexp && !preg_match($whitelistRegexp, $m['locale']) && $builder->parameters['productionMode']) {
