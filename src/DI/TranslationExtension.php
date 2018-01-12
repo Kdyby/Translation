@@ -328,14 +328,14 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 				continue;
 			}
 
-			$config['dirs'] = array_merge($config['dirs'], array_values($extension->getTranslationResources()));
+			$config['dirs'] = array_merge($config['dirs'], $extension->getTranslationResources());
 		}
 
 		$config['dirs'] = array_map(function ($dir) {
 			return str_replace((DIRECTORY_SEPARATOR === '/') ? '\\' : '/', DIRECTORY_SEPARATOR, $dir);
 		}, $config['dirs']);
 
-		$dirs = array_values(array_filter($config['dirs'], Callback::closure('is_dir')));
+		$dirs = array_filter($config['dirs'], Callback::closure('is_dir'));
 		if (count($dirs) > 0) {
 			foreach ($dirs as $dir) {
 				$builder->addDependency($dir);
@@ -378,20 +378,33 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 			return '*.*.' . $value;
 		}, array_keys($this->loaders));
 
-		foreach (Finder::findFiles($mask)->from($dirs) as $file) {
-			/** @var \SplFileInfo $file */
-			if (!preg_match('~^(?P<domain>.*?)\.(?P<locale>[^\.]+)\.(?P<format>[^\.]+)$~', $file->getFilename(), $m)) {
-				continue;
-			}
+		foreach ($dirs as $baseDomain => $dir) {
+                        foreach (Finder::findFiles($mask)->from($dir) as $file) {
+                                /* @var $file \SplFileInfo */
+                                if (!preg_match('~^(?P<domain>.*?)\.(?P<locale>[^\.]+)\.(?P<format>[^\.]+)$~', $file->getFilename(), $m)) {
+                                        continue;
+                                }
 
-			if ($whitelistRegexp && !preg_match($whitelistRegexp, $m['locale']) && $builder->parameters['productionMode']) {
-				continue; // ignore in production mode, there is no need to pass the ignored resources
-			}
+                                $relativePath = str_replace($dir, '', $file->getPath());
+                                if($relativePath !== '') {
+                                    $foldersDomain = str_replace(DIRECTORY_SEPARATOR, '.', $relativePath);
+                                    $foldersDomain = ltrim($foldersDomain, '.');
+                                    $m['domain'] = "$foldersDomain.{$m['domain']}";
+                                }
 
-			$this->validateResource($m['format'], $file->getPathname(), $m['locale'], $m['domain']);
-			$translator->addSetup('addResource', [$m['format'], $file->getPathname(), $m['locale'], $m['domain']]);
-			$builder->addDependency($file->getPathname());
-		}
+                                if (is_string($baseDomain)) {
+                                    $m['domain'] = "$baseDomain.{$m['domain']}";
+                                }
+
+                                if ($whitelistRegexp && !preg_match($whitelistRegexp, $m['locale']) && $builder->parameters['productionMode']) {
+                                        continue; // ignore in production mode, there is no need to pass the ignored resources
+                                }
+
+                                $this->validateResource($m['format'], $file->getPathname(), $m['locale'], $m['domain']);
+                                $translator->addSetup('addResource', [$m['format'], $file->getPathname(), $m['locale'], $m['domain']]);
+                                $builder->addDependency($file->getPathname());
+                        }
+                }
 	}
 
 	/**
