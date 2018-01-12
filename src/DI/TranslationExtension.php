@@ -379,32 +379,32 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 		}, array_keys($this->loaders));
 
 		foreach ($dirs as $baseDomain => $dir) {
-                        foreach (Finder::findFiles($mask)->from($dir) as $file) {
-                                /* @var $file \SplFileInfo */
-                                if (!preg_match('~^(?P<domain>.*?)\.(?P<locale>[^\.]+)\.(?P<format>[^\.]+)$~', $file->getFilename(), $m)) {
-                                        continue;
-                                }
+			foreach (Finder::findFiles($mask)->from($dir) as $file) {
+				/** @var \SplFileInfo $file */
+				if (!preg_match('~^(?P<domain>.*?)\.(?P<locale>[^\.]+)\.(?P<format>[^\.]+)$~', $file->getFilename(), $m)) {
+					continue;
+				}
 
-                                $relativePath = str_replace($dir, '', $file->getPath());
-                                if($relativePath !== '') {
-                                    $foldersDomain = str_replace(DIRECTORY_SEPARATOR, '.', $relativePath);
-                                    $foldersDomain = ltrim($foldersDomain, '.');
-                                    $m['domain'] = "$foldersDomain.{$m['domain']}";
-                                }
+				$relativePath = str_replace($dir, '', $file->getPath());
+				if($relativePath !== '') {
+					$foldersDomain = str_replace(DIRECTORY_SEPARATOR, '.', $relativePath);
+					$foldersDomain = ltrim($foldersDomain, '.');
+					$m['domain'] = "$foldersDomain.{$m['domain']}";
+				}
 
-                                if (is_string($baseDomain)) {
-                                    $m['domain'] = "$baseDomain.{$m['domain']}";
-                                }
+				if (is_string($baseDomain)) {
+					$m['domain'] = "$baseDomain.{$m['domain']}";
+				}
 
-                                if ($whitelistRegexp && !preg_match($whitelistRegexp, $m['locale']) && $builder->parameters['productionMode']) {
-                                        continue; // ignore in production mode, there is no need to pass the ignored resources
-                                }
+				if ($whitelistRegexp && !preg_match($whitelistRegexp, $m['locale']) && $builder->parameters['productionMode']) {
+					continue; // ignore in production mode, there is no need to pass the ignored resources
+				}
 
-                                $this->validateResource($m['format'], $file->getPathname(), $m['locale'], $m['domain']);
-                                $translator->addSetup('addResource', [$m['format'], $file->getPathname(), $m['locale'], $m['domain']]);
-                                $builder->addDependency($file->getPathname());
-                        }
-                }
+				$this->validateResource($m['format'], $file->getPathname(), $m['locale'], $m['domain']);
+				$translator->addSetup('addResource', [$m['format'], $file->getPathname(), $m['locale'], $m['domain']]);
+				$builder->addDependency($file->getPathname());
+			}
+		}
 	}
 
 	/**
