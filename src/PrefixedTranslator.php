@@ -63,7 +63,6 @@ class PrefixedTranslator implements \Kdyby\Translation\ITranslator
 	public function translate($message, $count = NULL, $parameters = [], $domain = NULL, $locale = NULL)
 	{
 		$translationString = ($message instanceof Phrase ? $message->message : $message);
-		$prefix = $this->prefix . '.';
 
 		if (Strings::startsWith($message, '//')) {
 			$prefix = NULL;
@@ -71,7 +70,13 @@ class PrefixedTranslator implements \Kdyby\Translation\ITranslator
 		}
 
 		if ($message instanceof Phrase) {
-			return $this->translator->translate(new Phrase($prefix . $translationString, $message->count, $message->parameters, $message->domain, $message->locale));
+			if ($domain) {
+				$domain = $this->prefix . '.' . $message->domain;
+			} else {
+				$domain = $this->prefix;
+			}
+
+			return $this->translator->translate(new Phrase($translationString, $message->count, $message->parameters, $domain, $message->locale));
 		}
 
 		if (is_array($count)) {
@@ -81,7 +86,13 @@ class PrefixedTranslator implements \Kdyby\Translation\ITranslator
 			$count = NULL;
 		}
 
-		return $this->translator->translate($prefix . $translationString, $count, (array) $parameters, $domain, $locale);
+		if ($domain) {
+			$domain = $this->prefix . '.' . $domain;
+		} else {
+			$domain = $this->prefix;
+		}
+                
+		return $this->translator->translate($translationString, $count, (array) $parameters, $domain, $locale);
 	}
 
 	/**
