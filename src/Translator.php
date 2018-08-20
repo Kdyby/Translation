@@ -146,6 +146,8 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 		} elseif ($message instanceof NetteHtmlString || $message instanceof LatteHtmlString) {
 			$this->logMissingTranslation($message->__toString(), $domain, $locale);
 			return $message; // what now?
+		} elseif (is_int($message)) {
+			$message = (string) $message;
 		}
 
 		if (!is_string($message)) {
@@ -182,6 +184,10 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	 */
 	public function trans($message, array $parameters = [], $domain = NULL, $locale = NULL)
 	{
+		if (is_int($message)) {
+			$message = (string) $message;
+		}
+
 		if (!is_string($message)) {
 			throw new \Kdyby\Translation\InvalidArgumentException(sprintf('Message id must be a string, %s was given', gettype($message)));
 		}
@@ -207,6 +213,10 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	 */
 	public function transChoice($message, $number, array $parameters = [], $domain = NULL, $locale = NULL)
 	{
+		if (is_int($message)) {
+			$message = (string) $message;
+		}
+
 		if (!is_string($message)) {
 			throw new \Kdyby\Translation\InvalidArgumentException(sprintf('Message id must be a string, %s was given', gettype($message)));
 		}
