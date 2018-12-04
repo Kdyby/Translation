@@ -15,7 +15,7 @@ use Latte\Runtime\IHtmlString as LatteHtmlString;
 use Nette\Utils\IHtmlString as NetteHtmlString;
 use Nette\Utils\Strings;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Translation\Formatter\MessageFormatter;
+use Symfony\Component\Translation\Formatter\MessageFormatterInterface;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 
 class Translator extends \Symfony\Component\Translation\Translator implements \Kdyby\Translation\ITranslator
@@ -69,13 +69,13 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	private $localeWhitelist;
 
 	/**
-	 * @var \Symfony\Component\Translation\Formatter\MessageFormatter
+	 * @var \Symfony\Component\Translation\Formatter\MessageFormatterInterface
 	 */
 	private $formatter;
 
 	/**
 	 * @param \Kdyby\Translation\IUserLocaleResolver $localeResolver
-	 * @param \Symfony\Component\Translation\Formatter\MessageFormatter $formatter
+	 * @param \Symfony\Component\Translation\Formatter\MessageFormatterInterface $formatter
 	 * @param \Kdyby\Translation\CatalogueCompiler $catalogueCompiler
 	 * @param \Kdyby\Translation\FallbackResolver $fallbackResolver
 	 * @param \Kdyby\Translation\IResourceLoader $loader
@@ -83,7 +83,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	 */
 	public function __construct(
 		IUserLocaleResolver $localeResolver,
-		MessageFormatter $formatter,
+		MessageFormatterInterface $formatter,
 		CatalogueCompiler $catalogueCompiler,
 		FallbackResolver $fallbackResolver,
 		IResourceLoader $loader
