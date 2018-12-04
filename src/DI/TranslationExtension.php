@@ -141,8 +141,15 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 		$builder->addDefinition($this->prefix('selector'))
 			->setClass(MessageSelector::class);
 
-		$builder->addDefinition($this->prefix('formatter'))
-			->setClass(MessageFormatter::class);
+        $builder->addDefinition($this->prefix('formatter'))
+            ->setClass(MessageFormatter::class, [$this->prefix('@selector'), null]);
+
+//		$builder->addDefinition($this->prefix('formatter'))
+//			->setClass(MessageFormatter::class)
+//            ->setArguments([
+//                '@translation.selector',
+//                null,
+//            ])->setInject(true);
 
 		$builder->addDefinition($this->prefix('extractor'))
 			->setClass(ChainExtractor::class);
