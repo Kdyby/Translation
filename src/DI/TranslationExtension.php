@@ -42,6 +42,7 @@ use Nette\Utils\Callback;
 use Nette\Utils\Finder;
 use Nette\Utils\Validators;
 use Symfony\Component\Translation\Extractor\ChainExtractor;
+use Symfony\Component\Translation\Formatter\IntlFormatter;
 use Symfony\Component\Translation\Formatter\MessageFormatter;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Translation\MessageSelector;
@@ -141,8 +142,11 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 		$builder->addDefinition($this->prefix('selector'))
 			->setClass(MessageSelector::class);
 
+		$builder->addDefinition($this->prefix('intlFormatter'))
+			->setClass(IntlFormatter::class);
+
 		$builder->addDefinition($this->prefix('formatter'))
-			->setClass(MessageFormatter::class, [$this->prefix('@selector'), NULL]);
+			->setClass(MessageFormatter::class, [$this->prefix('@selector'), $this->prefix('@intlFormatter')]);
 
 		$builder->addDefinition($this->prefix('extractor'))
 			->setClass(ChainExtractor::class);
