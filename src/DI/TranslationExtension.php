@@ -142,7 +142,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 			->setClass(MessageSelector::class);
 
 		$builder->addDefinition($this->prefix('formatter'))
-			->setClass(MessageFormatter::class, [$this->prefix('@selector'), null]);
+			->setClass(MessageFormatter::class, [$this->prefix('@selector'), NULL]);
 
 		$builder->addDefinition($this->prefix('extractor'))
 			->setClass(ChainExtractor::class);
