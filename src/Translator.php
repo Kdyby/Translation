@@ -249,7 +249,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 
 			} else {
 				if (!$this->formatter instanceof ChoiceMessageFormatterInterface) {
-				    $result = $id;
+					$result = $id;
 					if ($this->panel !== NULL) {
 						$this->panel->choiceError(new \Symfony\Component\Translation\Exception\LogicException(sprintf('The formatter "%s" does not support plural translations.', get_class($this->formatter))), $domain);
 					}
