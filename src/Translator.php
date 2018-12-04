@@ -15,6 +15,7 @@ use Latte\Runtime\IHtmlString as LatteHtmlString;
 use Nette\Utils\IHtmlString as NetteHtmlString;
 use Nette\Utils\Strings;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Translation\Formatter\ChoiceMessageFormatterInterface;
 use Symfony\Component\Translation\Formatter\MessageFormatterInterface;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 
@@ -247,7 +248,14 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 				$result = strtr($message, $parameters);
 
 			} else {
-				$result = $this->formatter->choiceFormat($message, (int) $number, $locale, $parameters);
+				if (!$this->formatter instanceof ChoiceMessageFormatterInterface) {
+				    $result = $id;
+					if ($this->panel !== NULL) {
+						$this->panel->choiceError(new \Symfony\Component\Translation\Exception\LogicException(sprintf('The formatter "%s" does not support plural translations.', get_class($this->formatter))), $domain);
+					}
+				} else {
+					$result = $this->formatter->choiceFormat($message, (int) $number, $locale, $parameters);
+				}
 			}
 		}
 
