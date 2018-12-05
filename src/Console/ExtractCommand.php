@@ -109,7 +109,7 @@ class ExtractCommand extends \Symfony\Component\Console\Command\Command
 			return 1;
 		}
 
-		$catalogue = new MessageCatalogue($input->getOption('catalogue-language'));
+		$catalogue = new MessageCatalogue((string) $input->getOption('catalogue-language'));
 		foreach ($this->scanDirs as $dir) {
 			$output->writeln(sprintf('<info>Extracting %s</info>', $dir));
 			$this->extractor->extract($dir, $catalogue);
