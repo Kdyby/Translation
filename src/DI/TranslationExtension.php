@@ -32,13 +32,13 @@ use Nette\Application\Application;
 use Nette\Bridges\ApplicationLatte\ILatteFactory;
 use Nette\Configurator;
 use Nette\DI\Compiler;
+use Nette\DI\Definitions\Definition;
+use Nette\DI\Definitions\FactoryDefinition;
 use Nette\DI\Helpers;
-use Nette\DI\ServiceDefinition;
 use Nette\DI\Statement;
 use Nette\PhpGenerator\ClassType as ClassTypeGenerator;
 use Nette\PhpGenerator\PhpLiteral;
 use Nette\Reflection\ClassType as ReflectionClassType;
-use Nette\Utils\Callback;
 use Nette\Utils\Finder;
 use Nette\Utils\Validators;
 use Symfony\Component\Translation\Extractor\ChainExtractor;
@@ -98,18 +98,22 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 
 	public function __construct()
 	{
-		$this->defaults['cache'] = new Statement($this->defaults['cache'], ['%tempDir%/cache']);
+
 	}
 
 	public function loadConfiguration()
 	{
 		$this->loaders = [];
-
 		$builder = $this->getContainerBuilder();
+
+		$cacheDir = Helpers::expand('%tempDir%/cache', $builder->parameters);
+		$this->defaults['cache'] = new Statement($this->defaults['cache'], [dirname($cacheDir)]);
+
+		$this->setConfig($this->defaults);
 		$config = $this->getConfig();
 
 		$translator = $builder->addDefinition($this->prefix('default'))
-			->setClass(KdybyTranslator::class, [$this->prefix('@userLocaleResolver')])
+			->setFactory(KdybyTranslator::class, [$this->prefix('@userLocaleResolver')])
 			->addSetup('?->setTranslator(?)', [$this->prefix('@userLocaleResolver.param'), '@self'])
 			->addSetup('setDefaultLocale', [$config['default']])
 			->addSetup('setLocaleWhitelist', [$config['whitelist']]);
@@ -118,11 +122,12 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 		$translator->addSetup('setFallbackLocales', [$config['fallback']]);
 
 		$catalogueCompiler = $builder->addDefinition($this->prefix('catalogueCompiler'))
-			->setClass(CatalogueCompiler::class, self::filterArgs($config['cache']));
+			->setFactory(CatalogueCompiler::class, self::filterArgs($config['cache']));
 
 		if ($config['debugger'] && interface_exists(IBarPanel::class)) {
+			$appDir = Helpers::expand('%appDir%', $builder->parameters);
 			$builder->addDefinition($this->prefix('panel'))
-				->setClass(Panel::class, [dirname($builder->expand('%appDir%'))])
+				->setFactory(Panel::class, [dirname($appDir)])
 				->addSetup('setLocaleWhitelist', [$config['whitelist']]);
 
 			$translator->addSetup('?->register(?)', [$this->prefix('@panel'), '@self']);
@@ -269,19 +274,22 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 
 		$this->beforeCompileLogging($config);
 
-		$registerToLatte = function (ServiceDefinition $def) {
-			$def->addSetup('?->onCompile[] = function($engine) { ?::install($engine->getCompiler()); }', ['@self', new PhpLiteral(TranslateMacros::class)]);
+		/** @var Definition|FactoryDefinition $def */
+		$registerToLatte = function (Definition $def) {
+			$def->getResultDefinition()
+				->addSetup('?->onCompile[] = function($engine) { ?::install($engine->getCompiler()); }', ['@self', new PhpLiteral(TranslateMacros::class)]);
 
-			$def->addSetup('addProvider', ['translator', $this->prefix('@default')])
+			$def->getResultDefinition()
+				->addSetup('addProvider', ['translator', $this->prefix('@default')])
 				->addSetup('addFilter', ['translate', [$this->prefix('@helpers'), 'translateFilterAware']]);
 		};
 
 		$latteFactoryService = $builder->getByType(ILatteFactory::class);
-		if (!$latteFactoryService || !self::isOfType($builder->getDefinition($latteFactoryService)->getClass(), LatteEngine::class)) {
+		if (!$latteFactoryService || !self::isOfType($builder->getDefinition($latteFactoryService)->getType(), LatteEngine::class)) {
 			$latteFactoryService = 'nette.latteFactory';
 		}
 
-		if ($builder->hasDefinition($latteFactoryService) && self::isOfType($builder->getDefinition($latteFactoryService)->getClass(), LatteEngine::class)) {
+		if ($builder->hasDefinition($latteFactoryService) && self::isOfType($builder->getDefinition($latteFactoryService)->getType(), ILatteFactory::class)) {
 			$registerToLatte($builder->getDefinition($latteFactoryService));
 		}
 
@@ -341,11 +349,12 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 			$config['dirs'] = array_merge($config['dirs'], array_values($extension->getTranslationResources()));
 		}
 
-		$config['dirs'] = array_map(function ($dir) {
-			return str_replace((DIRECTORY_SEPARATOR === '/') ? '\\' : '/', DIRECTORY_SEPARATOR, $dir);
+		$config['dirs'] = array_map(function ($dir) use ($builder) {
+			$path = Helpers::expand($dir, $builder->parameters);
+			return str_replace((DIRECTORY_SEPARATOR === '/') ? '\\' : '/', DIRECTORY_SEPARATOR, $path);
 		}, $config['dirs']);
 
-		$dirs = array_values(array_filter($config['dirs'], Callback::closure('is_dir')));
+		$dirs = array_values(array_filter($config['dirs'], \Closure::fromCallable('is_dir')));
 		if (count($dirs) > 0) {
 			foreach ($dirs as $dir) {
 				$builder->addDependency($dir);
@@ -420,7 +429,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 
 		try {
 			$def = $builder->getDefinition($this->loaders[$format]);
-			$refl = ReflectionClassType::from($def->getEntity() ?: $def->getClass());
+			$refl = ReflectionClassType::from($def->getEntity() ?: $def->getType());
 			$method = $refl->getConstructor();
 			if ($method !== NULL && $method->getNumberOfRequiredParameters() > 1) {
 				return;
@@ -454,9 +463,9 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getConfig(array $defaults = NULL, $expand = TRUE)
+	public function getConfig(): array
 	{
-		return parent::getConfig($this->defaults) + ['fallback' => ['en_US']];
+		return parent::getConfig() + ['fallback' => ['en_US']];
 	}
 
 	private function isRegisteredConsoleExtension()
