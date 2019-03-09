@@ -41,7 +41,7 @@ class CatalogueFactory
 	/**
 	 * {@inheritdoc}
 	 */
-	public function addResource($format, $resource, $locale, $domain = 'messages')
+	public function addResource($format, $resource, $locale, $domain = 'messages'): void
 	{
 		$this->resources[$locale][] = [$format, $resource, $domain];
 	}
@@ -49,7 +49,7 @@ class CatalogueFactory
 	/**
 	 * @return array
 	 */
-	public function getResources()
+	public function getResources(): array
 	{
 		$list = [];
 		foreach ($this->resources as $locale => $resources) {

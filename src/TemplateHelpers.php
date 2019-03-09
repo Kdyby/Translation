@@ -37,7 +37,7 @@ class TemplateHelpers
 		$this->translator = $translator;
 	}
 
-	public function register(Engine $engine)
+	public function register(Engine $engine): void
 	{
 		if (class_exists(FilterInfo::class)) {
 			$engine->addFilter('translate', [$this, 'translateFilterAware']);
@@ -50,7 +50,7 @@ class TemplateHelpers
 	/**
 	 * @return \Kdyby\Translation\ITranslator|\Kdyby\Translation\Translator|\Kdyby\Translation\PrefixedTranslator
 	 */
-	public function getTranslator()
+	public function getTranslator(): ITranslator
 	{
 		return $this->translator;
 	}
@@ -63,7 +63,7 @@ class TemplateHelpers
 	 * @param string|NULL $locale
 	 * @return string
 	 */
-	public function translate($message, $count = NULL, $parameters = [], $domain = NULL, $locale = NULL)
+	public function translate(string $message, $count = NULL, $parameters = [], ?string $domain = NULL, ?string $locale = NULL): string
 	{
 		if (is_array($count)) {
 			$locale = ($domain !== NULL) ? (string) $domain : NULL;
@@ -90,7 +90,7 @@ class TemplateHelpers
 	 * @param string|NULL $locale
 	 * @return string
 	 */
-	public function translateFilterAware(FilterInfo $filterInfo, $message, $count = NULL, $parameters = [], $domain = NULL, $locale = NULL)
+	public function translateFilterAware(FilterInfo $filterInfo, string $message, $count = NULL, $parameters = [], ?string $domain = NULL, ?string $locale = NULL): string
 	{
 		return $this->translate($message, $count, $parameters, $domain, $locale);
 	}

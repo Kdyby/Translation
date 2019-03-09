@@ -60,7 +60,7 @@ class PrefixedTranslator implements \Kdyby\Translation\ITranslator
 	 * @param string|NULL $locale
 	 * @return string|\Nette\Utils\IHtmlString|\Latte\Runtime\IHtmlString
 	 */
-	public function translate($message, $count = NULL, $parameters = [], $domain = NULL, $locale = NULL)
+	public function translate($message, $count = NULL, $parameters = [], ?string $domain = NULL, ?string $locale = NULL)
 	{
 		$translationString = ($message instanceof Phrase ? $message->message : $message);
 		$prefix = $this->prefix . '.';
@@ -87,7 +87,7 @@ class PrefixedTranslator implements \Kdyby\Translation\ITranslator
 	/**
 	 * @return \Kdyby\Translation\ITranslator
 	 */
-	public function unwrap()
+	public function unwrap(): ITranslator
 	{
 		return $this->translator;
 	}
@@ -96,7 +96,7 @@ class PrefixedTranslator implements \Kdyby\Translation\ITranslator
 	 * @param \Latte\Runtime\Template $template
 	 * @return \Kdyby\Translation\ITranslator
 	 */
-	public function unregister(Template $template)
+	public function unregister(Template $template): ITranslator
 	{
 		$translator = $this->unwrap();
 		self::overrideTemplateTranslator($template, $translator);
@@ -109,7 +109,7 @@ class PrefixedTranslator implements \Kdyby\Translation\ITranslator
 	 * @throws \Kdyby\Translation\InvalidArgumentException
 	 * @return \Kdyby\Translation\ITranslator
 	 */
-	public static function register(Template $template, $prefix)
+	public static function register(Template $template, string $prefix): ITranslator
 	{
 		$translator = new static($prefix, $template->global->translator);
 		self::overrideTemplateTranslator($template, $translator);

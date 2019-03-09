@@ -17,6 +17,6 @@ interface IUserLocaleResolver
 	 * @param \Kdyby\Translation\Translator $translator
 	 * @return string|NULL
 	 */
-	public function resolve(Translator $translator);
+	public function resolve(Translator $translator): ?string;
 
 }

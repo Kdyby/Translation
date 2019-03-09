@@ -29,11 +29,11 @@ class PhpFileStorage extends \Nette\Caching\Storages\FileStorage implements \Net
 	 * @param array $meta
 	 * @return mixed
 	 */
-	protected function readData($meta)
+	protected function readData(array $meta)
 	{
 		return [
-			'file' => $meta[self::FILE],
-			'handle' => $meta[self::HANDLE],
+			'file' => $meta['file'],
+			'handle' => $meta['handle'],
 		];
 	}
 
@@ -43,7 +43,7 @@ class PhpFileStorage extends \Nette\Caching\Storages\FileStorage implements \Net
 	 * @param string $key
 	 * @return string
 	 */
-	protected function getCacheFile($key)
+	protected function getCacheFile(string $key): string
 	{
 		$cacheKey = substr_replace(
 			$key,

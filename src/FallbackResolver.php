@@ -23,12 +23,12 @@ class FallbackResolver
 	/**
 	 * @param array $fallbackLocales
 	 */
-	public function setFallbackLocales(array $fallbackLocales)
+	public function setFallbackLocales(array $fallbackLocales): void
 	{
 		$this->fallbackLocales = $fallbackLocales;
 	}
 
-	public function compute(Translator $translator, $locale)
+	public function compute(Translator $translator, string $locale): array
 	{
 		$locales = [];
 		foreach ($this->fallbackLocales as $fallback) {

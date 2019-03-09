@@ -22,12 +22,12 @@ interface IResourceLoader
 	 * @param string $format The format of the loader
 	 * @param \Symfony\Component\Translation\Loader\LoaderInterface $loader
 	 */
-	public function addLoader($format, LoaderInterface $loader);
+	public function addLoader(string $format, LoaderInterface $loader): void;
 
 	/**
 	 * @return \Symfony\Component\Translation\Loader\LoaderInterface[]
 	 */
-	public function getLoaders();
+	public function getLoaders(): array;
 
 	/**
 	 * @param string $format
@@ -36,6 +36,6 @@ interface IResourceLoader
 	 * @param \Symfony\Component\Translation\MessageCatalogue $catalogue
 	 * @throws \Kdyby\Translation\LoaderNotFoundException
 	 */
-	public function loadResource($format, $resource, $domain, MessageCatalogue $catalogue);
+	public function loadResource(string $format, string $resource, string $domain, MessageCatalogue $catalogue): void;
 
 }

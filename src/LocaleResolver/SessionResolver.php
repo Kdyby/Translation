@@ -53,9 +53,9 @@ class SessionResolver implements \Kdyby\Translation\IUserLocaleResolver
 	}
 
 	/**
-	 * @param string $locale
+	 * @param string|NULL $locale
 	 */
-	public function setLocale($locale = NULL)
+	public function setLocale(?string $locale = NULL): void
 	{
 		$this->localeSession->locale = $locale;
 	}
@@ -64,7 +64,7 @@ class SessionResolver implements \Kdyby\Translation\IUserLocaleResolver
 	 * @param \Kdyby\Translation\Translator $translator
 	 * @return string|NULL
 	 */
-	public function resolve(Translator $translator)
+	public function resolve(Translator $translator): ?string
 	{
 		if (!$this->session->isStarted() && $this->httpResponse->isSent()) {
 			trigger_error(

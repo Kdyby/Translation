@@ -26,7 +26,7 @@ class ChainResolver implements \Kdyby\Translation\IUserLocaleResolver
 	/**
 	 * @param \Kdyby\Translation\IUserLocaleResolver $resolver
 	 */
-	public function addResolver(IUserLocaleResolver $resolver)
+	public function addResolver(IUserLocaleResolver $resolver): void
 	{
 		array_unshift($this->resolvers, $resolver); // first the newer
 	}
@@ -35,7 +35,7 @@ class ChainResolver implements \Kdyby\Translation\IUserLocaleResolver
 	 * @param \Kdyby\Translation\Translator $translator
 	 * @return string|NULL
 	 */
-	public function resolve(Translator $translator)
+	public function resolve(Translator $translator): ?string
 	{
 		foreach ($this->resolvers as $resolver) {
 			$locale = $resolver->resolve($translator);

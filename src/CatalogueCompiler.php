@@ -67,7 +67,7 @@ class CatalogueCompiler
 	 * @param string $locale
 	 * @param string|NULL $domain
 	 */
-	public function addResource($format, $resource, $locale, $domain = NULL)
+	public function addResource(string $format, string $resource, string $locale, ?string $domain = NULL)
 	{
 		$this->catalogueFactory->addResource($format, $resource, $locale, $domain);
 	}
@@ -79,7 +79,7 @@ class CatalogueCompiler
 	 * @throws \Kdyby\Translation\InvalidArgumentException
 	 * @return \Symfony\Component\Translation\MessageCatalogueInterface[]
 	 */
-	public function compile(Translator $translator, array &$availableCatalogues, $locale)
+	public function compile(Translator $translator, array &$availableCatalogues, string $locale)
 	{
 		if (empty($locale)) {
 			throw new \Kdyby\Translation\InvalidArgumentException('Invalid locale');
@@ -123,7 +123,7 @@ class CatalogueCompiler
 	 * @param string $locale
 	 * @return string
 	 */
-	protected function compilePhpCache(Translator $translator, array &$availableCatalogues, $locale)
+	protected function compilePhpCache(Translator $translator, array &$availableCatalogues, string $locale)
 	{
 		$fallbackContent = '';
 		$current = new PhpLiteral('');

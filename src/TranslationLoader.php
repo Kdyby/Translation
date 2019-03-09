@@ -43,7 +43,7 @@ class TranslationLoader implements \Kdyby\Translation\IResourceLoader
 	/**
 	 * @internal
 	 */
-	public function injectServiceIds($serviceIds, DIContainer $serviceLocator)
+	public function injectServiceIds($serviceIds, DIContainer $serviceLocator): void
 	{
 		$this->serviceIds = $serviceIds;
 		$this->serviceLocator = $serviceLocator;
@@ -55,7 +55,7 @@ class TranslationLoader implements \Kdyby\Translation\IResourceLoader
 	 * @param string $format The format of the loader
 	 * @param \Symfony\Component\Translation\Loader\LoaderInterface $loader
 	 */
-	public function addLoader($format, LoaderInterface $loader)
+	public function addLoader(string $format, LoaderInterface $loader): void
 	{
 		$this->loaders[$format] = $loader;
 	}
@@ -63,7 +63,7 @@ class TranslationLoader implements \Kdyby\Translation\IResourceLoader
 	/**
 	 * @return \Symfony\Component\Translation\Loader\LoaderInterface[]
 	 */
-	public function getLoaders()
+	public function getLoaders(): array
 	{
 		foreach ($this->serviceIds as $format => $loaderId) {
 			$this->loaders[$format] = $this->serviceLocator->getService($loaderId);
@@ -79,7 +79,7 @@ class TranslationLoader implements \Kdyby\Translation\IResourceLoader
 	 * @param string $directory the directory to look into
 	 * @param \Symfony\Component\Translation\MessageCatalogue $catalogue the catalogue
 	 */
-	public function loadMessages($directory, MessageCatalogue $catalogue)
+	public function loadMessages(string $directory, MessageCatalogue $catalogue)
 	{
 		foreach ($this->getLoaders() as $format => $loader) {
 			// load any existing translation files
@@ -99,7 +99,7 @@ class TranslationLoader implements \Kdyby\Translation\IResourceLoader
 	 * @param \Symfony\Component\Translation\MessageCatalogue $catalogue
 	 * @throws \Kdyby\Translation\LoaderNotFoundException
 	 */
-	public function loadResource($format, $resource, $domain, MessageCatalogue $catalogue)
+	public function loadResource(string $format, string $resource, string $domain, MessageCatalogue $catalogue): void
 	{
 		if (!isset($this->loaders[$format])) {
 			if (!isset($this->serviceIds[$format])) {

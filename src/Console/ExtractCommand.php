@@ -57,7 +57,7 @@ class ExtractCommand extends \Symfony\Component\Console\Command\Command
 	 */
 	private $outputDir;
 
-	protected function configure()
+	protected function configure(): void
 	{
 		$this->setName('kdyby:translation-extract')
 			->setDescription('Extracts strings from application to translation files')
@@ -67,14 +67,14 @@ class ExtractCommand extends \Symfony\Component\Console\Command\Command
 			->addOption('catalogue-language', 'l', InputOption::VALUE_OPTIONAL, 'The language of the catalogue', 'en_US');
 	}
 
-	protected function initialize(InputInterface $input, OutputInterface $output)
+	protected function initialize(InputInterface $input, OutputInterface $output): void
 	{
 		$this->writer = $this->getHelper('container')->getByType(TranslationWriter::class);
 		$this->extractor = $this->getHelper('container')->getByType(ChainExtractor::class);
 		$this->serviceLocator = $this->getHelper('container')->getContainer();
 	}
 
-	protected function validate(InputInterface $input, OutputInterface $output)
+	protected function validate(InputInterface $input, OutputInterface $output): bool
 	{
 		$this->outputFormat = trim($input->getOption('output-format'), '=');
 		if (!in_array($this->outputFormat, $this->writer->getFormats(), TRUE)) {
@@ -103,7 +103,7 @@ class ExtractCommand extends \Symfony\Component\Console\Command\Command
 		return TRUE;
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output)
+	protected function execute(InputInterface $input, OutputInterface $output): ?int
 	{
 		if ($this->validate($input, $output) !== TRUE) {
 			return 1;

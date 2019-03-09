@@ -55,7 +55,7 @@ class Phrase
 	 * @param string|NULL $domain
 	 * @param string|NULL $locale
 	 */
-	public function __construct($message, $count = NULL, $parameters = NULL, $domain = NULL, $locale = NULL)
+	public function __construct(string $message, $count = NULL, $parameters = NULL, ?string $domain = NULL, ?string $locale = NULL)
 	{
 		$this->message = $message;
 
@@ -80,7 +80,7 @@ class Phrase
 	 * @param string|NULL $locale
 	 * @return string|\Nette\Utils\IHtmlString|\Latte\Runtime\IHtmlString
 	 */
-	public function translate(Translator $translator, $count = NULL, array $parameters = [], $domain = NULL, $locale = NULL)
+	public function translate(Translator $translator, $count = NULL, array $parameters = [], ?string $domain = NULL, ?string $locale = NULL)
 	{
 		if (!is_string($this->message)) {
 			throw new \Kdyby\Translation\InvalidStateException('Message is not a string, type ' . gettype($this->message) . ' given.');
@@ -103,7 +103,7 @@ class Phrase
 		$this->translator = $translator;
 	}
 
-	public function __toString()
+	public function __toString(): string
 	{
 		if ($this->translator === NULL) {
 			return $this->message;
@@ -119,7 +119,7 @@ class Phrase
 		return '';
 	}
 
-	public function __sleep()
+	public function __sleep(): array
 	{
 		$this->translator = NULL;
 		return ['message', 'count', 'parameters', 'domain', 'locale'];

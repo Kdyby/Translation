@@ -29,7 +29,7 @@ class LocaleParamResolver implements \Kdyby\Translation\IUserLocaleResolver
 	 */
 	private $translator;
 
-	public function setTranslator(Translator $translator)
+	public function setTranslator(Translator $translator): void
 	{
 		$this->translator = $translator;
 	}
@@ -38,7 +38,7 @@ class LocaleParamResolver implements \Kdyby\Translation\IUserLocaleResolver
 	 * @param \Nette\Application\Application $sender
 	 * @param \Nette\Application\Request $request
 	 */
-	public function onRequest(Application $sender, Request $request)
+	public function onRequest(Application $sender, Request $request): void
 	{
 		$params = $request->getParameters();
 		if ($request->getMethod() === Request::FORWARD && empty($params['locale'])) {
@@ -47,7 +47,7 @@ class LocaleParamResolver implements \Kdyby\Translation\IUserLocaleResolver
 
 		$this->request = $request;
 
-		if (!$this->translator) {
+		if ($this->translator === null) {
 			return;
 		}
 
@@ -59,7 +59,7 @@ class LocaleParamResolver implements \Kdyby\Translation\IUserLocaleResolver
 	 * @param \Kdyby\Translation\Translator $translator
 	 * @return string|NULL
 	 */
-	public function resolve(Translator $translator)
+	public function resolve(Translator $translator): ?string
 	{
 		if ($this->request === NULL) {
 			return NULL;

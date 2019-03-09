@@ -18,9 +18,7 @@ use Latte\PhpWriter;
 class TranslateMacros extends \Latte\Macros\MacroSet
 {
 
-	use \Kdyby\StrictObjects\Scream;
-
-	public static function install(Compiler $compiler)
+	public static function install(Compiler $compiler): TranslateMacros
 	{
 		$me = new static($compiler);
 		/** @var \Kdyby\Translation\Latte\TranslateMacros $me */
@@ -67,13 +65,13 @@ class TranslateMacros extends \Latte\Macros\MacroSet
 	 * @throws \Latte\CompileException for invalid domain
 	 * @return string|NULL
 	 */
-	public function macroDomain(MacroNode $node, PhpWriter $writer)
+	public function macroDomain(MacroNode $node, PhpWriter $writer): ?string
 	{
 		if ($node->closing) {
 			if ($node->content !== NULL && $node->content !== '') {
 				return $writer->write('$_translator->unregister($this);');
 			}
-
+			return null;
 		} else {
 			if ($node->empty) {
 				throw new \Latte\CompileException('Expected message prefix, none given');
@@ -87,7 +85,7 @@ class TranslateMacros extends \Latte\Macros\MacroSet
 	 * @param \Latte\MacroNode $node
 	 * @return bool
 	 */
-	private function containsOnlyOneWord(MacroNode $node)
+	private function containsOnlyOneWord(MacroNode $node): bool
 	{
 		$result = trim($node->tokenizer->joinUntil(',')) === trim($node->args);
 		$node->tokenizer->reset();

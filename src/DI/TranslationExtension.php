@@ -410,7 +410,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 	 * @param string $locale
 	 * @param string $domain
 	 */
-	protected function validateResource($format, $file, $locale, $domain)
+	protected function validateResource(string $format, string $file, string $locale, string $domain)
 	{
 		$builder = $this->getContainerBuilder();
 
