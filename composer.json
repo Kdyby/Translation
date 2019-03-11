@@ -17,7 +17,7 @@
 		"issues": "https://github.com/kdyby/translation/issues"
 	},
 	"require": {
-		"php": ">=7.0",
+		"php": ">=7.1",
 		"kdyby/strict-objects": "dev-master",
 		"latte/latte": "^3.0@dev",
 		"nette/caching": "^3.0@dev",
