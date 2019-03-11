@@ -18,7 +18,7 @@
 	},
 	"require": {
 		"php": ">=7.1",
-		"kdyby/strict-objects": "dev-master",
+		"kdyby/strict-objects": "^1.0@dev",
 		"latte/latte": "^3.0@dev",
 		"nette/caching": "^3.0@dev",
 		"nette/di": "^3.0@dev",
