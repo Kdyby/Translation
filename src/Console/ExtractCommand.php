@@ -76,7 +76,9 @@ class ExtractCommand extends \Symfony\Component\Console\Command\Command
 
 	protected function validate(InputInterface $input, OutputInterface $output)
 	{
-		$this->outputFormat = trim($input->getOption('output-format'), '=');
+		/** @var string $outputFormat */
+		$outputFormat = $input->getOption('output-format');
+		$this->outputFormat = trim($outputFormat, '=');
 		if (!in_array($this->outputFormat, $this->writer->getFormats(), TRUE)) {
 			$output->writeln('<error>Unknown --output-format</error>');
 			$output->writeln(sprintf('<info>Choose one of: %s</info>', implode(', ', $this->writer->getFormats())));
@@ -109,7 +111,9 @@ class ExtractCommand extends \Symfony\Component\Console\Command\Command
 			return 1;
 		}
 
-		$catalogue = new MessageCatalogue((string) $input->getOption('catalogue-language'));
+		/** @var string $catalogueLanguage */
+		$catalogueLanguage = $input->getOption('catalogue-language');
+		$catalogue = new MessageCatalogue($catalogueLanguage);
 		foreach ($this->scanDirs as $dir) {
 			$output->writeln(sprintf('<info>Extracting %s</info>', $dir));
 			$this->extractor->extract($dir, $catalogue);

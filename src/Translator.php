@@ -134,9 +134,11 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 			return $message->translate($this);
 		}
 
+		/** @var string $parametersString */
+		$parametersString = $parameters;
 		if (is_array($count)) {
 			$locale = ($domain !== NULL) ? (string) $domain : NULL;
-			$domain = ($parameters !== NULL && !empty($parameters)) ? (string) $parameters : NULL;
+			$domain = ($parameters !== NULL && !empty($parameters)) ? (string) $parametersString : NULL;
 			$parameters = $count;
 			$count = NULL;
 		}

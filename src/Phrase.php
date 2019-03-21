@@ -60,8 +60,10 @@ class Phrase
 		$this->message = $message;
 
 		if (is_array($count)) {
+			/** @var string $stringParameters */
+			$stringParameters = $parameters;
 			$locale = ($domain !== NULL) ? (string) $domain : NULL;
-			$domain = ($parameters !== NULL) ? (string) $parameters : NULL;
+			$domain = ($parameters !== NULL) ? (string) $stringParameters : NULL;
 			$parameters = $count;
 			$count = NULL;
 		}

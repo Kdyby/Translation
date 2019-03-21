@@ -110,7 +110,9 @@ class TranslationLoader implements \Kdyby\Translation\IResourceLoader
 			unset($this->serviceIds[$format]);
 		}
 
-		$catalogue->addCatalogue($this->loaders[$format]->load($resource, $catalogue->getLocale(), $domain));
+		/** @var \Symfony\Component\Translation\Loader\LoaderInterface $loader */
+		$loader = $this->loaders[$format];
+		$catalogue->addCatalogue($loader->load($resource, $catalogue->getLocale(), $domain));
 	}
 
 }

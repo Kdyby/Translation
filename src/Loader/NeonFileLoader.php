@@ -33,7 +33,9 @@ class NeonFileLoader extends \Symfony\Component\Translation\Loader\ArrayLoader i
 		}
 
 		try {
-			$messages = Neon::decode(file_get_contents($resource));
+			/** @var string $fileContent */
+			$fileContent = file_get_contents($resource);
+			$messages = Neon::decode($fileContent);
 
 		} catch (\Nette\Neon\Exception $e) {
 			throw new \Symfony\Component\Translation\Exception\InvalidResourceException(sprintf('Error parsing Neon: %s', $e->getMessage()), 0, $e);

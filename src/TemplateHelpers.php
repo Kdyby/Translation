@@ -66,8 +66,10 @@ class TemplateHelpers
 	public function translate($message, $count = NULL, $parameters = [], $domain = NULL, $locale = NULL)
 	{
 		if (is_array($count)) {
+			/** @var string $stringParameters */
+			$stringParameters = $parameters;
 			$locale = ($domain !== NULL) ? (string) $domain : NULL;
-			$domain = ($parameters !== NULL && !empty($parameters)) ? (string) $parameters : NULL;
+			$domain = ($parameters !== NULL && !empty($parameters)) ? (string) $stringParameters : NULL;
 			$parameters = $count;
 			$count = NULL;
 		}

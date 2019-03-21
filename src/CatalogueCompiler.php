@@ -128,7 +128,9 @@ class CatalogueCompiler
 		$fallbackContent = '';
 		$current = new PhpLiteral('');
 		foreach ($this->fallbackResolver->compute($translator, $locale) as $fallback) {
-			$fallbackSuffix = new PhpLiteral(ucfirst(preg_replace('~[^a-z0-9_]~i', '_', $fallback)));
+			/** @var string $pregReplace */
+			$pregReplace = preg_replace('~[^a-z0-9_]~i', '_', $fallback);
+			$fallbackSuffix = new PhpLiteral(ucfirst($pregReplace));
 
 			$fallbackContent .= GeneratorHelpers::format(<<<EOF
 \$catalogue? = new MessageCatalogue(?, ?);

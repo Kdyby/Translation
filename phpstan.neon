@@ -3,10 +3,6 @@ parameters:
 		- '#Constant TEMP_DIR not found#'
 		# Temporary, untill the resolvers are refactored to work on application request basis
 		- '#Strict comparison using === between string and null will always evaluate to false#'
-		# Optional arguments
-		- "#Casting to string something that's already string#"
-		- "#Casting to int something that's already int#"
-		- "#Casting to array something that's already array#"
 		# Other errors
 		- '#Access to an undefined property Nette\\Http\\SessionSection\|stdClass::\$locale#'
 		- '#Argument of an invalid type array\|string\|null supplied for foreach, only iterables are supported#'
@@ -14,3 +10,7 @@ parameters:
 		- '#Array \(array\<Symfony\\Component\\Translation\\Loader\\LoaderInterface\>\) does not accept object#'
 		- '#Class Symfony\\Component\\Translation\\Formatter\\IntlFormatterInterface not found.#'
 		- '#Class Symfony\\Component\\Translation\\Formatter\\IntlFormatter not found.#'
+
+		-
+			message: '#Tracy\\BlueScreen::addPanel()#'
+			path: %currentWorkingDirectory%/src/Diagnostics/Panel.php

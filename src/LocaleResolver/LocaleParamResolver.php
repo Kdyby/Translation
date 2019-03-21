@@ -25,7 +25,7 @@ class LocaleParamResolver implements \Kdyby\Translation\IUserLocaleResolver
 	private $request;
 
 	/**
-	 * @var \Kdyby\Translation\Translator
+	 * @var \Kdyby\Translation\Translator|NULL
 	 */
 	private $translator;
 
