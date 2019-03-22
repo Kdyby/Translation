@@ -121,23 +121,25 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	 * Translates the given string.
 	 *
 	 * @param string|\Kdyby\Translation\Phrase|mixed $message The message id
-	 * @param int|array|NULL $count The number to use to find the indice of the message
 	 * @param string|array|NULL $parameters An array of parameters for the message
-	 * @param string|NULL $domain The domain for the message
-	 * @param string|NULL $locale The locale
 	 * @throws \InvalidArgumentException
 	 * @return string|\Nette\Utils\IHtmlString|\Latte\Runtime\IHtmlString
 	 */
-	public function translate($message, $count = NULL, $parameters = [], $domain = NULL, $locale = NULL)
+	public function translate($message, ...$parameters): string
 	{
 		if ($message instanceof Phrase) {
 			return $message->translate($this);
 		}
 
+		$count = isset($parameters[0]) ? $parameters[0] : NULL;
+		$params = isset($parameters[1]) ? $parameters[1] : [];
+		$domain = isset($parameters[2]) ? $parameters[2] : NULL;
+		$locale = isset($parameters[3]) ? $parameters[3] : NULL;
+
 		if (is_array($count)) {
 			$locale = ($domain !== NULL) ? (string) $domain : NULL;
 			$domain = ($parameters !== NULL && !empty($parameters)) ? (string) $parameters : NULL;
-			$parameters = $count;
+			$params = $count;
 			$count = NULL;
 		}
 
@@ -168,16 +170,16 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 		}
 
 		$tmp = [];
-		foreach ($parameters as $key => $val) {
+		foreach ($params as $key => $val) {
 			$tmp['%' . trim($key, '%') . '%'] = $val;
 		}
-		$parameters = $tmp;
+		$params = $tmp;
 
 		if ($count !== NULL && is_scalar($count)) {
-			return $this->transChoice($message, $count, $parameters + ['%count%' => $count], $domain, $locale);
+			return $this->transChoice($message, $count, $params + ['%count%' => $count], $domain, $locale);
 		}
 
-		return $this->trans($message, $parameters, $domain, $locale);
+		return $this->trans($message, $params, $domain, $locale);
 	}
 
 	/**
