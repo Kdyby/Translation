@@ -39,10 +39,10 @@ install:
   - if [ "$COVERAGE" != "" ]; then travis_retry wget -O /tmp/coveralls.phar https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar; fi
 
 script:
-  - vendor/bin/tester $COVERAGE -s -p ${TESTER_RUNTIME:-php} -c ./tests/php.ini-unix ./tests/KdybyTests/
   - php /tmp/php-parallel-lint/parallel-lint.php -e php,phpt --exclude vendor .
   - if [ "$PHPSTAN" = "1" ]; then php vendor/phpstan/phpstan-shim/phpstan.phar analyse --ansi --no-progress -l7 -c phpstan.neon src tests/KdybyTests; fi
   - if [ "$CODING_STANDARD" = "1" ]; then php vendor/bin/phpcs --standard=ruleset.xml --encoding=utf-8 -sp src tests; fi
+  - vendor/bin/tester $COVERAGE -s -p ${TESTER_RUNTIME:-php} -c ./tests/php.ini-unix ./tests/KdybyTests/
 
 after_script:
   - if [ "$COVERAGE" != "" ]; then php /tmp/coveralls.phar --verbose --config tests/.coveralls.yml || true; fi
