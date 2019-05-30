@@ -43,7 +43,7 @@ class PhpFileStorage extends \Nette\Caching\Storages\FileStorage implements \Net
 	 * @param string $key
 	 * @return string
 	 */
-	protected function getCacheFile($key)
+	protected function getCacheFile(string $key): string
 	{
 		$cacheKey = substr_replace(
 			$key,

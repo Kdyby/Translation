@@ -128,11 +128,16 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	 * @throws \InvalidArgumentException
 	 * @return string|\Nette\Utils\IHtmlString|\Latte\Runtime\IHtmlString
 	 */
-	public function translate($message, $count = NULL, $parameters = [], $domain = NULL, $locale = NULL)
+	public function translate($message, ...$arg): string
 	{
 		if ($message instanceof Phrase) {
 			return $message->translate($this);
 		}
+
+		$count = isset($arg[0]) ? $arg[0] : NULL;
+		$parameters = isset($arg[1]) ? $arg[1] : [];
+		$domain = isset($arg[2]) ? $arg[2] : [];
+		$locale = isset($arg[3]) ? $arg[3] : [];
 
 		if (is_array($count)) {
 			$locale = ($domain !== NULL) ? (string) $domain : NULL;
