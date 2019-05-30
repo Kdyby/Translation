@@ -38,6 +38,8 @@ use Nette\DI\Statement;
 use Nette\PhpGenerator\ClassType as ClassTypeGenerator;
 use Nette\PhpGenerator\PhpLiteral;
 use Nette\Reflection\ClassType as ReflectionClassType;
+use Nette\Schema\Schema;
+use Nette\Schema\Expect;
 use Nette\Utils\Callback;
 use Nette\Utils\Finder;
 use Nette\Utils\Validators;
@@ -101,15 +103,35 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 		$this->defaults['cache'] = new Statement($this->defaults['cache'], ['%tempDir%/cache']);
 	}
 
+	public function getConfigSchema(): Schema
+	{
+		return Expect::structure([
+			'whitelist' => Expect::anyOf(Expect::arrayOf('string'), NULL),
+			'default' => Expect::string('en'),
+			'logging' => Expect::anyOf('string', 'bool'),
+			'fallback' => Expect::arrayOf('string')->default(['en_US']),
+			'dirs' => Expect::arrayOf('string')->default(['%appDir%/lang', '%appDir%/locale']),
+			'cache' => Expect::string(PhpFileStorage::class),
+			'debugger' => Expect::string('%debugMode%'),
+			'resolvers' => Expect::array()->default([
+				self::RESOLVER_SESSION => FALSE,
+				self::RESOLVER_REQUEST => TRUE,
+				self::RESOLVER_HEADER => TRUE,
+			]),
+			'loaders' => Expect::array(),
+		])->castTo('array');
+
+	}
+
 	public function loadConfiguration()
 	{
 		$this->loaders = [];
 
 		$builder = $this->getContainerBuilder();
-		$config = $this->getConfig();
+		$config = $this->config;
 
 		$translator = $builder->addDefinition($this->prefix('default'))
-			->setClass(KdybyTranslator::class, [$this->prefix('@userLocaleResolver')])
+			->setFactory(KdybyTranslator::class, [$this->prefix('@userLocaleResolver')])
 			->addSetup('?->setTranslator(?)', [$this->prefix('@userLocaleResolver.param'), '@self'])
 			->addSetup('setDefaultLocale', [$config['default']])
 			->addSetup('setLocaleWhitelist', [$config['whitelist']]);
@@ -118,11 +140,11 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 		$translator->addSetup('setFallbackLocales', [$config['fallback']]);
 
 		$catalogueCompiler = $builder->addDefinition($this->prefix('catalogueCompiler'))
-			->setClass(CatalogueCompiler::class, self::filterArgs($config['cache']));
+			->setFactory(CatalogueCompiler::class, self::filterArgs($config['cache']));
 
 		if ($config['debugger'] && interface_exists(IBarPanel::class)) {
 			$builder->addDefinition($this->prefix('panel'))
-				->setClass(Panel::class, [dirname($builder->expand('%appDir%'))])
+				->setFactory(Panel::class, [dirname(Helpers::expand('%appDir%', $builder->parameters))])
 				->addSetup('setLocaleWhitelist', [$config['whitelist']]);
 
 			$translator->addSetup('?->register(?)', [$this->prefix('@panel'), '@self']);
