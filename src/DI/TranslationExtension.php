@@ -10,6 +10,7 @@
 
 namespace Kdyby\Translation\DI;
 
+use Doctrine\Tests\Models\Cache\State;
 use Kdyby\Console\DI\ConsoleExtension;
 use Kdyby\Monolog\Logger as KdybyLogger;
 use Kdyby\Translation\Caching\PhpFileStorage;
@@ -98,17 +99,12 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 	 */
 	private $loaders;
 
-	public function __construct()
-	{
-		$this->defaults['cache'] = new Statement($this->defaults['cache'], ['%tempDir%/cache']);
-	}
-
 	public function getConfigSchema(): Schema
 	{
 		return Expect::structure([
 			'whitelist' => Expect::anyOf(Expect::arrayOf('string'), NULL),
 			'default' => Expect::string('en'),
-			'logging' => Expect::anyOf('string', 'bool'),
+			'logging' => Expect::anyOf(Expect::string(), Expect::bool()),
 			'fallback' => Expect::arrayOf('string')->default(['en_US']),
 			'dirs' => Expect::arrayOf('string')->default(['%appDir%/lang', '%appDir%/locale']),
 			'cache' => Expect::string(PhpFileStorage::class),
@@ -129,6 +125,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 
 		$builder = $this->getContainerBuilder();
 		$config = $this->config;
+		$config['cache'] = new Statement($config['cache'], [dirname(Helpers::expand('%tempDir%/cache', $builder->parameters))]);
 
 		$translator = $builder->addDefinition($this->prefix('default'))
 			->setFactory(KdybyTranslator::class, [$this->prefix('@userLocaleResolver')])
@@ -363,8 +360,8 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 			$config['dirs'] = array_merge($config['dirs'], array_values($extension->getTranslationResources()));
 		}
 
-		$config['dirs'] = array_map(function ($dir) {
-			return str_replace((DIRECTORY_SEPARATOR === '/') ? '\\' : '/', DIRECTORY_SEPARATOR, $dir);
+		$config['dirs'] = array_map(function ($dir) use ($builder) {
+			return str_replace((DIRECTORY_SEPARATOR === '/') ? '\\' : '/', DIRECTORY_SEPARATOR, Helpers::expand($dir, $builder->parameters));
 		}, $config['dirs']);
 
 		$dirs = array_values(array_filter($config['dirs'], Callback::closure('is_dir')));
