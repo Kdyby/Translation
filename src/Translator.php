@@ -121,10 +121,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	 * Translates the given string.
 	 *
 	 * @param string|\Kdyby\Translation\Phrase|mixed $message The message id
-	 * @param int|array|NULL $count The number to use to find the indice of the message
-	 * @param string|array|NULL $parameters An array of parameters for the message
-	 * @param string|NULL $domain The domain for the message
-	 * @param string|NULL $locale The locale
+	 * @param string|array|NULL $arg An array of parameters for the message
 	 * @throws \InvalidArgumentException
 	 * @return string|\Nette\Utils\IHtmlString|\Latte\Runtime\IHtmlString
 	 */
@@ -136,8 +133,8 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 
 		$count = isset($arg[0]) ? $arg[0] : NULL;
 		$parameters = isset($arg[1]) ? $arg[1] : [];
-		$domain = isset($arg[2]) ? $arg[2] : [];
-		$locale = isset($arg[3]) ? $arg[3] : [];
+		$domain = isset($arg[2]) ? $arg[2] : NULL;
+		$locale = isset($arg[3]) ? $arg[3] : NULL;
 
 		if (is_array($count)) {
 			$locale = ($domain !== NULL) ? (string) $domain : NULL;
