@@ -55,7 +55,7 @@ class PrefixedTranslator implements \Kdyby\Translation\ITranslator
 	/**
 	 * @param string|\Kdyby\Translation\Phrase $message
 	 * @param array|string|NULL ...$arg
-	 * @return string|\Nette\Utils\IHtmlString|\Latte\Runtime\IHtmlString
+	 * @return string
 	 */
 	public function translate($message, ...$arg): string
 	{
@@ -67,7 +67,7 @@ class PrefixedTranslator implements \Kdyby\Translation\ITranslator
 		$domain = isset($arg[2]) ? $arg[2] : NULL;
 		$locale = isset($arg[3]) ? $arg[3] : NULL;
 
-		if (Strings::startsWith($message, '//')) {
+		if (Strings::startsWith((string)$message, '//')) {
 			$prefix = NULL;
 			$translationString = Strings::substring($translationString, 2);
 		}

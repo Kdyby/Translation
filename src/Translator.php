@@ -121,9 +121,9 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	 * Translates the given string.
 	 *
 	 * @param string|\Kdyby\Translation\Phrase|mixed $message The message id
-	 * @param string|array|NULL ...$arg An array of parameters for the message
+	 * @param mixed ...$arg An array of parameters for the message
 	 * @throws \InvalidArgumentException
-	 * @return string|\Nette\Utils\IHtmlString|\Latte\Runtime\IHtmlString
+	 * @return string
 	 */
 	public function translate($message, ...$arg): string
 	{
@@ -141,7 +141,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 
 		} elseif ($message instanceof NetteHtmlString || $message instanceof LatteHtmlString) {
 			$this->logMissingTranslation($message->__toString(), $domain, $locale);
-			return $message; // what now?
+			return (string)$message; // what now?
 		} elseif (is_int($message)) {
 			$message = (string) $message;
 		}

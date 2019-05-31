@@ -33,6 +33,7 @@ use Nette\Bridges\ApplicationLatte\ILatteFactory;
 use Nette\Configurator;
 use Nette\DI\Compiler;
 use Nette\DI\Definitions\FactoryDefinition;
+use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Helpers;
 use Nette\DI\Statement;
 use Nette\PhpGenerator\ClassType as ClassTypeGenerator;
@@ -122,6 +123,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 		$this->loaders = [];
 
 		$builder = $this->getContainerBuilder();
+		/** @var array $config */
 		$config = $this->config;
 		$config['cache'] = new Statement($config['cache'], [dirname(Helpers::expand('%tempDir%/cache', $builder->parameters))]);
 
@@ -227,8 +229,9 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 		}
 
 		if ($config['debugger'] && interface_exists(IBarPanel::class)) {
-			$builder->getDefinition($this->prefix('panel'))
-				->addSetup('setLocaleResolvers', [array_reverse($resolvers)]);
+			/** @var ServiceDefinition $panel */
+			$panel = $builder->getDefinition($this->prefix('panel'));
+			$panel->addSetup('setLocaleResolvers', [array_reverse($resolvers)]);
 		}
 	}
 
@@ -238,7 +241,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 
 		Validators::assertField($config, 'dirs', 'list');
 		$builder->addDefinition($this->prefix('console.extract'))
-			->setClass(ExtractCommand::class)
+			->setFactory(ExtractCommand::class)
 			->addSetup('$defaultOutputDir', [reset($config['dirs'])])
 			->addTag(ConsoleExtension::TAG_COMMAND, 'latte');
 	}
@@ -282,7 +285,8 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 	public function beforeCompile()
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->getConfig();
+		/** @var array $config */
+		$config = $this->config;
 
 		$this->beforeCompileLogging($config);
 
@@ -309,11 +313,14 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 
 		$applicationService = $builder->getByType(Application::class) ?: 'application';
 		if ($builder->hasDefinition($applicationService)) {
-			$builder->getDefinition($applicationService)
+
+			/** @var ServiceDefinition $applicationServiceDefinition */
+			$applicationServiceDefinition = $builder->getDefinition($applicationService);
+			$applicationServiceDefinition
 				->addSetup('$service->onRequest[] = ?', [[$this->prefix('@userLocaleResolver.param'), 'onRequest']]);
 
 			if ($config['debugger'] && interface_exists(IBarPanel::class)) {
-				$builder->getDefinition($applicationService)
+				$applicationServiceDefinition
 					->addSetup('$self = $this; $service->onStartup[] = function () use ($self) { $self->getService(?); }', [$this->prefix('default')])
 					->addSetup('$service->onRequest[] = ?', [[$this->prefix('@panel'), 'onRequest']]);
 			}
@@ -323,6 +330,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 			Panel::registerBluescreen();
 		}
 
+		/** @var ServiceDefinition $extractor */
 		$extractor = $builder->getDefinition($this->prefix('extractor'));
 		foreach ($builder->findByTag(self::TAG_EXTRACTOR) as $extractorId => $meta) {
 			Validators::assert($meta, 'string:2..');
@@ -332,6 +340,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 			$builder->getDefinition($extractorId)->setAutowired(FALSE);
 		}
 
+		/** @var ServiceDefinition $writer */
 		$writer = $builder->getDefinition($this->prefix('writer'));
 		foreach ($builder->findByTag(self::TAG_DUMPER) as $dumperId => $meta) {
 			Validators::assert($meta, 'string:2..');
@@ -348,8 +357,9 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 			$this->loaders[$meta] = $loaderId;
 		}
 
-		$builder->getDefinition($this->prefix('loader'))
-			->addSetup('injectServiceIds', [$this->loaders]);
+		/** @var ServiceDefinition $loaderDefinition */
+		$loaderDefinition = $builder->getDefinition($this->prefix('loader'));
+		$loaderDefinition->addSetup('injectServiceIds', [$this->loaders]);
 
 		foreach ($this->compiler->getExtensions() as $extension) {
 			if (!$extension instanceof ITranslationProvider) {
@@ -376,6 +386,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 	protected function beforeCompileLogging(array $config)
 	{
 		$builder = $this->getContainerBuilder();
+		/** @var ServiceDefinition $translator */
 		$translator = $builder->getDefinition($this->prefix('default'));
 
 		if ($config['logging'] === TRUE) {
@@ -397,9 +408,10 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 	protected function loadResourcesFromDirs($dirs)
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->getConfig();
+		$config = $this->config;
 
 		$whitelistRegexp = KdybyTranslator::buildWhitelistRegexp($config['whitelist']);
+		/** @var ServiceDefinition $translator */
 		$translator = $builder->getDefinition($this->prefix('default'));
 
 		$mask = array_map(function ($value) {
@@ -437,6 +449,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 		}
 
 		try {
+			/** @var ServiceDefinition $def */
 			$def = $builder->getDefinition($this->loaders[$format]);
 			$refl = ReflectionClassType::from($def->getEntity() ?: $def->getClass());
 			$method = $refl->getConstructor();
@@ -467,14 +480,6 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 		if (class_exists(Debugger::class)) {
 			$initialize->addBody('?::registerBluescreen();', [new PhpLiteral(Panel::class)]);
 		}
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getConfig(array $defaults = NULL, $expand = TRUE)
-	{
-		return parent::getConfig($this->defaults) + ['fallback' => ['en_US']];
 	}
 
 	private function isRegisteredConsoleExtension()
