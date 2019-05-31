@@ -33,6 +33,7 @@ use Nette\Application\Application;
 use Nette\Bridges\ApplicationLatte\ILatteFactory;
 use Nette\Configurator;
 use Nette\DI\Compiler;
+use Nette\DI\Definitions\FactoryDefinition;
 use Nette\DI\Helpers;
 use Nette\DI\ServiceDefinition;
 use Nette\DI\Statement;
@@ -108,7 +109,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 			'fallback' => Expect::arrayOf('string')->default(['en_US']),
 			'dirs' => Expect::arrayOf('string')->default(['%appDir%/lang', '%appDir%/locale']),
 			'cache' => Expect::string(PhpFileStorage::class),
-			'debugger' => Expect::string('%debugMode%'),
+			'debugger' => Expect::bool(FALSE),
 			'resolvers' => Expect::array()->default([
 				self::RESOLVER_SESSION => FALSE,
 				self::RESOLVER_REQUEST => TRUE,
@@ -288,10 +289,11 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 
 		$this->beforeCompileLogging($config);
 
-		$registerToLatte = function (ServiceDefinition $def) {
-			$def->addSetup('?->onCompile[] = function($engine) { ?::install($engine->getCompiler()); }', ['@self', new PhpLiteral(TranslateMacros::class)]);
+		$registerToLatte = function (FactoryDefinition $def) {
+			$def->getResultDefinition()->addSetup('?->onCompile[] = function($engine) { ?::install($engine->getCompiler()); }', ['@self', new PhpLiteral(TranslateMacros::class)]);
 
-			$def->addSetup('addProvider', ['translator', $this->prefix('@default')])
+			$def->getResultDefinition()
+				->addSetup('addProvider', ['translator', $this->prefix('@default')])
 				->addSetup('addFilter', ['translate', [$this->prefix('@helpers'), 'translateFilterAware']]);
 		};
 
@@ -300,7 +302,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 			$latteFactoryService = 'nette.latteFactory';
 		}
 
-		if ($builder->hasDefinition($latteFactoryService) && self::isOfType($builder->getDefinition($latteFactoryService)->getClass(), LatteEngine::class)) {
+		if ($builder->hasDefinition($latteFactoryService) && self::isOfType($builder->getDefinition($latteFactoryService)->getClass(), ILatteFactory::class)) {
 			$registerToLatte($builder->getDefinition($latteFactoryService));
 		}
 
