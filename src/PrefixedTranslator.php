@@ -76,13 +76,6 @@ class PrefixedTranslator implements \Kdyby\Translation\ITranslator
 			return $this->translator->translate(new Phrase($prefix . $translationString, $message->count, $message->parameters, $message->domain, $message->locale));
 		}
 
-		if (is_array($count)) {
-			$locale = $domain !== NULL ? (string) $domain : NULL;
-			$domain = $parameters !== NULL && !empty($parameters) ? (string) $parameters : NULL;
-			$parameters = $count;
-			$count = NULL;
-		}
-
 		return $this->translator->translate($prefix . $translationString, $count, (array) $parameters, $domain, $locale);
 	}
 
