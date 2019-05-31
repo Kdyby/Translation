@@ -141,7 +141,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 
 		} elseif ($message instanceof NetteHtmlString || $message instanceof LatteHtmlString) {
 			$this->logMissingTranslation($message->__toString(), $domain, $locale);
-			return (string)$message; // what now?
+			return (string) $message; // what now?
 		} elseif (is_int($message)) {
 			$message = (string) $message;
 		}

@@ -67,7 +67,7 @@ class PrefixedTranslator implements \Kdyby\Translation\ITranslator
 		$domain = isset($arg[2]) ? $arg[2] : NULL;
 		$locale = isset($arg[3]) ? $arg[3] : NULL;
 
-		if (Strings::startsWith((string)$message, '//')) {
+		if (Strings::startsWith((string) $message, '//')) {
 			$prefix = NULL;
 			$translationString = Strings::substring($translationString, 2);
 		}

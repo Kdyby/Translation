@@ -33,7 +33,6 @@ use Nette\Bridges\ApplicationLatte\ILatteFactory;
 use Nette\Configurator;
 use Nette\DI\Compiler;
 use Nette\DI\Definitions\FactoryDefinition;
-use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Helpers;
 use Nette\DI\Statement;
 use Nette\PhpGenerator\ClassType as ClassTypeGenerator;
@@ -229,7 +228,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 		}
 
 		if ($config['debugger'] && interface_exists(IBarPanel::class)) {
-			/** @var ServiceDefinition $panel */
+			/** @var \Nette\DI\Definitions\ServiceDefinition $panel */
 			$panel = $builder->getDefinition($this->prefix('panel'));
 			$panel->addSetup('setLocaleResolvers', [array_reverse($resolvers)]);
 		}
@@ -314,7 +313,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 		$applicationService = $builder->getByType(Application::class) ?: 'application';
 		if ($builder->hasDefinition($applicationService)) {
 
-			/** @var ServiceDefinition $applicationServiceDefinition */
+			/** @var \Nette\DI\Definitions\ServiceDefinition $applicationServiceDefinition */
 			$applicationServiceDefinition = $builder->getDefinition($applicationService);
 			$applicationServiceDefinition
 				->addSetup('$service->onRequest[] = ?', [[$this->prefix('@userLocaleResolver.param'), 'onRequest']]);
@@ -330,7 +329,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 			Panel::registerBluescreen();
 		}
 
-		/** @var ServiceDefinition $extractor */
+		/** @var \Nette\DI\Definitions\ServiceDefinition $extractor */
 		$extractor = $builder->getDefinition($this->prefix('extractor'));
 		foreach ($builder->findByTag(self::TAG_EXTRACTOR) as $extractorId => $meta) {
 			Validators::assert($meta, 'string:2..');
@@ -340,7 +339,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 			$builder->getDefinition($extractorId)->setAutowired(FALSE);
 		}
 
-		/** @var ServiceDefinition $writer */
+		/** @var \Nette\DI\Definitions\ServiceDefinition $writer */
 		$writer = $builder->getDefinition($this->prefix('writer'));
 		foreach ($builder->findByTag(self::TAG_DUMPER) as $dumperId => $meta) {
 			Validators::assert($meta, 'string:2..');
@@ -357,7 +356,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 			$this->loaders[$meta] = $loaderId;
 		}
 
-		/** @var ServiceDefinition $loaderDefinition */
+		/** @var \Nette\DI\Definitions\ServiceDefinition $loaderDefinition */
 		$loaderDefinition = $builder->getDefinition($this->prefix('loader'));
 		$loaderDefinition->addSetup('injectServiceIds', [$this->loaders]);
 
@@ -386,7 +385,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 	protected function beforeCompileLogging(array $config)
 	{
 		$builder = $this->getContainerBuilder();
-		/** @var ServiceDefinition $translator */
+		/** @var \Nette\DI\Definitions\ServiceDefinition $translator */
 		$translator = $builder->getDefinition($this->prefix('default'));
 
 		if ($config['logging'] === TRUE) {
@@ -411,7 +410,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 		$config = $this->config;
 
 		$whitelistRegexp = KdybyTranslator::buildWhitelistRegexp($config['whitelist']);
-		/** @var ServiceDefinition $translator */
+		/** @var \Nette\DI\Definitions\ServiceDefinition $translator */
 		$translator = $builder->getDefinition($this->prefix('default'));
 
 		$mask = array_map(function ($value) {
@@ -449,7 +448,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 		}
 
 		try {
-			/** @var ServiceDefinition $def */
+			/** @var \Nette\DI\Definitions\ServiceDefinition $def */
 			$def = $builder->getDefinition($this->loaders[$format]);
 			$refl = ReflectionClassType::from($def->getEntity() ?: $def->getClass());
 			$method = $refl->getConstructor();
