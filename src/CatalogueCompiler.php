@@ -158,7 +158,16 @@ EOF
 	 */
 	protected static function load()
 	{
-		return include func_get_arg(0);
+		/**
+		 * Ugly hack because of BC break in Nette\Caching\Storages due to this commit:
+		 * https://github.com/nette/caching/commit/0e5d0699a82a9a25b3daffd832c04b1521544770
+		 * FileStorage no longer escapes the meta head with <?php, which causes Kdyby/Translator
+		 * to print the cache meta head with every translate() call.
+		 **/
+		ob_start();
+		$fnc = include func_get_arg(0);
+		ob_get_clean();
+		return $fnc;
 	}
 
 }
