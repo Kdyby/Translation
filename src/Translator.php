@@ -121,7 +121,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	 * Translates the given string.
 	 *
 	 * @param string|\Kdyby\Translation\Phrase|mixed $message The message id
-	 * @param string|array|NULL $arg An array of parameters for the message
+	 * @param string|array|NULL ...$arg An array of parameters for the message
 	 * @throws \InvalidArgumentException
 	 * @return string|\Nette\Utils\IHtmlString|\Latte\Runtime\IHtmlString
 	 */

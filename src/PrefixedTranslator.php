@@ -54,7 +54,7 @@ class PrefixedTranslator implements \Kdyby\Translation\ITranslator
 
 	/**
 	 * @param string|\Kdyby\Translation\Phrase $message
-	 * @param array|string|NULL $arg
+	 * @param array|string|NULL ...$arg
 	 * @return string|\Nette\Utils\IHtmlString|\Latte\Runtime\IHtmlString
 	 */
 	public function translate($message, ...$arg): string

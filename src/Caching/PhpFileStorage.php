@@ -23,7 +23,9 @@ class PhpFileStorage extends \Nette\Caching\Storages\FileStorage implements \Net
 	 */
 	public $hint;
 
-	/** additional cache structure */
+	/**
+	 * Additional cache structure
+	 */
 	private const
 		FILE = 'file',
 		HANDLE = 'handle';

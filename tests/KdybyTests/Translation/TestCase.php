@@ -31,7 +31,7 @@ abstract class TestCase extends \Tester\TestCase
 		$config->addParameters(['appDir' => __DIR__]);
 		TranslationExtension::register($config);
 		MonologExtension::register($config);
-		$config->onCompile[] = function($config, Compiler $compiler): void {
+		$config->onCompile[] = function ($config, Compiler $compiler): void {
 			$compiler->addExtension('console', new ConsoleExtension());
 		};
 		$config->addConfig(__DIR__ . '/../nette-reset.neon');

@@ -10,7 +10,6 @@
 
 namespace Kdyby\Translation\DI;
 
-use Doctrine\Tests\Models\Cache\State;
 use Kdyby\Console\DI\ConsoleExtension;
 use Kdyby\Monolog\Logger as KdybyLogger;
 use Kdyby\Translation\Caching\PhpFileStorage;
@@ -35,13 +34,12 @@ use Nette\Configurator;
 use Nette\DI\Compiler;
 use Nette\DI\Definitions\FactoryDefinition;
 use Nette\DI\Helpers;
-use Nette\DI\ServiceDefinition;
 use Nette\DI\Statement;
 use Nette\PhpGenerator\ClassType as ClassTypeGenerator;
 use Nette\PhpGenerator\PhpLiteral;
 use Nette\Reflection\ClassType as ReflectionClassType;
-use Nette\Schema\Schema;
 use Nette\Schema\Expect;
+use Nette\Schema\Schema;
 use Nette\Utils\Callback;
 use Nette\Utils\Finder;
 use Nette\Utils\Validators;
@@ -117,7 +115,6 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 			]),
 			'loaders' => Expect::array(),
 		])->castTo('array');
-
 	}
 
 	public function loadConfiguration()
