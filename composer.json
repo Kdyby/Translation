@@ -45,7 +45,7 @@
 		"nette/forms": "^3.0",
 		"tracy/tracy": "^3.0",
 		"kdyby/console": "^2.7.1@dev",
-		"kdyby/monolog": "dev-refactor-for-new-nette",
+		"kdyby/monolog": "dev-master",
 		"symfony/yaml": "^3.4 || ^4.0",
 		"symfony/console": "^3.4 || ^4.0",
 		"nette/tester": "^2.2",
