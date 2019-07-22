@@ -19,7 +19,7 @@
 	"require": {
 		"php": ">=7.1",
 		"kdyby/strict-objects": "^2.0",
-		"latte/latte": "^3.0 >3.0.0-RC1",
+		"latte/latte": "^2.5 || ^3.0",
 		"nette/caching": "^3.0",
 		"nette/di": "^3.0",
 		"nette/finder": "^3.0",
