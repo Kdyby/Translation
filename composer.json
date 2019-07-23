@@ -45,7 +45,7 @@
 		"nette/forms": "^3.0",
 		"tracy/tracy": "^3.0",
 		"kdyby/console": "^2.7.1@dev",
-		"kdyby/monolog": "dev-master",
+		"kdyby/monolog": "^2.0",
 		"symfony/yaml": "^3.4 || ^4.0",
 		"symfony/console": "^3.4 || ^4.0",
 		"nette/tester": "^2.2",
@@ -72,11 +72,5 @@
 		"branch-alias": {
 			"dev-master": "3.0-dev"
 		}
-	},
-	"repositories": [
-		{
-			"type": "git",
-			"url": "https://github.com/haltuf/Monolog.git"
-		}
-	]
+	}
 }
