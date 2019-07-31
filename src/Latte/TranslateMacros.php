@@ -18,6 +18,8 @@ use Latte\PhpWriter;
 class TranslateMacros extends \Latte\Macros\MacroSet
 {
 
+	use \Kdyby\StrictObjects\Scream;
+
 	public static function install(Compiler $compiler)
 	{
 		$me = new static($compiler);

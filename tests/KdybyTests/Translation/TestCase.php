@@ -14,6 +14,7 @@ use Kdyby\Console\DI\ConsoleExtension;
 use Kdyby\Monolog\DI\MonologExtension;
 use Kdyby\Translation\DI\TranslationExtension;
 use Nette\Configurator;
+use Nette\DI\Compiler;
 use Nette\Localization\ITranslator;
 
 abstract class TestCase extends \Tester\TestCase
@@ -30,7 +31,9 @@ abstract class TestCase extends \Tester\TestCase
 		$config->addParameters(['appDir' => __DIR__]);
 		TranslationExtension::register($config);
 		MonologExtension::register($config);
-		ConsoleExtension::register($config);
+		$config->onCompile[] = function ($config, Compiler $compiler): void {
+			$compiler->addExtension('console', new ConsoleExtension());
+		};
 		$config->addConfig(__DIR__ . '/../nette-reset.neon');
 
 		if ($configName) {

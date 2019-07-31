@@ -54,31 +54,26 @@ class PrefixedTranslator implements \Kdyby\Translation\ITranslator
 
 	/**
 	 * @param string|\Kdyby\Translation\Phrase $message
-	 * @param int|array|NULL $count
-	 * @param array|string|NULL $parameters
-	 * @param string|NULL $domain
-	 * @param string|NULL $locale
-	 * @return string|\Nette\Utils\IHtmlString|\Latte\Runtime\IHtmlString
+	 * @param array|string|NULL ...$arg
+	 * @return string
 	 */
-	public function translate($message, $count = NULL, $parameters = [], $domain = NULL, $locale = NULL)
+	public function translate($message, ...$arg): string
 	{
 		$translationString = ($message instanceof Phrase ? $message->message : $message);
 		$prefix = $this->prefix . '.';
 
-		if (Strings::startsWith($message, '//')) {
+		$count = isset($arg[0]) ? $arg[0] : NULL;
+		$parameters = isset($arg[1]) ? $arg[1] : [];
+		$domain = isset($arg[2]) ? $arg[2] : NULL;
+		$locale = isset($arg[3]) ? $arg[3] : NULL;
+
+		if (Strings::startsWith((string) $message, '//')) {
 			$prefix = NULL;
 			$translationString = Strings::substring($translationString, 2);
 		}
 
 		if ($message instanceof Phrase) {
 			return $this->translator->translate(new Phrase($prefix . $translationString, $message->count, $message->parameters, $message->domain, $message->locale));
-		}
-
-		if (is_array($count)) {
-			$locale = $domain !== NULL ? (string) $domain : NULL;
-			$domain = $parameters !== NULL && !empty($parameters) ? (string) $parameters : NULL;
-			$parameters = $count;
-			$count = NULL;
 		}
 
 		return $this->translator->translate($prefix . $translationString, $count, (array) $parameters, $domain, $locale);

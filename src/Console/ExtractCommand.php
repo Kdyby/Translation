@@ -11,6 +11,7 @@
 namespace Kdyby\Translation\Console;
 
 use Kdyby\Translation\MessageCatalogue;
+use Nette\DI\Helpers;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -84,7 +85,7 @@ class ExtractCommand extends \Symfony\Component\Console\Command\Command
 			return FALSE;
 		}
 
-		$this->scanDirs = $this->serviceLocator->expand($input->getOption('scan-dir'));
+		$this->scanDirs = Helpers::expand($input->getOption('scan-dir'), $this->serviceLocator->parameters);
 		foreach ($this->scanDirs as $dir) {
 			if (!is_dir($dir)) {
 				$output->writeln(sprintf('<error>Given --scan-dir "%s" does not exists.</error>', $dir));
@@ -93,7 +94,7 @@ class ExtractCommand extends \Symfony\Component\Console\Command\Command
 			}
 		}
 
-		$this->outputDir = $this->serviceLocator->expand($input->getOption('output-dir'));
+		$this->outputDir = Helpers::expand($input->getOption('output-dir'), $this->serviceLocator->parameters);
 		if (!is_dir($this->outputDir) || !is_writable($this->outputDir)) {
 			$output->writeln(sprintf('<error>Given --output-dir "%s" does not exists or is not writable.</error>', $this->outputDir));
 

@@ -10,7 +10,7 @@ services:
 translation:
 	whitelist: [cs, sk, en]
 	resolvers:
-		session: on
+		session: true
 
 application:
 	scanDirs: false

@@ -78,9 +78,9 @@ class Phrase
 	 * @param array $parameters
 	 * @param string|NULL $domain
 	 * @param string|NULL $locale
-	 * @return string|\Nette\Utils\IHtmlString|\Latte\Runtime\IHtmlString
+	 * @return string
 	 */
-	public function translate(Translator $translator, $count = NULL, array $parameters = [], $domain = NULL, $locale = NULL)
+	public function translate(Translator $translator, $count = NULL, array $parameters = [], $domain = NULL, $locale = NULL): string
 	{
 		if (!is_string($this->message)) {
 			throw new \Kdyby\Translation\InvalidStateException('Message is not a string, type ' . gettype($this->message) . ' given.');
