@@ -22,7 +22,7 @@
 		"latte/latte": "^2.5.2 || ^3.0",
 		"nette/caching": "^3.0",
 		"nette/di": "^3.0",
-		"nette/finder": "^3.0",
+		"nette/finder": "^2.5",
 		"nette/http": "^3.0",
 		"nette/neon": "^3.0",
 		"nette/php-generator": "^3.0.1@dev",
