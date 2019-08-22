@@ -125,7 +125,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	 * @throws \InvalidArgumentException
 	 * @return string
 	 */
-	public function translate($message, ...$arg): string
+	public function translate($message, ...$arg): ?string
 	{
 		if ($message instanceof Phrase) {
 			return $message->translate($this);
