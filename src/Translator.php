@@ -137,8 +137,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 		$locale = isset($arg[3]) ? $arg[3] : NULL;
 
 		if (empty($message)) {
-			return $message;
-
+			return '';
 		} elseif ($message instanceof NetteHtmlString || $message instanceof LatteHtmlString) {
 			$this->logMissingTranslation($message->__toString(), $domain, $locale);
 			return (string) $message; // what now?
