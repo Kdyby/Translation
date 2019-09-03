@@ -136,6 +136,13 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 		$domain = isset($arg[2]) ? $arg[2] : NULL;
 		$locale = isset($arg[3]) ? $arg[3] : NULL;
 
+		if (is_array($count)) {
+			$locale = ($domain !== NULL) ? (string) $domain : NULL;
+			$domain = ($parameters !== NULL && !empty($parameters)) ? (string) $parameters : NULL;
+			$parameters = $count;
+			$count = NULL;
+		}
+
 		if (empty($message)) {
 			return '';
 		} elseif ($message instanceof NetteHtmlString || $message instanceof LatteHtmlString) {
