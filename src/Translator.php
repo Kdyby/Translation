@@ -97,7 +97,6 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 		$this->translationsLoader = $loader;
 
 		parent::__construct('', $formatter);
-		$this->setLocale(NULL);
 	}
 
 	/**
@@ -195,7 +194,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 		}
 
 		if ($domain === NULL) {
-			list($domain, $id) = $this->extractMessageDomain($message);
+			[$domain, $id] = $this->extractMessageDomain($message);
 
 		} else {
 			$id = $message;
@@ -224,7 +223,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 		}
 
 		if ($domain === NULL) {
-			list($domain, $id) = $this->extractMessageDomain($message);
+			[$domain, $id] = $this->extractMessageDomain($message);
 
 		} else {
 			$id = $message;
@@ -242,10 +241,10 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 
 		if ($result === "\x01") {
 			$this->logMissingTranslation($message, $domain, $locale);
-			if ($locale === NULL) {
+			if ($locale === null) {
 				$locale = $this->getLocale();
 			}
-			if ($locale === NULL) {
+			if ($locale === '') {
 				$result = strtr($message, $parameters);
 
 			} else {
@@ -340,17 +339,17 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	 */
 	public function setLocale($locale)
 	{
-		parent::setLocale($locale);
+		parent::setLocale((string)$locale);
 	}
 
 	/**
 	 * Returns the current locale.
 	 *
-	 * @return string|NULL The locale
+	 * @return string The locale
 	 */
 	public function getLocale()
 	{
-		if (parent::getLocale() === NULL) {
+		if (parent::getLocale() === '') {
 			$this->setLocale($this->localeResolver->resolve($this));
 		}
 
@@ -437,7 +436,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	private function extractMessageDomain($message)
 	{
 		if (strpos($message, '.') !== FALSE && strpos($message, ' ') === FALSE) {
-			list($domain, $message) = explode('.', $message, 2);
+			[$domain, $message] = explode('.', $message, 2);
 
 		} else {
 			$domain = 'messages';
