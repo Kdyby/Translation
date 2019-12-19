@@ -339,10 +339,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	 */
 	public function setLocale($locale)
 	{
-		if ($locale === null) {
-			$locale = '';
-		}
-		parent::setLocale($locale);
+		parent::setLocale((string)$locale);
 	}
 
 	/**
