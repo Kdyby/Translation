@@ -339,6 +339,9 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	 */
 	public function setLocale($locale)
 	{
+		if ($locale === null) {
+			$locale = '';
+		}
 		parent::setLocale($locale);
 	}
 
@@ -350,10 +353,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	public function getLocale()
 	{
 		if (parent::getLocale() === '') {
-			$locale = $this->localeResolver->resolve($this);
-			if ($locale !== null) {
-				$this->setLocale($locale);
-			}
+			$this->setLocale($this->localeResolver->resolve($this));
 		}
 
 		return parent::getLocale();
