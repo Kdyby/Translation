@@ -241,10 +241,10 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 
 		if ($result === "\x01") {
 			$this->logMissingTranslation($message, $domain, $locale);
-			if ($locale === NULL) {
+			if ($locale === '') {
 				$locale = $this->getLocale();
 			}
-			if ($locale === NULL) {
+			if ($locale === '') {
 				$result = strtr($message, $parameters);
 
 			} else {
