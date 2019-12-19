@@ -127,7 +127,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 		$config['cache'] = new Statement($config['cache'], [dirname(Helpers::expand('%tempDir%/cache', $builder->parameters))]);
 
 		$translator = $builder->addDefinition($this->prefix('default'))
-			->setFactory(KdybyTranslator::class, [$this->prefix('@userLocaleResolver'), $config['default']])
+			->setFactory(KdybyTranslator::class, [$this->prefix('@userLocaleResolver')])
 			->addSetup('?->setTranslator(?)', [$this->prefix('@userLocaleResolver.param'), '@self'])
 			->addSetup('setDefaultLocale', [$config['default']])
 			->addSetup('setLocaleWhitelist', [$config['whitelist']]);

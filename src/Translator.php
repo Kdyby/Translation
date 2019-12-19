@@ -76,7 +76,6 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 
 	/**
 	 * @param \Kdyby\Translation\IUserLocaleResolver $localeResolver
-	 * @param string $locale
 	 * @param \Symfony\Component\Translation\Formatter\MessageFormatterInterface $formatter
 	 * @param \Kdyby\Translation\CatalogueCompiler $catalogueCompiler
 	 * @param \Kdyby\Translation\FallbackResolver $fallbackResolver
@@ -85,7 +84,6 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	 */
 	public function __construct(
 		IUserLocaleResolver $localeResolver,
-		string $locale,
 		MessageFormatterInterface $formatter,
 		CatalogueCompiler $catalogueCompiler,
 		FallbackResolver $fallbackResolver,
@@ -98,7 +96,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 		$this->fallbackResolver = $fallbackResolver;
 		$this->translationsLoader = $loader;
 
-		parent::__construct($locale, $formatter);
+		parent::__construct('', $formatter);
 	}
 
 	/**
@@ -351,7 +349,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	 */
 	public function getLocale()
 	{
-		if (parent::getLocale() === NULL) {
+		if (parent::getLocale() === '') {
 			$this->setLocale($this->localeResolver->resolve($this));
 		}
 
