@@ -194,7 +194,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 		}
 
 		if ($domain === NULL) {
-			list($domain, $id) = $this->extractMessageDomain($message);
+			[$domain, $id] = $this->extractMessageDomain($message);
 
 		} else {
 			$id = $message;
@@ -223,7 +223,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 		}
 
 		if ($domain === NULL) {
-			list($domain, $id) = $this->extractMessageDomain($message);
+			[$domain, $id] = $this->extractMessageDomain($message);
 
 		} else {
 			$id = $message;
@@ -350,7 +350,10 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	public function getLocale()
 	{
 		if (parent::getLocale() === '') {
-			$this->setLocale($this->localeResolver->resolve($this));
+			$locale = $this->localeResolver->resolve($this);
+			if ($locale !== null) {
+				$this->setLocale($locale);
+			}
 		}
 
 		return parent::getLocale();
@@ -436,7 +439,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	private function extractMessageDomain($message)
 	{
 		if (strpos($message, '.') !== FALSE && strpos($message, ' ') === FALSE) {
-			list($domain, $message) = explode('.', $message, 2);
+			[$domain, $message] = explode('.', $message, 2);
 
 		} else {
 			$domain = 'messages';
