@@ -348,7 +348,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	/**
 	 * Returns the current locale.
 	 *
-	 * @return string|NULL The locale
+	 * @return string The locale
 	 */
 	public function getLocale()
 	{
