@@ -51,6 +51,7 @@ class LocaleParamResolver implements \Kdyby\Translation\IUserLocaleResolver
 			return;
 		}
 
+		$this->translator->setLocale('');
 		$this->translator->getLocale(); // invoke resolver
 	}
 
