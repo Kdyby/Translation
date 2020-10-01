@@ -7,6 +7,5 @@ parameters:
 		- "#Casting to array something that's already array#"
 		# Other errors
 		- '#Access to an undefined property Nette\\Http\\SessionSection\|stdClass::\$locale#'
-		- '#Argument of an invalid type array\|string\|null supplied for foreach, only iterables are supported#'
 		- '#Parameter \#1 \$locale of method Symfony\\Component\\Translation\\Translator::setLocale\(\) expects string, string\|null given#'
 		- '#Array \(array\<Symfony\\Component\\Translation\\Loader\\LoaderInterface\>\) does not accept object#'

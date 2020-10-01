@@ -11,6 +11,7 @@
 namespace KdybyTests\Translation;
 
 use Nette\Application\UI\Form;
+use Nette\ComponentModel\IComponent;
 
 class HomepagePresenter extends \Nette\Application\UI\Presenter
 {
@@ -18,7 +19,7 @@ class HomepagePresenter extends \Nette\Application\UI\Presenter
 	/**
 	 * @return \Nette\Application\UI\Form
 	 */
-	protected function createComponent($name)
+	protected function createComponent(string $name): ?IComponent
 	{
 		$form = new Form();
 		$form->addProtection('Invalid CSRF token');

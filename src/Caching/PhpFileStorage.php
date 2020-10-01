@@ -24,12 +24,18 @@ class PhpFileStorage extends \Nette\Caching\Storages\FileStorage implements \Net
 	public $hint;
 
 	/**
+	 * Additional cache structure
+	 */
+	private const FILE = 'file';
+	private const HANDLE = 'handle';
+
+	/**
 	 * Reads cache data from disk.
 	 *
 	 * @param array $meta
 	 * @return mixed
 	 */
-	protected function readData($meta)
+	protected function readData(array $meta)
 	{
 		return [
 			'file' => $meta[self::FILE],
@@ -43,7 +49,7 @@ class PhpFileStorage extends \Nette\Caching\Storages\FileStorage implements \Net
 	 * @param string $key
 	 * @return string
 	 */
-	protected function getCacheFile($key)
+	protected function getCacheFile(string $key): string
 	{
 		$cacheKey = substr_replace(
 			$key,

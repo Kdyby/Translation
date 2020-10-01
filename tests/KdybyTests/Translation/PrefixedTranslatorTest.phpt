@@ -77,6 +77,17 @@ class PrefixedTranslatorTest extends \KdybyTests\Translation\TestCase
 		Assert::same('Use 5 credits', $prefixed->translate(new Phrase('//front.orderForm.useCredits', 5)));
 	}
 
+	/**
+	 * Reported at https://github.com/Kdyby/Translation/commit/7858654f4e68a932b09e9515996036ac44339362
+	 */
+	public function testBugRemovedUnnecessaryCode()
+	{
+		$translator = $this->createTranslator();
+		$prefixed = $translator->domain('front.homepage');
+
+		Assert::same('Hello world', $prefixed->translate('namedHello', ['name' => 'world']));
+	}
+
 }
 
 (new PrefixedTranslatorTest())->run();

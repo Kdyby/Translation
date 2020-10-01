@@ -120,18 +120,20 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	 * Translates the given string.
 	 *
 	 * @param string|\Kdyby\Translation\Phrase|mixed $message The message id
-	 * @param int|array|NULL $count The number to use to find the indice of the message
-	 * @param string|array|NULL $parameters An array of parameters for the message
-	 * @param string|NULL $domain The domain for the message
-	 * @param string|NULL $locale The locale
+	 * @param mixed ...$arg An array of parameters for the message
 	 * @throws \InvalidArgumentException
-	 * @return string|\Nette\Utils\IHtmlString|\Latte\Runtime\IHtmlString
+	 * @return string
 	 */
-	public function translate($message, $count = NULL, $parameters = [], $domain = NULL, $locale = NULL)
+	public function translate($message, ...$arg): string
 	{
 		if ($message instanceof Phrase) {
 			return $message->translate($this);
 		}
+
+		$count = isset($arg[0]) ? $arg[0] : NULL;
+		$parameters = isset($arg[1]) ? $arg[1] : [];
+		$domain = isset($arg[2]) ? $arg[2] : NULL;
+		$locale = isset($arg[3]) ? $arg[3] : NULL;
 
 		if (is_array($count)) {
 			$locale = ($domain !== NULL) ? (string) $domain : NULL;
@@ -141,11 +143,10 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 		}
 
 		if (empty($message)) {
-			return $message;
-
+			return '';
 		} elseif ($message instanceof NetteHtmlString || $message instanceof LatteHtmlString) {
 			$this->logMissingTranslation($message->__toString(), $domain, $locale);
-			return $message; // what now?
+			return (string) $message; // what now?
 		} elseif (is_int($message)) {
 			$message = (string) $message;
 		}
