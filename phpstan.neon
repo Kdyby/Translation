@@ -1,8 +1,6 @@
 parameters:
 	ignoreErrors:
 		- '#Constant TEMP_DIR not found#'
-		# Temporary, untill the resolvers are refactored to work on application request basis
-		- '#Strict comparison using === between string and null will always evaluate to false#'
 		# Optional arguments
 		- "#Casting to string something that's already string#"
 		- "#Casting to int something that's already int#"
