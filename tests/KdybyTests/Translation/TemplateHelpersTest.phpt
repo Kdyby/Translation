@@ -39,12 +39,12 @@ class TemplateHelpersTest extends \KdybyTests\Translation\TestCase
 		Assert::same('front.missingKey.namedHelloCounting', $helper->translate('front.missingKey.namedHelloCounting', ['name' => 'Peter'], NULL, 'en'));
 	}
 
-    public function testGetTranslator()
-    {
-        $translator = $this->createTranslator();
-        $helper = new TemplateHelpers($translator);
+	public function testGetTranslator()
+	{
+		$translator = $this->createTranslator();
+		$helper = new TemplateHelpers($translator);
 
-        Assert::true($helper->getTranslator() instanceof ITranslator);
+		Assert::true($helper->getTranslator() instanceof ITranslator);
 	}
 
 }
