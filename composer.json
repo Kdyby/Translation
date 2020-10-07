@@ -43,7 +43,7 @@
 		"nette/application": "^3.0",
 		"nette/bootstrap": "^3.0",
 		"nette/forms": "^3.0",
-		"tracy/tracy": "^3.0",
+		"tracy/tracy": "^2.7 || ^3.0",
 		"kdyby/console": "^2.7.1@dev",
 		"kdyby/monolog": "^2.0",
 		"symfony/yaml": "^3.4 || ^4.0",
