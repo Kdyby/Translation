@@ -29,6 +29,8 @@ matrix:
   exclude:
     - php: 7.3
       env: COMPOSER_EXTRA_ARGS="--prefer-stable"
+    - php: 7.4
+      env: COMPOSER_EXTRA_ARGS="--prefer-lowest --prefer-stable"
   allow_failures:
     - env: DEV=1
 
