@@ -8,6 +8,7 @@
 
 namespace KdybyTests\Translation;
 
+use Kdyby\Translation\ITranslator;
 use Kdyby\Translation\TemplateHelpers;
 use Tester\Assert;
 
@@ -36,6 +37,14 @@ class TemplateHelpersTest extends \KdybyTests\Translation\TestCase
 		Assert::same('front.missingKey.namedHelloCounting', $helper->translate('front.missingKey.namedHelloCounting', 3, NULL, NULL, 'en'));
 		Assert::same('front.missingKey.namedHelloCounting', $helper->translate('front.missingKey.namedHelloCounting', 3, ['name' => 'Peter'], NULL, 'en'));
 		Assert::same('front.missingKey.namedHelloCounting', $helper->translate('front.missingKey.namedHelloCounting', ['name' => 'Peter'], NULL, 'en'));
+	}
+
+	public function testGetTranslator()
+	{
+		$translator = $this->createTranslator();
+		$helper = new TemplateHelpers($translator);
+
+		Assert::true($helper->getTranslator() instanceof ITranslator);
 	}
 
 }
