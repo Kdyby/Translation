@@ -10,9 +10,10 @@ php:
   - 7.1
   - 7.2
   - 7.3
+  - 7.4
 
 env:
-  - # dev
+  - DEV=1
   - COMPOSER_EXTRA_ARGS="--prefer-stable"
   - COMPOSER_EXTRA_ARGS="--prefer-lowest --prefer-stable"
 
@@ -28,8 +29,10 @@ matrix:
   exclude:
     - php: 7.3
       env: COMPOSER_EXTRA_ARGS="--prefer-stable"
+    - php: 7.4
+      env: COMPOSER_EXTRA_ARGS="--prefer-lowest --prefer-stable"
   allow_failures:
-    - env:
+    - env: DEV=1
 
 install:
   - if [ "$CODING_STANDARD" = "1" ]; then composer require --dev --no-update kdyby/coding-standard:^1.0@dev; fi
