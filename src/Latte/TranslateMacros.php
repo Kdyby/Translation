@@ -25,6 +25,7 @@ class TranslateMacros extends \Latte\Macros\MacroSet
 		$me = new static($compiler);
 		/** @var \Kdyby\Translation\Latte\TranslateMacros $me */
 
+		
 		$me->addMacro('_', [$me, 'macroTranslate'], [$me, 'macroTranslate']);
 		$me->addMacro('translator', [$me, 'macroDomain'], [$me, 'macroDomain']);
 
@@ -48,7 +49,7 @@ class TranslateMacros extends \Latte\Macros\MacroSet
 				$value = 'ob_get_clean()';
 			}
 
-			return $writer->write('$_fi = new LR\FilterInfo(%var); echo %modifyContent($this->filters->filterContent("translate", $_fi, %raw))', $node->context[0], $value);
+			return $writer->write('$__fi = new LR\FilterInfo(%var); echo %modifyContent($this->filters->filterContent("translate", $__fi, %raw))', $node->context[0], $value);
 
 		} elseif ($node->args !== '') {
 			$node->empty = TRUE;
