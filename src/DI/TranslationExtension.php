@@ -372,7 +372,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 			return str_replace((DIRECTORY_SEPARATOR === '/') ? '\\' : '/', DIRECTORY_SEPARATOR, Helpers::expand($dir, $builder->parameters));
 		}, $config['dirs']);
 
-		$dirs = array_values(array_filter($config['dirs'], Callback::closure('is_dir')));
+		$dirs = array_values(array_filter($config['dirs'], \Closure::fromCallable('is_dir')));
 		if (count($dirs) > 0) {
 			foreach ($dirs as $dir) {
 				$builder->addDependency($dir);
