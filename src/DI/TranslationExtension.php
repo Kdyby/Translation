@@ -40,7 +40,6 @@ use Nette\PhpGenerator\PhpLiteral;
 use Nette\Reflection\ClassType as ReflectionClassType;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
-use Nette\Utils\Callback;
 use Nette\Utils\Finder;
 use Nette\Utils\Validators;
 use Symfony\Component\Translation\Extractor\ChainExtractor;
