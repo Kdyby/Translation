@@ -161,8 +161,8 @@ class TranslatorTest extends \KdybyTests\Translation\TestCase
 	{
 		$translator = $this->createTranslator();
 
-		Assert::same('Hello.', $translator->translate('Hello.']));
-		Assert::same('Hello world.', $translator->translate('Hello world.']));
+		Assert::same('Hello.', $translator->translate('Hello.'));
+		Assert::same('Hello world.', $translator->translate('Hello world.'));
 	}
 }
 
