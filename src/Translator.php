@@ -201,9 +201,9 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 		}
 
 		if ($id === '') {
-		    $id = $message;
-		    $domain = NULL;
-        }
+			$id = $message;
+			$domain = NULL;
+		}
 
 		$result = parent::trans($id, $parameters, $domain, $locale);
 		if ($result === "\x01") {
@@ -234,10 +234,10 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 			$id = $message;
 		}
 
-        if ($id === '') {
-            $id = $message;
-            $domain = NULL;
-        }
+		if ($id === '') {
+			$id = $message;
+			$domain = NULL;
+		}
 
 		try {
 			$result = parent::transChoice($id, $number, $parameters, $domain, $locale);
