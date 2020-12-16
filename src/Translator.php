@@ -200,6 +200,11 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 			$id = $message;
 		}
 
+		if ($id === '') {
+		    $id = $message;
+		    $domain = NULL;
+        }
+
 		$result = parent::trans($id, $parameters, $domain, $locale);
 		if ($result === "\x01") {
 			$this->logMissingTranslation($message, $domain, $locale);
@@ -228,6 +233,11 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 		} else {
 			$id = $message;
 		}
+
+        if ($id === '') {
+            $id = $message;
+            $domain = NULL;
+        }
 
 		try {
 			$result = parent::transChoice($id, $number, $parameters, $domain, $locale);
