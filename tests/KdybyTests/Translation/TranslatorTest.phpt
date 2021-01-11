@@ -160,7 +160,6 @@ class TranslatorTest extends \KdybyTests\Translation\TestCase
 	public function testBugMessageWithDotAtTheEnd()
 	{
 		$translator = $this->createTranslator();
-
 		Assert::same('Hello.', $translator->translate('Hello.'));
 		Assert::same('Hello world.', $translator->translate('Hello world.'));
 	}
