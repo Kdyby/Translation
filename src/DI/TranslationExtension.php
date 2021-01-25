@@ -10,6 +10,7 @@
 
 namespace Kdyby\Translation\DI;
 
+use Closure;
 use Kdyby\Console\DI\ConsoleExtension;
 use Kdyby\Monolog\Logger as KdybyLogger;
 use Kdyby\Translation\Caching\PhpFileStorage;
@@ -40,7 +41,6 @@ use Nette\PhpGenerator\PhpLiteral;
 use Nette\Reflection\ClassType as ReflectionClassType;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
-use Nette\Utils\Callback;
 use Nette\Utils\Finder;
 use Nette\Utils\Validators;
 use Symfony\Component\Translation\Extractor\ChainExtractor;
@@ -372,7 +372,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 			return str_replace((DIRECTORY_SEPARATOR === '/') ? '\\' : '/', DIRECTORY_SEPARATOR, Helpers::expand($dir, $builder->parameters));
 		}, $config['dirs']);
 
-		$dirs = array_values(array_filter($config['dirs'], Callback::closure('is_dir')));
+		$dirs = array_values(array_filter($config['dirs'], Closure::fromCallable('is_dir')));
 		if (count($dirs) > 0) {
 			foreach ($dirs as $dir) {
 				$builder->addDependency($dir);
