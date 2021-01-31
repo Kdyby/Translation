@@ -26,11 +26,13 @@ matrix:
       env: COMPOSER_EXTRA_ARGS="--prefer-stable" PHPSTAN=1
     - php: 7.3
       env: COMPOSER_EXTRA_ARGS="--prefer-stable" CODING_STANDARD=1
+    - php: 7.4
+      env: COMPOSER_EXTRA_ARGS="--prefer-stable" CODING_STANDARD=1
   exclude:
     - php: 7.3
-      env: COMPOSER_EXTRA_ARGS="--prefer-stable"
+      env: COMPOSER_EXTRA_ARGS="--prefer-stable" 
     - php: 7.4
-      env: COMPOSER_EXTRA_ARGS="--prefer-lowest --prefer-stable"
+      env: COMPOSER_EXTRA_ARGS="--prefer-lowest --prefer-stable" 
   allow_failures:
     - env: DEV=1
 
