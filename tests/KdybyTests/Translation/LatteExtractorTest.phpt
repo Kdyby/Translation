@@ -9,6 +9,7 @@
 namespace KdybyTests\Translation;
 
 use Kdyby\Translation\Extractors\LatteExtractor;
+use Latte\Engine;
 use Symfony\Component\Translation\MessageCatalogue;
 use Tester\Assert;
 
@@ -23,17 +24,32 @@ class LatteExtractorTest extends \KdybyTests\Translation\TestCase
 
 		$catalogue = new MessageCatalogue('cs_CZ');
 		$extractor->extract(__DIR__ . '/data/extractor-files', $catalogue);
-
-		Assert::same([
-			'messages' => [
-				'Important title' => 'Important title',
-				'Another important title' => 'Another important title',
-				"\nInteresting article about interesting topic\n" => "\nInteresting article about interesting topic\n",
-				'Chapter 2' => 'Chapter 2',
-				'none|one|many' => 'none|one|many',
-				'sample.identificator' => 'sample.identificator',
-			],
-		], $catalogue->all());
+		if (Engine::VERSION_ID < 20900) {
+			$mess = [
+				'messages' => [
+					'Important title' => 'Important title',
+					'Another important title' => 'Another important title',
+					"\nInteresting article about interesting topic\n" => "\nInteresting article about interesting topic\n",
+					'Chapter 2' => 'Chapter 2',
+					'none|one|many' => 'none|one|many',
+					'sample.identificator' => 'sample.identificator',
+				],
+			];
+		} else {
+			// we like cs :-)
+			$impT = sprintf('%s%s%s', '(', '"Important title"', ')');
+			$mess = [
+				'messages' => [
+					$impT => $impT,
+					"('Another important title')" => "('Another important title')",
+					"\nInteresting article about interesting topic\n" => "\nInteresting article about interesting topic\n",
+					"('Chapter 2')" => "('Chapter 2')",
+					'none|one|many' => 'none|one|many',
+					'sample.identificator' => 'sample.identificator',
+				],
+			];
+		}
+		Assert::same($mess, $catalogue->all());
 	}
 
 	public function testExtractDirectoryWithPrefix()
@@ -43,17 +59,34 @@ class LatteExtractorTest extends \KdybyTests\Translation\TestCase
 
 		$catalogue = new MessageCatalogue('cs_CZ');
 		$extractor->extract(__DIR__ . '/data/extractor-files', $catalogue);
-
-		Assert::same([
-			'messages' => [
-				'homepage.Important title' => 'Important title',
-				'homepage.Another important title' => 'Another important title',
-				"homepage.\nInteresting article about interesting topic\n" => "\nInteresting article about interesting topic\n",
-				'homepage.Chapter 2' => 'Chapter 2',
-				'homepage.none|one|many' => 'none|one|many',
-				'homepage.sample.identificator' => 'sample.identificator',
-			],
-		], $catalogue->all());
+		if (Engine::VERSION_ID < 20900) {
+			$mess = [
+				'messages' => [
+					'homepage.Important title' => 'Important title',
+					'homepage.Another important title' => 'Another important title',
+					"homepage.\nInteresting article about interesting topic\n" => "\nInteresting article about interesting topic\n",
+					'homepage.Chapter 2' => 'Chapter 2',
+					'homepage.none|one|many' => 'none|one|many',
+					'homepage.sample.identificator' => 'sample.identificator',
+				],
+			];
+		} else {
+			$impT = sprintf('%s%s%s', '(', '"Important title"', ')');
+			$prefixImpT = sprintf('%s%s%s', 'homepage.(', '"Important title"', ')');
+			$prefixNoneOneMany = sprintf('%s%s', 'homepage.', 'none|one|many');
+			$prefixSampleIdentificator = sprintf('%s%s', 'homepage.sample.', 'identificator');
+			$mess = [
+				'messages' => [
+					$prefixImpT => $impT,
+					"homepage.('Another important title')" => "('Another important title')",
+					"homepage.\nInteresting article about interesting topic\n" => "\nInteresting article about interesting topic\n",
+					"homepage.('Chapter 2')" => "('Chapter 2')",
+					$prefixNoneOneMany => 'none|one|many',
+					$prefixSampleIdentificator => 'sample.identificator',
+				],
+			];
+		}
+		Assert::same($mess, $catalogue->all());
 	}
 
 }
