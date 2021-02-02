@@ -24,7 +24,7 @@ class LatteExtractorTest extends \KdybyTests\Translation\TestCase
 
 		$catalogue = new MessageCatalogue('cs_CZ');
 		$extractor->extract(__DIR__ . '/data/extractor-files', $catalogue);
-		if (Engine::VERSION_ID < 20900) {
+		if (!defined(Engine::class . '::VERSION_ID') || Engine::VERSION_ID < 20900) {
 			$mess = [
 				'messages' => [
 					'Important title' => 'Important title',
@@ -59,7 +59,7 @@ class LatteExtractorTest extends \KdybyTests\Translation\TestCase
 
 		$catalogue = new MessageCatalogue('cs_CZ');
 		$extractor->extract(__DIR__ . '/data/extractor-files', $catalogue);
-		if (Engine::VERSION_ID < 20900) {
+		if (!defined(Engine::class . '::VERSION_ID') || Engine::VERSION_ID < 20900) {
 			$mess = [
 				'messages' => [
 					'homepage.Important title' => 'Important title',
