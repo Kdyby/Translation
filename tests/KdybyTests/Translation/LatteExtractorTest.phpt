@@ -36,7 +36,6 @@ class LatteExtractorTest extends \KdybyTests\Translation\TestCase
 				],
 			];
 		} else {
-			// we like cs :-)
 			$impT = sprintf('%s%s%s', '(', '"Important title"', ')');
 			$mess = [
 				'messages' => [
