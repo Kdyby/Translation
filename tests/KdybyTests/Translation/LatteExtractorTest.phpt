@@ -36,10 +36,9 @@ class LatteExtractorTest extends \KdybyTests\Translation\TestCase
 				],
 			];
 		} else {
-			$impT = sprintf('%s%s%s', '(', '"Important title"', ')');
 			$mess = [
 				'messages' => [
-					$impT => $impT,
+					"(\"Important title\")" => "(\"Important title\")",
 					"('Another important title')" => "('Another important title')",
 					"\nInteresting article about interesting topic\n" => "\nInteresting article about interesting topic\n",
 					"('Chapter 2')" => "('Chapter 2')",
@@ -70,11 +69,9 @@ class LatteExtractorTest extends \KdybyTests\Translation\TestCase
 				],
 			];
 		} else {
-			$impT = sprintf('%s%s%s', '(', '"Important title"', ')');
-			$prefixImpT = sprintf('%s%s%s', 'homepage.(', '"Important title"', ')');
 			$mess = [
 				'messages' => [
-					$prefixImpT => $impT,
+					"homepage.(\"Important title\")" => "(\"Important title\")",
 					"homepage.('Another important title')" => "('Another important title')",
 					"homepage.\nInteresting article about interesting topic\n" => "\nInteresting article about interesting topic\n",
 					"homepage.('Chapter 2')" => "('Chapter 2')",

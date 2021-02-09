@@ -9,4 +9,7 @@
 	<rule ref="KdybyCodingStandard.Files.TypeNameMatchesFileName.NoMatchBetweenTypeNameAndFileName">
 		<exclude-pattern>tests/KdybyTests/Translation/data/extractor-files/*</exclude-pattern>
 	</rule>
+	<rule ref="Squiz.Strings.DoubleQuoteUsage.NotRequired">
+		<exclude-pattern>tests/KdybyTests/Translation/LatteExtractorTest.phpt</exclude-pattern>
+	</rule>
 </ruleset>
