@@ -38,7 +38,7 @@ class LatteExtractorTest extends \KdybyTests\Translation\TestCase
 		} else {
 			$mess = [
 				'messages' => [
-					"(\"Important title\")" => "(\"Important title\")",
+					'("Important title")' => '("Important title")',
 					"('Another important title')" => "('Another important title')",
 					"\nInteresting article about interesting topic\n" => "\nInteresting article about interesting topic\n",
 					"('Chapter 2')" => "('Chapter 2')",
@@ -71,7 +71,7 @@ class LatteExtractorTest extends \KdybyTests\Translation\TestCase
 		} else {
 			$mess = [
 				'messages' => [
-					"homepage.(\"Important title\")" => "(\"Important title\")",
+					'homepage.("Important title")' => '("Important title")',
 					"homepage.('Another important title')" => "('Another important title')",
 					"homepage.\nInteresting article about interesting topic\n" => "\nInteresting article about interesting topic\n",
 					"homepage.('Chapter 2')" => "('Chapter 2')",
