@@ -31,6 +31,7 @@ use Kdyby\Translation\Translator as KdybyTranslator;
 use Latte\Engine as LatteEngine;
 use Nette\Application\Application;
 use Nette\Bridges\ApplicationLatte\ILatteFactory;
+use Nette\Bridges\ApplicationLatte\LatteFactory;
 use Nette\Configurator;
 use Nette\DI\Compiler;
 use Nette\DI\Definitions\FactoryDefinition;
@@ -297,12 +298,12 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 				->addSetup('addFilter', ['translate', [$this->prefix('@helpers'), 'translateFilterAware']]);
 		};
 
-		$latteFactoryService = $builder->getByType(ILatteFactory::class);
+		$latteFactoryService = $builder->getByType(LatteFactory::class) ?: $builder->getByType(ILatteFactory::class);
 		if (!$latteFactoryService || !self::isOfType($builder->getDefinition($latteFactoryService)->getClass(), LatteEngine::class)) {
 			$latteFactoryService = 'nette.latteFactory';
 		}
 
-		if ($builder->hasDefinition($latteFactoryService) && self::isOfType($builder->getDefinition($latteFactoryService)->getClass(), ILatteFactory::class)) {
+		if ($builder->hasDefinition($latteFactoryService) && (self::isOfType($builder->getDefinition($latteFactoryService)->getClass(), LatteFactory::class) || self::isOfType($builder->getDefinition($latteFactoryService)->getClass(), ILatteFactory::class))) {
 			$registerToLatte($builder->getDefinition($latteFactoryService));
 		}
 
