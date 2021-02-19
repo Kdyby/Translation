@@ -10,6 +10,7 @@
 
 namespace Kdyby\Translation\DI;
 
+use Closure;
 use Kdyby\Console\DI\ConsoleExtension;
 use Kdyby\Monolog\Logger as KdybyLogger;
 use Kdyby\Translation\Caching\PhpFileStorage;
@@ -30,6 +31,7 @@ use Kdyby\Translation\Translator as KdybyTranslator;
 use Latte\Engine as LatteEngine;
 use Nette\Application\Application;
 use Nette\Bridges\ApplicationLatte\ILatteFactory;
+use Nette\Bridges\ApplicationLatte\LatteFactory;
 use Nette\Configurator;
 use Nette\DI\Compiler;
 use Nette\DI\Definitions\FactoryDefinition;
@@ -40,7 +42,6 @@ use Nette\PhpGenerator\PhpLiteral;
 use Nette\Reflection\ClassType as ReflectionClassType;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
-use Nette\Utils\Callback;
 use Nette\Utils\Finder;
 use Nette\Utils\Validators;
 use Symfony\Component\Translation\Extractor\ChainExtractor;
@@ -297,12 +298,12 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 				->addSetup('addFilter', ['translate', [$this->prefix('@helpers'), 'translateFilterAware']]);
 		};
 
-		$latteFactoryService = $builder->getByType(ILatteFactory::class);
+		$latteFactoryService = $builder->getByType(LatteFactory::class) ?: $builder->getByType(ILatteFactory::class);
 		if (!$latteFactoryService || !self::isOfType($builder->getDefinition($latteFactoryService)->getClass(), LatteEngine::class)) {
 			$latteFactoryService = 'nette.latteFactory';
 		}
 
-		if ($builder->hasDefinition($latteFactoryService) && self::isOfType($builder->getDefinition($latteFactoryService)->getClass(), ILatteFactory::class)) {
+		if ($builder->hasDefinition($latteFactoryService) && (self::isOfType($builder->getDefinition($latteFactoryService)->getClass(), LatteFactory::class) || self::isOfType($builder->getDefinition($latteFactoryService)->getClass(), ILatteFactory::class))) {
 			$registerToLatte($builder->getDefinition($latteFactoryService));
 		}
 
@@ -372,7 +373,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 			return str_replace((DIRECTORY_SEPARATOR === '/') ? '\\' : '/', DIRECTORY_SEPARATOR, Helpers::expand($dir, $builder->parameters));
 		}, $config['dirs']);
 
-		$dirs = array_values(array_filter($config['dirs'], Callback::closure('is_dir')));
+		$dirs = array_values(array_filter($config['dirs'], Closure::fromCallable('is_dir')));
 		if (count($dirs) > 0) {
 			foreach ($dirs as $dir) {
 				$builder->addDependency($dir);
