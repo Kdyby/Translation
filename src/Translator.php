@@ -435,7 +435,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	 */
 	private function extractMessageDomain($message)
 	{
-		if (strpos($message, '.') !== FALSE && strpos($message, ' ') === FALSE) {
+		if (strpos(substr($message, 0, -1), '.') !== FALSE && strpos($message, ' ') === FALSE) {
 			list($domain, $message) = explode('.', $message, 2);
 
 		} else {
