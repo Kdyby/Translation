@@ -200,11 +200,6 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 			$id = $message;
 		}
 
-		if ($id === '') {
-			$id = $message;
-			$domain = NULL;
-		}
-
 		$result = parent::trans($id, $parameters, $domain, $locale);
 		if ($result === "\x01") {
 			$this->logMissingTranslation($message, $domain, $locale);
@@ -232,11 +227,6 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 
 		} else {
 			$id = $message;
-		}
-
-		if ($id === '') {
-			$id = $message;
-			$domain = NULL;
 		}
 
 		try {
@@ -445,7 +435,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	 */
 	private function extractMessageDomain($message)
 	{
-		if (strpos($message, '.') !== FALSE && strpos($message, ' ') === FALSE) {
+		if (strpos($message, '.') !== FALSE && strpos(strrev($message), '.') !== 0 && strpos($message, ' ') === FALSE) {
 			list($domain, $message) = explode('.', $message, 2);
 
 		} else {
