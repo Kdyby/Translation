@@ -171,6 +171,35 @@ front.missingKey.namedHelloCounting' . "\n", $this->template->__toString());
 		Assert::same([], $handler->getRecords());
 	}
 
+	public function testPhraseInFlashMessagePairMacro()
+	{
+		$logger = new Logger('translator');
+		$handler = new TestHandler();
+		$logger->pushHandler($handler);
+		$this->translator->injectPsrLogger($logger);
+
+		$this->template->setFile(__DIR__ . '/data/files/flashMessagePairMacro.latte');
+		$this->template->setParameters([
+			'flashes' => unserialize(serialize([
+				(object) [
+					'message' => new Phrase('front.flashes.weSentPasswordRequest', ['email' => 'filip@prochazka.su']),
+					'type' => 'info',
+				],
+				(object) [
+					'message' => new Phrase('front.weSentPasswordRequest', ['email' => 'filip@prochazka.su']),
+					'type' => 'info',
+				],
+			])),
+		]);
+
+		$expected = "\tHeslo vám bylo zasláno na email filip@prochazka.su\n" .
+			"\tHeslo vám pošleme na email filip@prochazka.su\n\n";
+
+		Assert::match($expected, $this->template->__toString());
+
+		Assert::same([], $handler->getRecords());
+	}
+
 }
 
 (new TranslateMacrosTest())->run();
