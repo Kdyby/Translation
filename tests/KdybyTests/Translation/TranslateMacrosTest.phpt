@@ -171,6 +171,13 @@ front.missingKey.namedHelloCounting' . "\n", $this->template->__toString());
 		Assert::same([], $handler->getRecords());
 	}
 
+	public function testPairMacro()
+	{
+		$this->template->setFile(__DIR__ . '/data/files/pairMacro.latte');
+		$expected = 'Hello';
+		Assert::match($expected, $this->template->__toString());
+	}
+
 }
 
 (new TranslateMacrosTest())->run();
