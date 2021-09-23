@@ -1,0 +1,4 @@
+homepage:
+	hello2: Default ahoj světe
+	namedHello2: default ahoj %name%
+	namedHelloCounting2: Default ahoj %name%|Hola %name%

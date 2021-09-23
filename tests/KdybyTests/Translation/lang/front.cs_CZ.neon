@@ -1,3 +1,6 @@
+includes:
+	- default.cs_CZ.neon
+
 homepage:
 	hello: Ahoj světe
 	namedHello: Ahoj %name%
