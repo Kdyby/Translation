@@ -29,6 +29,8 @@ class PhpFileStorage extends \Nette\Caching\Storages\FileStorage implements \Net
 	private const FILE = 'file';
 	private const HANDLE = 'handle';
 
+	private const NS_SEPARATOR = "\x00";
+
 	/**
 	 * Reads cache data from disk.
 	 *
@@ -54,7 +56,7 @@ class PhpFileStorage extends \Nette\Caching\Storages\FileStorage implements \Net
 		$cacheKey = substr_replace(
 			$key,
 			trim(strtr($this->hint, '\\/@', '.._'), '.') . '-',
-			strpos($key, Cache::NAMESPACE_SEPARATOR) + 1,
+			strpos($key, self::NS_SEPARATOR) + 1,
 			0
 		);
 
