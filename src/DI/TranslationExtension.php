@@ -105,7 +105,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 			'whitelist' => Expect::anyOf(Expect::arrayOf('string'), NULL),
 			'default' => Expect::string('en'),
 			'logging' => Expect::anyOf(Expect::string(), Expect::bool()),
-			'fallback' => Expect::arrayOf('string')->default(['en_US']),
+			'fallback' => Expect::arrayOf('string')->default(['en_US'])->mergeDefaults(false),
 			'dirs' => Expect::arrayOf('string')->default(['%appDir%/lang', '%appDir%/locale']),
 			'cache' => Expect::string(PhpFileStorage::class),
 			'debugger' => Expect::bool(FALSE),
