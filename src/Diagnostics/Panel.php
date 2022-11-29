@@ -13,10 +13,10 @@ namespace Kdyby\Translation\Diagnostics;
 use Kdyby\Translation\Translator;
 use Nette\Application\Application;
 use Nette\Application\Request;
-use Nette\Reflection\ClassType;
 use Nette\Utils\Arrays;
 use Nette\Utils\Html;
 use Nette\Utils\Strings;
+use ReflectionClass;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Tracy\BlueScreen;
 use Tracy\Debugger;
@@ -275,7 +275,7 @@ class Panel implements \Tracy\IBarPanel
 	{
 		$this->localeResolvers = [];
 		foreach ($resolvers as $resolver) {
-			$this->localeResolvers[ClassType::from($resolver)->getShortName()] = $resolver;
+			$this->localeResolvers[(new ReflectionClass($resolver))->getShortName()] = $resolver;
 		}
 	}
 
