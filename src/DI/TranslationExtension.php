@@ -451,7 +451,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 		try {
 			/** @var \Nette\DI\Definitions\ServiceDefinition $def */
 			$def = $builder->getDefinition($this->loaders[$format]);
-            $refl = new ReflectionClass($def->getEntity() ?: $def->getClass());
+			$refl = new ReflectionClass($def->getEntity() ?: $def->getClass());
 			$method = $refl->getConstructor();
 			if ($method !== NULL && $method->getNumberOfRequiredParameters() > 1) {
 				return;
