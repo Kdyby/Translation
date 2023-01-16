@@ -95,6 +95,15 @@ class CatalogueCompiler
 			$messages = $this->cache->load($cacheKey);
 			if ($messages !== NULL) {
 				$availableCatalogues[$locale] = new MessageCatalogue($locale, $messages);
+
+				//If $locale has a fallback, load them from cache as well
+				foreach ($this->fallbackResolver->compute($translator, $locale) as $fallback) {
+					if (!isset($availableCatalogues[$fallback])) {
+						$this->compile($translator, $availableCatalogues, $fallback);
+					}
+					$availableCatalogues[$locale]->addFallbackCatalogue($availableCatalogues[$fallback]);
+				}
+
 				return $availableCatalogues;
 			}
 
